@@ -1,0 +1,413 @@
+/* No comment provided by engineer. */
+"**Host:** %@" = "**Computadora:** %@";
+
+/* No comment provided by engineer. */
+"**It is possible that someone is doing something nasty**.\n\nSomeone could be eavesdropping on you right now (man-in-the-middle attack).\n\nIt is also possible that the host key has just been changed. The fingerprint for the RSA key sent by the remote host is:\n\n`%@`\n\nContact your system administrator to verify.\n\nIf this is expected, you can remove the existing known key from the Known Hosts settings." = "**Es posible que una persona esté tratando de hacer algo desagradable**\n\nAlguien podría estar monitoreando tu conección en este momento (un ataque de interposición).\n\nAunque es posible que la llave del servidor o computadora haya cambiado.   La huella digital que ha enviado el servidor remoto es:\n\n`%@`\n\nContacte a su administrator de sistemas para verificarla.\n\nSi este cambio estaba anticipado, remueve el registro para esta computadaora de la lista de computadoras conocidas.\n        ";
+
+/* No comment provided by engineer. */
+"A terminal emulator and SSH client for iOS" = "Un emulador de terminal y cliente de SSH para iOS";
+
+/* No comment provided by engineer. */
+"Active SSH sessions will appear here" = "Las conecciones activas SSH aparecerán aquí";
+
+/* No comment provided by engineer. */
+"Alias" = "Alias";
+
+/* No comment provided by engineer. */
+"Appearance" = "Apariencia";
+
+/* No comment provided by engineer. */
+"Auth" = "Auth";
+
+/* No comment provided by engineer. */
+"Authentication" = "Autentificación";
+
+/* No comment provided by engineer. */
+"Authors: %@" = "Autores %@";
+
+/* No comment provided by engineer. */
+"Background" = "Fondo";
+
+/* No comment provided by engineer. */
+"Background Style" = "Estilo del fondo";
+
+/* No comment provided by engineer. */
+"Beep" = "Bip";
+
+/* No comment provided by engineer. */
+"Below is the configuration" = "Abajo aparece la configuración";
+
+/* No comment provided by engineer. */
+"Bottom" = "Abajo";
+
+/* No comment provided by engineer. */
+"BUG" = "ERROR";
+
+/* No comment provided by engineer. */
+"Close Connection" = "Cerrar la conección";
+
+/* No comment provided by engineer. */
+"Color Theme" = "Tema de color";
+
+/* No comment provided by engineer. */
+"Columns" = "Columnas";
+
+/* No comment provided by engineer. */
+"Command" = "Comando";
+
+/* No comment provided by engineer. */
+"Comment" = "Comentario";
+
+/* No comment provided by engineer. */
+"Connect" = "Conectarse";
+
+/* No comment provided by engineer. */
+"Connected" = "Conectado";
+
+/* No comment provided by engineer. */
+"Connecting" = "Conectando";
+
+/* No comment provided by engineer. */
+"Connection to `%@:%@` was terminated" = "La conección a `%1$@:%2$@` se interrumpió";
+
+"Connection to `%@:%@` was closed" = "La conección a `%1$@:%2$@` se cerró";
+
+/* No comment provided by engineer. */
+"Continue" = "Continua";
+
+/* No comment provided by engineer. */
+"Create a host to define a machine you want to connect to." = "Crea una definición para una computadora con la información necesaria para contactarse.";
+
+/* No comment provided by engineer. */
+"Created by: %@" = "Creado por: %@";
+
+/* No comment provided by engineer. */
+"Default" = "Ninguno";
+
+/* No comment provided by engineer. */
+"Disconnected" = "Desconectado";
+
+/* No comment provided by engineer. */
+"Duplicate Host" = "Computadora duplicada";
+
+/* No comment provided by engineer. */
+"ecdsa-sha2-nistp256" = "ecdsa-sha2-nistp256";
+
+/* No comment provided by engineer. */
+"ed25519" = "ed25519";
+
+/* No comment provided by engineer. */
+"Endpoint:" = "Punto de contacto:";
+
+/* No comment provided by engineer. */
+"Environment Variables" = "Variables de Entorno";
+
+/* No comment provided by engineer. */
+"error" = "error";
+
+/* No comment provided by engineer. */
+"Font" = "Fuente";
+
+/* No comment provided by engineer. */
+"Fourth" = "Cuarto";
+
+/* No comment provided by engineer. */
+"Hello" = "Hola";
+
+/* No comment provided by engineer. */
+"Hello, World!" = "Hola, Mundo!";
+
+/* No comment provided by engineer. */
+"History" = "Historia";
+
+/* No comment provided by engineer. */
+"Host" = "Computadora";
+
+/* No comment provided by engineer. */
+"Host Icon" = "Ícono de la computadora";
+
+/* No comment provided by engineer. */
+"Host: %@" = "Computadora: %@";
+
+/* No comment provided by engineer. */
+"Hosts" = "Computadoras";
+
+/* No comment provided by engineer. */
+"Keep Display On" = "Mantener la tela prendida";
+
+/* No comment provided by engineer. */
+"KEY TYPE" = "TIPO DE LLAVE";
+
+/* No comment provided by engineer. */
+"Key Type:" = "Tipo de la llave";
+
+/* No comment provided by engineer. */
+"Key Type: %@" = "Tipo de la llave: %@";
+
+/* No comment provided by engineer. */
+"Key:" = "Llave:";
+
+/* No comment provided by engineer. */
+"Live" = "En vivo";
+
+/* No comment provided by engineer. */
+"Location unavailable" = "La ubicación no está disponible";
+
+/* No comment provided by engineer. */
+"Moved" = "Cambió de lugar";
+
+/* No comment provided by engineer. */
+"Name" = "Nombre";
+
+/* No comment provided by engineer. */
+"Name Conflict" = "Conflicto del nombre";
+
+/* No comment provided by engineer. */
+"New Terminal" = "Nueva Terminal";
+
+/* No comment provided by engineer. */
+"No active sessions" = "No hay sesiones activas";
+
+/* No comment provided by engineer. */
+"No Host" = "Sin computador";
+
+/* No comment provided by engineer. */
+"none" = "ninguno";
+
+/* No comment provided by engineer. */
+"NUMBER OF BITS" = "NÚMERO DE BITS";
+
+/* Default action */
+"OK" = "Aceptar";
+
+/* No comment provided by engineer. */
+"Other Options" = "Otras opciones";
+
+/* No comment provided by engineer. */
+"Passphrase" = "Frase de seguridad";
+
+/* No comment provided by engineer. */
+"Password" = "Seña";
+
+/* No comment provided by engineer. */
+"Port" = "Puerto";
+
+/* No comment provided by engineer. */
+"Private Key" = "Llave privada";
+
+/* No comment provided by engineer. */
+"Private Key Storage" = "Almacenamiento de la llave privada";
+
+/* No comment provided by engineer. */
+"Proceed" = "Continuar";
+
+/* No comment provided by engineer. */
+"Project site: [%@](%@)" = "Sitio del proyecto: [%1$@](%2$@)";
+
+/* No comment provided by engineer. */
+"Public Key" = "Llave pública";
+
+/* No comment provided by engineer. */
+"Recent" = "Reciente";
+
+/* No comment provided by engineer. */
+"Recent Connections" = "Conecciones recientes";
+
+/* No comment provided by engineer. */
+"Replace" = "Remplazar";
+
+/* No comment provided by engineer. */
+"Replace SSH Key" = "Replazar la llave SSH";
+
+/* No comment provided by engineer. */
+"Required" = "Requerido";
+
+/* No comment provided by engineer. */
+"Restoration" = "Restauración";
+
+/* No comment provided by engineer. */
+"Secure Enclave" = "Enclave Seguro";
+
+/* No comment provided by engineer. */
+"Secure Enclave Key" = "Llave del Enclave Seguro";
+
+/* No comment provided by engineer. */
+"Sessions" = "Sesiones";
+
+/* No comment provided by engineer. */
+"Silent" = "Silencioso";
+
+/* No comment provided by engineer. */
+"Size" = "Tamaño";
+
+/* No comment provided by engineer. */
+"Snippets are groups of commands that you can paste in your terminal with the snippet icon." = "Los Fragmnetos son grupos de comandos que se pueden insertar en su terminal con el icono del fragmento.";
+
+/* No comment provided by engineer. */
+"Solid" = "Sólido";
+
+/* No comment provided by engineer. */
+"SSH Key" = "Llave SSH";
+
+/* No comment provided by engineer. */
+"SwiftTerm" = "SwiftTerm";
+
+/* No comment provided by engineer. */
+"Test" = "Prueba";
+
+/* No comment provided by engineer. */
+"There is already a host with the alias %@ declared, do you want to keep this name?" = "Ya existe una computadora con el alias %@ declarado, ¿desea mantener este nombre?";
+
+/* No comment provided by engineer. */
+"These are the macOS settings" = "Estas son las opciones de configuración de macOS";
+
+/* No comment provided by engineer. */
+"Third" = "Tercero";
+
+/* No comment provided by engineer. */
+"Title:" = "Título:";
+
+/* No comment provided by engineer. */
+"tmux" = "tmux";
+
+/* No comment provided by engineer. */
+"To get started, create a new host definition that includes the address of the machine you want to connect to, and the username to login as." = "Para empezar, cree una nueva definición de la computadora que incluya la dirección a conectarse, y el nombre de usuario.";
+
+/* No comment provided by engineer. */
+"Track Location" = "Seguir tu ubicación";
+
+/* No comment provided by engineer. */
+"Type" = "Tipo";
+
+/* No comment provided by engineer. */
+"Username" = "Nombre de usuario";
+
+/* No comment provided by engineer. */
+"Value" = "Valor";
+
+/* No comment provided by engineer. */
+"Variable" = "Variable";
+
+/* No comment provided by engineer. */
+"Vibrate" = "Vibrar";
+
+/* No comment provided by engineer. */
+"Welcome to SwiftTerm" = "Bienvenido a SwiftTerm";
+
+/* No comment provided by engineer. */
+"World" = "Mundo";
+
+/* No comment provided by engineer. */
+"You can then import existing SSH keys, or create new ones." = "Puedes importar tus llaves SSH, o crear nuevas llaves SSH";
+
+
+"Terminals" = "Terminales";
+
+"Keys" = "Llaves";
+
+"tmux" = "tmux";
+
+"Known Hosts" = "Computadoras Conocidas";
+
+"Settings" = "Ajustes";
+
+"Credits" = "Créditos";
+
+"Add Host" = "Añadir Computadora";
+
+"Password" = "Contraseña";
+
+"Snippets" = "Fragmentos";
+
+"Support" = "Soporte";
+
+"Home" = "Inicio";
+
+"Create Enclave Key" = "Crea llave en el Enclave";
+
+"Create New Key" = "Crea una nueva llave";
+
+"Add Existing Key" = "Añade una nueva llave";
+
+"Keys allow you to easily log into hosts without having to type in passwords.\n\n[Learn More...](https://github.com/migueldeicaza/SwiftTermApp/wiki/Keys)" = "Las llaves ayudan a entrar a una computadora facilmente, sin tener que usar contraseñas.\n\n[Aprende Más](https://github.com/migueldeicaza/SwiftTermApp/wiki/Keys)";
+    
+"SwiftTermApp is built using the kind work of many open source developers, these are the projects that are used by SwiftTermApp" = "SwiftTermApp ha sido escrito usando el generoso trabajo de various proyectos de software libre.   Estos son los proyectos empleados por SwiftTermApp";
+
+"The lists of hosts you have connected to, along with their fingerprints will be listed here.   These fingerprints are checked on each connection to ensure that a machine is not swapped behind your back and you get tricked into logging into a machine controlled by an adversary" = "La lista de computadoras a las cuales te has contectado, asi como sus huellas digitales están listadas aquí.   Estas huellas digitales se verifican en cada conección para asegurar que te estás conectando a la misma computaodra, y que nadie la ha alterado o cambiado tratando de engañarte para que entres a una computadora controlada por un adversario.";
+
+"Dismiss" = "Descartar";
+
+"Add Snippet" = "Añadir Fragmento";
+
+"Prevents sleep mode from activating while you are connected" = "Evita que el sistema de apagado del sistema se active cuando estás conectado a una computadora remota";
+
+"Tracks your location to keep the terminal running in the background, you can review the locations from the History tab" = "Al seguir tu ubicación, el sistema mantendrá la terminal ejecutándose en el fondo, sin terminar tu conección.  Puedes revisar la historia de lugares a los que te has conectado en la pestaña Historia.";
+
+"Name" = "Nombre";
+
+"USER" = "Usuario";
+
+"While it is possible to configure environment variables, some servers disable setting environment variables.   Check your `sshd_config` file on your server for the *PermitUserEnvironment* setting" = "Aunque es posible definir variables de entorno, algunos servidores desactivan esta opción.   Verifica el valor de la variable *PermitUserEnvironment* en el archivo de configuración `sshd_config` en su servidor";
+
+"Cancel" = "Cancelar";
+
+"Save" = "Guardar";
+
+"The authenticity of host '`%@`' can not be established.\n\nIf this is the first time you connect to this host, you can check that the fingertprint for the host matches the fingerprint you recognize and then proceed. Otherwise, select cancel.\n\nFingerprint:\n\n`%@`\n\nDo you want to continue connecting?" = "La autenticidad de la computaodra '`%@`' no puede ser establecida.\n\nSi esta es la primera ves que te conectas a esta computadora, puedes verificar que su huella digital concuerda con una huella digital que reconoces y continuar.   De otra manera, cancela.\n\nHuella digital:\n\n`%@'\n\nDeseas continuar?";
+
+"Yes" = "Si";
+
+"Name" = "Nombre";
+
+"Date" = "Fecha";
+
+"Time" = "Hora";
+
+"Longitude" = "Longitud";
+
+"Latitude" = "Latitud";
+
+"Address" = "Dirección";
+
+"Clear" = "Borrar";
+
+"Authentication challenge" = "Reto de autenticación";
+
+"Enter password" = "Introduzca contraseña";
+
+"Terminal" = "Terminal";
+
+"Export Text" = "Exporta Texto";
+
+"Export Selection" = "Exporta la Selección";
+
+"Soft Reset" = "Reinicio Parcial";
+
+"Hard Reset" = "Reinicio Completo";
+
+"Keys " = "Teclas";
+
+"Escape" = "Escape";
+
+"F1" = "F1";
+"F2" = "F2";
+"F3" = "F3";
+"F4" = "F4";
+"F5" = "F5";
+"F6" = "F6";
+"F7" = "F7";
+"F8" = "F8";
+"F9" = "F9";
+"F10" = "F10";
+
+"Need help?  Shake your device or use the 'Support' menu option to report a bug or to share feedback or a feature request." = "¿Necesitas ayuda?   Sacude tu equipo o selecciona 'Soporte' en el menu para repotar problemas, enviarnos sugerencias o compartir tus opiniones.";
+
+
+"SwiftTermApp remembers the digital fingerprints of each host you have connected to.   These fingerprints are used to ensure that you do not accidentally log into a malicious host that can steal information from you.\n\nIn some scenarios, when a computer system is reinstalled the keys might change, and you might want to consider removing it from the list of known hosts.\n\nYou can use the fingerprint to visually inspect if the key matches the host you are trying to connect to." = "SwiftTermApp recuerda las huellas digitales de cada computadora al que te has conectado.  Estas huellas digitales se usan para evitar que te conectes accidentalmente a una computadora bajo control de un tercercero que quiere atacarte.\n\nEn algunos casoos, cuando una computadora se ha reinstalado o actualizado, las huellas digitales pueden cambiar - en ese caso, considera borrar la huella digital registrada de la lista.\n\nPuedes usar la huella digital visualmente para verificar que corresponde a la computadora a la que querías conectarte.";
+
+"Add Variable" = "Añade una variable";
+
+
+"Using the file selector icons allows you to use Files to select your private and public keys.\n\nThe private key is required, and if it needs a passphrase, you will need to provide it" = "El ícono de selección de archivos te permite usar la aplicación Files del sistema para seleccionar tu llave private y tu llave pública.\n\nLa llave privada es necesisar, y si necesita de una contraseña, la puedes proveer";
+
+"Generate" = "Genera";

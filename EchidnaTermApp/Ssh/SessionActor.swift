@@ -1,0 +1,644 @@
+//
+// TODO:
+//  - Handle disconnect
+//  - Do I still care about timeout as a global?   With this async framework, perhaps the timeout needs to be implemented elsewhere
+//
+//  SessionActor.swift
+//  SwiftTermApp
+//
+//  Created by Miguel de Icaza on 2/3/22.
+//  Copyright © 2022 Miguel de Icaza. All rights reserved.
+//
+import Foundation
+import Network
+import CryptoKit
+
+@_implementationOnly import CSSH
+
+typealias socketCbType = @convention(c) (libssh2_socket_t, UnsafeRawPointer, size_t, CInt, UnsafeRawPointer) -> ssize_t
+typealias debugCbType  = @convention(c) (libssh2_socket_t, CInt, UnsafeRawPointer, CInt, UnsafeRawPointer, CInt, UnsafeRawPointer) -> ()
+typealias disconnectCbType = @convention(c) (UnsafeRawPointer, CInt,
+                                           UnsafePointer<CChar>, CInt,
+                                           UnsafePointer<CChar>, CInt, UnsafeRawPointer) -> Void
+
+var debugIO = false
+///
+/// Surfaces the libssh2 `Session` APIs and puts them behind an actor, ensuring that all operations on it
+/// are serialized.   This API surface is not only for the session, but also for any types that are thread-bound
+/// to the session, like channels created from the session, or the SFTP API.
+actor SessionActor {
+    typealias queuedOp = ()->Bool
+    
+    // Handle to the libssh2 Session
+    var sessionHandle: OpaquePointer!
+
+    // Purely helps to initialize the Session object
+    init (fakeSetup: Bool) { }
+    
+    /// Initializes the session actor with methods to send, receive and notify about any debug information
+    /// - Parameters:
+    ///  - send: the method that will be invoked by libssh2 to send data over the connection
+    ///  - recv: the method that is invoked by libssh2 to receive data from the connection
+    ///  - debug: method to invoke when we receive a debug message from the server
+    ///  - opaque: the C-level context/closure.   This should point to the Session, and is allocated by the session.
+    init (send: @escaping socketCbType, recv: @escaping socketCbType, disconnect: @escaping disconnectCbType, debug: @escaping debugCbType, opaque: UnsafeMutableRawPointer, retHandle: inout OpaquePointer?) {
+        libssh2_init (0)
+        sessionHandle = libssh2_session_init_ex(nil, nil, nil, opaque)
+        retHandle = sessionHandle
+        let flags: Int32 = 0
+        
+        libssh2_trace(sessionHandle, flags)
+        libssh2_trace_sethandler(sessionHandle, nil, { session, context, data, length in
+            var str: String
+            if let ptr = data {
+                str = String (cString: ptr)
+            } else {
+                str = "<null>"
+            }
+            print ("Trace callback: \(str)")
+        })
+        
+        libssh2_session_callback_set(sessionHandle, LIBSSH2_CALLBACK_DISCONNECT, unsafeBitCast(disconnect, to: UnsafeMutableRawPointer.self))
+        
+        libssh2_session_set_blocking (sessionHandle, 0)
+        libssh2_session_callback_set(sessionHandle, LIBSSH2_CALLBACK_SEND, unsafeBitCast(send, to: UnsafeMutableRawPointer.self))
+        libssh2_session_callback_set(sessionHandle, LIBSSH2_CALLBACK_RECV, unsafeBitCast(recv, to: UnsafeMutableRawPointer.self))
+        libssh2_session_callback_set(sessionHandle, LIBSSH2_CALLBACK_DEBUG, unsafeBitCast(debug, to: UnsafeMutableRawPointer.self))
+    }
+    
+    /// Invokes the provided operation, if it returns `true`, it means that it could not complete its operation
+    /// due to lack of data, so it gets placed on the list of pending tasks.  When new data arrives on the
+    /// connection, all the pending tasks are notified, and they are executed again.
+    /// - Parameter task: an operation that returns true if it needs to be attempted again, false if it completed execution, and invoked c.resume
+
+    func track (task: @escaping queuedOp) {
+        if task () {
+            if debugIO {
+                print ("Suspending task due to EAGAIN")
+            }
+            tasks.append (task)
+        }
+    }
+    
+    ///
+    /// Calls into a libssh2 function that uses the convention that where a `LIBSSH2_ERROR_EAGAIN`
+    /// return value indicates that the operation should be retried, but does so by waiting for new
+    /// data to be made available on the channel.
+    ///
+    /// - Parameter callback: a method that is expecred to return an Int32, and one of the
+    /// possible values is `LIBSSH2_ERROR_EAGAIN` which will trigger a new attempt to execute
+    func callSsh (_ callback: @escaping ()->Int32) async -> Int32 {
+        return await withUnsafeContinuation { c in
+            let op: queuedOp = {
+                let ret = callback()
+                if ret == LIBSSH2_ERROR_EAGAIN {
+                    return true
+                }
+                c.resume(returning: ret)
+                return false
+            }
+            track (task: op)
+        }
+    }
+
+    ///
+    /// Calls into a libssh2 function that uses the convention that where a `LIBSSH2_ERROR_EAGAIN`
+    /// return value indicates that the operation should be retried, but does so by waiting for new
+    /// data to be made available on the channel.
+    ///
+    /// - Parameter callback: a method that is expecred to return an Int32, and one of the
+    /// possible values is `LIBSSH2_ERROR_EAGAIN` which will trigger a new attempt to execute
+    func callSshInt (_ callback: @escaping ()->Int) async -> Int {
+        return await withUnsafeContinuation { c in
+            let op: queuedOp = {
+                let ret = callback()
+                if ret == LIBSSH2_ERROR_EAGAIN {
+                    return true
+                }
+                c.resume(returning: ret)
+                return false
+            }
+            track (task: op)
+        }
+    }
+
+    ///
+    /// Calls into a libssh2 function that returns a pointer value as a return, and that sets the
+    /// libssh2 errno to `LIBSSH2_ERROR_EAGAIN` to indicate that there is not enough data
+    /// availble and the operation should be retried.   If this is the case, then the operation is
+    /// queued for exectuion until new data to be made available on the channel.
+    ///
+    /// - Parameter callback: a method that is expecred to return an Int32, and one of the
+    /// possible values is `LIBSSH2_ERROR_EAGAIN` which will trigger a new attempt to execute
+    /// - Returns: an optional pointer value.
+    func callSshPtr<T> (_ callback: @escaping ()->T?) async -> T? {
+        return await withUnsafeContinuation { c in
+            let op: queuedOp = {
+                let ret = callback()
+                if ret == nil {
+                    let code = libssh2_session_last_errno(self.sessionHandle)
+                    if code == LIBSSH2_ERROR_EAGAIN {
+                        return true
+                    }
+                }
+                c.resume(returning: ret)
+                return false
+            }
+            track (task: op)
+        }
+    }
+
+    // These tasks return true if they should be kept on the list
+    var tasks: [()->Bool] = []
+    
+    /// To be invoked when new data has been read from the network for the channel,
+    /// this retries all pending tasks that were waiting for data to be made available.
+    public func pingTasks () {
+        let copy = tasks
+        tasks = []
+        
+        if debugIO {
+            print ("pinging tasks #\(copy.count)")
+        }
+        for task in copy {
+            if task() {
+                tasks.append(task)
+            }
+        }
+    }
+    
+    public func hostKey () -> (key: [Int8], type: Int32)? {
+        var len: Int = 0
+        var type: Int32 = 0
+
+        let ptr = libssh2_session_hostkey(sessionHandle, &len, &type)
+        if ptr == nil {
+            return nil
+        }
+        let data = UnsafeBufferPointer (start: ptr, count: len)
+        return (data.map { $0 }, type)
+    }
+
+    public func handshake () async -> Int32 {
+        return await callSsh {
+            libssh2_session_handshake(self.sessionHandle, 0)
+        }
+    }
+
+    public var timeout: Date?
+    
+    public func userAuthenticationList (username: String) async -> String {
+        let ptr = await callSshPtr {
+            return libssh2_userauth_list (self.sessionHandle, username, UInt32(username.utf8.count))
+        }
+        guard let ptr = ptr else {
+            return ""
+        }
+        return String (validatingUTF8: ptr) ?? ""
+    }
+        
+    public var authenticated: Bool {
+        get {
+            return libssh2_userauth_authenticated(sessionHandle) == 1
+        }
+    }
+    
+    public var lastError: String {
+        get {
+            var dataBuffer: UnsafeMutablePointer <CChar>?
+
+            libssh2_session_last_error(self.sessionHandle, &dataBuffer, nil, 0)
+            if let cstr = dataBuffer {
+                return String (validatingUTF8: cstr) ?? "Unable to convert binary blob to valid string while retrieving error information"
+            } else {
+                return "No detail provided"
+            }
+        }
+    }
+    
+    // MARK: authentication APIs
+    public func userAuthKeyboardInteractive (username: String) async -> String? {
+        return await authErrorToString(code: callSsh {
+            let usernameCount = UInt32 (username.utf8.count)
+            let ret = libssh2_userauth_keyboard_interactive_ex(self.sessionHandle, username, usernameCount) { name, nameLen, instruction, instructionLen, numPrompts, prompts, responses, abstract in
+                let session = Session.getSession(from: abstract!)
+                
+                for i in 0..<Int(numPrompts) {
+                    guard let promptI = prompts?[i], let text = promptI.text else {
+                        continue
+                    }
+                    
+                    let data = Data (bytes: UnsafeRawPointer (text), count: Int(promptI.length))
+                    
+                    guard let challenge = String (data: data, encoding: .utf8) else {
+                        continue
+                    }
+                    
+                    let password = session.promptFunc! (challenge)
+                    let response = password.withCString {
+                        LIBSSH2_USERAUTH_KBDINT_RESPONSE(text: strdup($0), length: UInt32(strlen(password)))
+                    }
+                    responses?[i] = response
+                }
+            }
+            return ret
+        })
+    }
+    
+    // TODO: we should likely handle the password change callback requirement:
+    // The callback: If the host accepts authentication but requests that the password be changed,
+    // this callback will be issued. If no callback is defined, but server required password change,
+    // authentication will fail.
+    //
+    // TODO: the above is the last parameter to libssh2_userauth_password_ex
+    public func userAuthPassword (username: String, password: String) async -> String? {
+        return authErrorToString(code: await callSsh {
+            let usernameCount = UInt32(username.utf8.count)
+            let passwordCount = UInt32(password.utf8.count)
+            
+            return libssh2_userauth_password_ex (self.sessionHandle, username, usernameCount, password, passwordCount, nil)
+        })
+    }
+    
+    public func userAuthPublicKeyFromMemory (username: String, passPhrase: String, publicKey: String, privateKey: String) async -> String? {
+        let ret = await callSsh {
+            // Use the withCString rather than going to Data and then to pointers, because libssh2 ignores in some paths the size of the
+            // parameters and instead relies on a NUL characters at the end of the string to determine the size.
+            
+            let usernameCount = username.utf8.count
+            return privateKey.withCString {
+                let privPtr = $0
+                
+                return publicKey.withCString {
+                    let pubPtr = $0
+                    return libssh2_userauth_publickey_frommemory(self.sessionHandle, username, usernameCount, pubPtr, strlen(pubPtr), privPtr, strlen(privPtr), passPhrase)
+                }
+            }
+        }
+        return authErrorToString(code: ret)
+    }
+    
+    public func userAuthWithCallback (username: String, publicKey: Data, signCallback: @escaping (Data)->Data?) async -> String? {
+        let ret = await callSsh {
+            var rc: CInt = 0
+            let cbData = callbackData (pub: publicKey, signCallback: signCallback)
+            let ptrCbData = UnsafeMutablePointer<UnsafeMutableRawPointer?>.allocate(capacity: 1)
+            ptrCbData.pointee = Unmanaged.passUnretained(cbData).toOpaque()
+            
+            
+            publicKey.withUnsafeBytes {
+                let pubPtr = $0.bindMemory(to: UInt8.self).baseAddress!
+                
+                let count = publicKey.count
+                rc = libssh2_userauth_publickey (self.sessionHandle, username, pubPtr, count, authenticateCallback, ptrCbData)
+            }
+            return rc
+        }
+        return authErrorToString(code: ret)
+    }
+    
+    // MARK: host validation utilities and known hosts
+    public func makeKnownHost () -> LibsshKnownHost? {
+        guard let kh = libssh2_knownhost_init (sessionHandle) else {
+            return nil
+        }
+        return LibsshKnownHost (sessionActor: self, knownHost: kh)
+    }
+    
+    public func getFingerprintBytes () -> [UInt8]? {
+        guard let hashPointer = libssh2_hostkey_hash(sessionHandle, LIBSSH2_HOSTKEY_HASH_SHA256) else {
+            return nil
+        }
+        
+        let hash = UnsafeRawPointer(hashPointer).assumingMemoryBound(to: UInt8.self)
+        
+        return (0..<32).map({ UInt8(hash[$0]) })
+    }
+    
+    public func getBanner () -> String {
+        return String (cString: libssh2_session_banner_get(sessionHandle))
+    }
+    
+    public func readFile (knownHost: LibsshKnownHost, filename: String) -> String? {
+        let ret = libssh2_knownhost_readfile(knownHost.khHandle, filename, LIBSSH2_KNOWNHOST_FILE_OPENSSH)
+        if ret < 0 {
+            return libSsh2ErrorToString(error: ret)
+        }
+        return nil
+    }
+    
+    public func writeFile (knownHost: LibsshKnownHost, filename: String) -> String? {
+        let ret = libssh2_knownhost_writefile(knownHost.khHandle, filename, LIBSSH2_KNOWNHOST_FILE_OPENSSH)
+        if ret < 0 {
+            return libSsh2ErrorToString (error: ret)
+        }
+        return nil
+    }
+    
+
+    public func add(knownHost: LibsshKnownHost, fullhostname: String, key: [Int8], keyTypeCode: Int32, comment: String) async -> String? {
+        let empty = ""
+        var kcopy = key
+        let ret = await callSsh {
+            libssh2_knownhost_addc(knownHost.khHandle, fullhostname, empty, &kcopy, kcopy.count, comment, comment.utf8.count, LIBSSH2_KNOWNHOST_TYPE_PLAIN | LIBSSH2_KNOWNHOST_KEYENC_RAW | keyTypeCode, nil)
+        }
+
+        return ret == 0 ? nil : libSsh2ErrorToString(error: ret)
+    }
+    
+    // MARK: Disconnect
+    public func disconnect (reason: Int32 = SSH_DISCONNECT_BY_APPLICATION, description: String) async {
+        let _ = await callSsh {
+            libssh2_session_disconnect_ex(self.sessionHandle, reason, description, "")
+        }
+    }
+    
+    // MARK: Channel APIs
+    
+    public func openChannel (type: String, windowSize: CUnsignedInt = 2*1024*1024, packetSize: CUnsignedInt = 32768) async -> OpaquePointer? {
+        
+        return await callSshPtr {
+            return libssh2_channel_open_ex(self.sessionHandle, type, UInt32(type.utf8.count), windowSize, packetSize, nil, 0)
+        }
+    }
+    
+    public func setEnv (channel: Channel, name: String, value: String) async -> Int32 {
+        return await callSsh {
+            libssh2_channel_setenv_ex (channel.channelHandle, name, UInt32(name.utf8.count), value, UInt32(value.utf8.count))
+        }
+    }
+    
+    public func requestPseudoTerminal (channel: Channel, name: String, cols: Int, rows: Int) async -> Int32 {
+        return await callSsh {
+            libssh2_channel_request_pty_ex(channel.channelHandle, name, UInt32(name.utf8.count), nil, 0, Int32(cols), Int32(rows), LIBSSH2_TERM_WIDTH_PX, LIBSSH2_TERM_HEIGHT_PX)
+        }
+    }
+    
+    var logFileCounter = 1
+    func dump (_ data: Data)
+    {
+        let dir = "/tmp"
+        let path = dir + "/log-\(logFileCounter)"
+        do {
+            try data.write(to: URL.init(fileURLWithPath: path))
+            logFileCounter += 1
+        } catch {
+            // Ignore write error
+            //print ("Got error while logging data dump to \(path)")
+        }
+    }
+
+    
+    public func ping (channel: Channel, eofDetected: inout Bool) async -> (Data?, Data?)? {
+        // standard channel
+        let channelHandle = channel.channelHandle
+        let streamId: Int32 = 0
+        var ret, retError: Int
+        let bufferSize = channel.bufferSize
+        ret = libssh2_channel_read_ex (channelHandle, streamId, channel.buffer, bufferSize)
+        retError = libssh2_channel_read_ex (channelHandle, SSH_EXTENDED_DATA_STDERR, channel.bufferError, bufferSize)
+        eofDetected = libssh2_channel_eof(channelHandle) != 0
+        //print ("Ping on channel got \(ret) bytes")
+        let data = ret >= 0 ? Data (bytesNoCopy: channel.buffer, count: ret, deallocator: .none) : nil
+        let error = retError >= 0 ? Data (bytesNoCopy: channel.bufferError, count: retError, deallocator: .none) : nil
+        //if ret >= 0 { dump (data!) }
+        if ret >= 0 || retError >= 0 {
+            return (data, error)
+        } else {
+            return nil
+        }
+
+    }
+    public func processStartup (channel: Channel, request: String, message: String?) async -> Int32 {
+        return await callSsh {
+            libssh2_channel_process_startup (channel.channelHandle, request, UInt32(request.utf8.count), message, message == nil ? 0 : UInt32(message!.utf8.count))
+        }
+    }
+    
+    public func setTerminalSize (channel: Channel, cols: Int, rows: Int, pixelWidth: Int, pixelHeight: Int) async {
+        let _ = await callSsh {
+            libssh2_channel_request_pty_size_ex(channel.channelHandle, Int32(cols), Int32(rows), Int32(pixelWidth), Int32(pixelHeight))
+        }
+    }
+    
+    public func close (channel: Channel) async {
+        let _ = await callSsh {
+            libssh2_channel_close(channel.channelHandle)
+        }
+    }
+    
+    public func receivedEof (channel: Channel) -> Bool {
+        return libssh2_channel_eof (channel.channelHandle) != 0
+    }
+    
+    /// Sends the provided data over the channel and invokes the callback with the status code from invoking this call.
+    public func send (channel: Channel, data: Data, callback: @escaping (Int)->()) async {
+        if data.count == 0 {
+            return
+        }
+        callback (Int (await callSsh {
+            data.withUnsafeBytes { (unsafeBytes) in
+                let bytes = unsafeBytes.bindMemory(to: CChar.self).baseAddress!
+                
+                
+                let ret = libssh2_channel_write_ex(channel.channelHandle, 0, bytes, data.count)
+                    
+                if ret < 0 {
+                    print ("DEBUG libssh2_channel_write_ex result: \(libSsh2ErrorToString(error:Int32(ret)))")
+                }
+                return Int32 (ret)
+            }
+        }))
+    }
+    
+    public func exec (channel: Channel, command: String) async -> Int32 {
+        await callSsh {
+            libssh2_channel_process_startup (channel.channelHandle, "exec", 4, command, UInt32(command.utf8.count))
+        }
+    }
+    
+    public func free (channelHandle: OpaquePointer) {
+        libssh2_channel_free(channelHandle)
+    }
+    
+    /// Creates a TCP tunnel from the machine the session is connected to a specified host.
+    /// - Parameters:
+    ///  - host: The name of the host on the connected end that we will connect to
+    ///  - port: the port to connect to.
+    ///  - originatingHost: Host to tell the SSH server the connection originated on.
+    ///  - originatingPort: Port to tell the SSH server the connection originated from.
+    /// - Returns:a handle to the channel that can be used for IO, or nil on error
+    public func tunnelTcp (host: String, port: Int32, originatingHost: String, originatingPort: Int32) async -> OpaquePointer? {
+        return await callSshPtr {
+            libssh2_channel_direct_tcpip_ex(self.sessionHandle, host, port, originatingHost, originatingPort)
+        }
+    }
+    
+    // MARK: SFTP APIs
+    public func openSftp () async -> OpaquePointer? {
+        return await callSshPtr { libssh2_sftp_init(self.sessionHandle) }
+    }
+    
+    func sftpStat (_ sftp: SFTP, path: String) async -> LIBSSH2_SFTP_ATTRIBUTES? {
+        var attr: LIBSSH2_SFTP_ATTRIBUTES = LIBSSH2_SFTP_ATTRIBUTES()
+        let pc = UInt32 (path.utf8.count)
+        
+        let ret = await callSsh {
+            libssh2_sftp_stat_ex(sftp.handle, path, pc, LIBSSH2_SFTP_STAT, &attr)
+        }
+        return ret == 0 ? attr : nil
+    }
+    
+    func sftpOpen (_ sftp: SFTP, path: String, flags: UInt, file: Bool) async -> OpaquePointer? {
+        return await callSshPtr {
+            libssh2_sftp_open_ex(sftp.handle, path, UInt32 (path.utf8.count), flags, 0, file ? LIBSSH2_SFTP_OPENFILE : LIBSSH2_SFTP_OPENDIR)
+        }
+    }
+    
+    func sftpClose (sftpHandle: OpaquePointer) async {
+        let _ = await callSsh {
+            libssh2_sftp_close_handle(sftpHandle)
+        }
+    }
+    
+    // Fetches the next directory entry, returing the attributes, and the optional strings that represent it - might be nil if utf8 fails to decode it
+    func sftpReaddir (sftpHandle: OpaquePointer) async -> (attrs: LIBSSH2_SFTP_ATTRIBUTES, name: Data, rendered: Data)? {
+        let maxLen = 512
+
+        let buffer = UnsafeMutablePointer<CChar>.allocate(capacity: maxLen)
+        let longEntry = UnsafeMutablePointer<CChar>.allocate(capacity: maxLen)
+        var attrs = LIBSSH2_SFTP_ATTRIBUTES()
+        
+        let code = await callSsh {
+            libssh2_sftp_readdir_ex(sftpHandle, buffer, maxLen, longEntry, maxLen, &attrs)
+        }
+        let short = Data (bytes: buffer, count: strlen (buffer))
+        let long = Data (bytes: longEntry, count: strlen (longEntry))
+        let ret = code <= 0 ? nil : (attrs, short, long)
+        buffer.deallocate()
+        longEntry.deallocate()
+        return ret
+    }
+    
+    public func sftpShutdown (_ sftpHandle: OpaquePointer) async {
+        libssh2_sftp_shutdown (sftpHandle)
+    }
+        
+    func sftpReadFile (_ sftp: SFTP, path: String, limit: Int) async -> [Int8]? {
+        guard let f = await sftpOpen (sftp, path: path, flags: UInt (LIBSSH2_FXF_READ), file: true) else {
+            return nil
+        }
+        var buffer: [Int8] = []
+        let size = 8192
+        var llbuffer = Array<Int8>.init(repeating: 0, count: size)
+        var ret: Int = 0
+        var left = limit
+        let _ = await callSsh {
+            repeat {
+                ret = libssh2_sftp_read(f, &llbuffer, min (size, left))
+                if ret == LIBSSH2_ERROR_EAGAIN {
+                    return Int32 (ret)
+                }
+                if ret > 0 {
+                    left -= ret
+                    buffer.append(contentsOf: llbuffer [0..<ret])
+                } else {
+                    return Int32 (limit-left)
+                }
+                if ret == 0 {
+                    return Int32 (ret)
+                }
+            } while left > 0
+            return 0
+        }
+        return buffer
+    }
+    
+    func sftpWriteFile (_ sftp: SFTP,
+                        path: String,
+                        contents: Data,
+                        mode: Int32 = LIBSSH2_SFTP_S_IRUSR|LIBSSH2_SFTP_S_IWUSR|LIBSSH2_SFTP_S_IRGRP|LIBSSH2_SFTP_S_IROTH) async -> UInt {
+        guard let f = await sftpOpen (sftp, path: path, flags: UInt (LIBSSH2_FXF_CREAT|LIBSSH2_FXF_WRITE|LIBSSH2_FXF_TRUNC) | UInt (mode), file: true) else {
+            return libssh2_sftp_last_error(sftp.handle)
+        }
+        var left = contents.count
+        var offset = 0
+        let _ = await callSshInt {
+            repeat {
+                let ret = contents.withUnsafeBytes { ptr -> Int in
+                    guard let rawBytes = ptr.bindMemory(to: Int8.self).baseAddress else {
+                        return -1
+                    }
+                    return libssh2_sftp_write(f, rawBytes.advanced(by: offset), left)
+                }
+                if ret == LIBSSH2_ERROR_EAGAIN {
+                    return ret
+                }
+                if ret <= 0 {
+                    return offset
+                }
+                left -= Int (ret)
+                offset += Int (ret)
+            } while left > 0
+            return offset
+        }
+        return 0
+    }
+    
+//    libssh2_sftp_fsetstat()
+//    libssh2_sftp_fstat()
+//    libssh2_sftp_fstat_ex()
+//    libssh2_sftp_fstatvfs()
+//    libssh2_sftp_fsync()
+//    libssh2_sftp_get_channel()
+//    libssh2_sftp_init()
+//    libssh2_sftp_last_error()
+//    libssh2_sftp_lstat()
+//    libssh2_sftp_mkdir()
+//    libssh2_sftp_mkdir_ex()
+//    libssh2_sftp_readlink()
+//    libssh2_sftp_realpath()
+//    libssh2_sftp_rename()
+//    libssh2_sftp_rename_ex()
+//    libssh2_sftp_rewind()
+//    libssh2_sftp_rmdir()
+//    libssh2_sftp_rmdir_ex()
+//    libssh2_sftp_seek()
+//    libssh2_sftp_seek64()
+//    libssh2_sftp_setstat()
+//    libssh2_sftp_shutdown()
+//    libssh2_sftp_stat()
+//    libssh2_sftp_stat_ex()
+//    libssh2_sftp_statvfs()
+//    libssh2_sftp_symlink()
+//    libssh2_sftp_symlink_ex()
+//    libssh2_sftp_tell()
+//    libssh2_sftp_tell64()
+//    libssh2_sftp_unlink()
+//    libssh2_sftp_unlink_ex()
+}
+    
+// Returns nil on success, or a description of the code on error
+public func authErrorToString (code: CInt) -> String? {
+    switch code {
+    case 0:
+        // We are fine, return
+        return nil
+    case LIBSSH2_ERROR_ALLOC:
+        // WE are doomed, return
+        return "Memory allocation failure"
+    case LIBSSH2_ERROR_SOCKET_SEND:
+        // We are doomed return, upper Network layer will notify of this problem
+        return "Unable to send data to remote host"
+    case LIBSSH2_ERROR_PASSWORD_EXPIRED:
+        // the password expired, but we failed to change it (to fix, we will need to provide a callback)
+        return "Password expired"
+    case LIBSSH2_ERROR_AUTHENTICATION_FAILED:
+        // Failed, try the next password
+        return "Password authentication failed"
+    default:
+        // Unknown error, return
+        return "Unknown error during authentication"
+    }
+}
+

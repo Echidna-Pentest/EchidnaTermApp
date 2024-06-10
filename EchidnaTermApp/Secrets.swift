@@ -1,0 +1,2 @@
+let shakeId = ""
+let shakeKey = ""
