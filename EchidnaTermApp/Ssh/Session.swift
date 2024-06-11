@@ -474,10 +474,10 @@ class Session: CustomDebugStringConvertible, Equatable {
             return
         }
         banner = await sessionActor.getBanner ()
-        if await !checkHostIntegrity () {
+/*        if await !checkHostIntegrity () {
             logConnection ("SSH: Host integrity failed")
             return 
-        }
+        }*/
         
 
         let failureReason = await authenticate()

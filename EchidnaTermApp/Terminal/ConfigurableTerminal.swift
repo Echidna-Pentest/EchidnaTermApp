@@ -73,6 +73,7 @@ struct ConfigurableUITerminal: View {
     @State var showConfig: Bool = false
     @State var showCommand: Bool = false
     @State var showClose: Bool = false
+    @State var showChat: Bool = false
 
     func topMostViewController (_ t: UIViewController) -> UIViewController {
         if let presented = t.presentedViewController {
@@ -119,6 +120,9 @@ struct ConfigurableUITerminal: View {
                         Button (action: { self.hideKeyboard() }) {
                             Image(systemName: "keyboard")
                         }
+                        Button (action: { self.showChat = true }) {
+                            Image(systemName: "bubble.left.and.bubble.right")
+                        }
                     }
                 }
             }
@@ -129,6 +133,9 @@ struct ConfigurableUITerminal: View {
                 NavigationView {
                     CommandPicker (terminalGetter: terminalGetter)
                 }
+            }
+            .sheet (isPresented: $showChat) {
+                ChatView()
             }
     }
 }

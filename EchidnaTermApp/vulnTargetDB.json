@@ -1,0 +1,108 @@
+[
+    {
+        "machine_name": "Legacy",
+        "nmap": "ms17-010"
+    },
+    {
+        "machine_name": "Blue",
+        "smbmap": "ms17-010"
+    },
+    {
+        "machine_name": "Granny",
+        "exploit_process": {
+            "nmap": "Microsoft IIS httpd 6.0",
+            "nmap2": "http-webdav-scan:"
+        }
+    },
+    {
+        "machine_name": "Chatterbox",
+        "nmap": "AChat"
+    },
+    {
+        "machine_name": "Irked",
+        "nmap": "UnrealIRCd"
+    },
+    {
+        "machine_name": "Bastion",
+        "smbmap": "READ, WRITE"
+    },
+    {
+        "machine_name": "Active",
+        "smbmap": "READ ONLY"
+    },
+    {
+        "machine_name": "Optimum",
+        "nmap": "vsftpd 2.3.4"
+    },
+    {
+        "machine_name": "Lame, Metasploitable",
+        "exploit_process": {
+            "nmap": "vsftpd 2.3.4",
+            "smbmap": "Samba 3.0.2"
+        }
+    },
+    {
+        "machine_name": "Jerry",
+        "nikto": "s3cret"
+    },
+    {
+        "machine_name": "Jeeves",
+        "exploit_process": {
+            "nmap": "JEEVES",
+            "dirb": "/askjeeves"
+        }
+    },
+    {
+        "machine_name": "Remote",
+        "nmap": "",
+        "exploit_process": {
+            "dirb": "Umbraco",
+            "showmount": "everyone"
+        }
+    },
+    {
+        "machine_name": "Shocker",
+        "dirb": "cgi-bin"
+    },
+    {
+        "machine_name": "Nibbles",
+        "dirb": "nibbleblog"
+    },
+    {
+        "machine_name": "Poison",
+        "dirb": "listfiles.php"
+    },
+    {
+        "machine_name": "SwagShop",
+        "exploit_process": {
+            "nmap": "Magento",
+            "dirb": "/mage"
+        }
+    },
+    {
+        "machine_name": "October",
+        "exploit_process": {
+            "nmap": "October CMS",
+            "dirb": "/backend"
+        }
+    },
+    {
+        "machine_name": "help",
+        "dirb": "graphql"
+    },
+    {
+        "machine_name": "Access, Devel, Netmon",
+        "nmap": "Anonymous FTP login allowed"
+    },
+    {
+        "machine_name": "Bounty",
+        "dirb": "transfer.aspx"
+    },
+    {
+        "machine_name": "Grandpa",
+        "exploit_process": {
+            "nmap": "IIS httpd 6.0",
+            "nmap2": "WebDAV"
+        }
+    }
+]

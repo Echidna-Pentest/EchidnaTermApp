@@ -17,7 +17,7 @@ struct OnboardWelcome: View {
                 Image (systemName: "terminal.fill")
                     .font (.system(size: 72))
                 VStack (alignment: .leading){
-                    Text ("Welcome to SwiftTerm")
+                    Text ("Welcome to EchidnaTerm")
                         .fontWeight(.semibold)
                         .font (.title)
                     Text ("A terminal emulator and SSH client for iOS")

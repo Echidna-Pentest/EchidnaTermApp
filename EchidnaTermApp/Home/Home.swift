@@ -241,6 +241,23 @@ struct HomeView: View {
                     label: {
                         Label("History", systemImage: "clock")
                     })
+                NavigationLink(
+                    destination: TargetTreeView(),
+                    label: {
+                        Label("TargetTree", systemImage: "clock")
+                    })
+
+                NavigationLink(
+                    destination: CandidateCommandView(),
+                    label: {
+                        Label("CandidateCommand", systemImage: "clock")
+                    })
+
+                NavigationLink(
+                    destination: TargetGraphView(),
+                    label: {
+                        Label("TargetGraph", systemImage: "clock")
+                    })
 
             }
             

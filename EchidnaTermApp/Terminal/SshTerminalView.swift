@@ -28,7 +28,10 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
     var completeConnectSetup: () -> () = { }
     var session: SocketSession?
     var sessionChannel: Channel?
-
+    @MainActor private var shouldRunFilterScript = false
+    @MainActor private var isNewLineEntered = false
+    @MainActor private var commandOutputs: [String] = []
+    @MainActor private var commandEntered = ""
     // Session restoration:
     //
     // -2 -> Force new terminal
@@ -47,6 +50,20 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
     // we start to output diagnostics on the connection
     var started: Date
 
+    nonisolated func extract(_ text: String) -> String {
+        do {
+            // Attempt to remove escape sequences
+            let regex = try NSRegularExpression(pattern: "\\x1b\\[\\??[0-9;]*[a-zA-Z]|\\x1b\\][0-9]*;", options: [])
+            let range = NSRange(location: 0, length: text.utf16.count)
+            let newText = regex.stringByReplacingMatches(in: text, options: [], range: range, withTemplate: "")
+            return newText
+        } catch {
+            // Log the error or handle it as needed
+            print("Failed to extract: \(error.localizedDescription)")
+            return text // Return the original text if there's an error
+        }
+    }
+    
     nonisolated func channelReader (channel: Channel, data: Data?, error: Data?, eof: Bool) {
         if let d = data {
             let sliced = Array(d) [0...]
@@ -57,15 +74,70 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                 self.feed(byteArray: sliced)
             }
             #else
-            let blocksize = 1024
+            let blocksize = 102400
             var next = 0
             let last = sliced.endIndex
             
+            var triggersFound = [String]()
             while next < last {
                 
                 let end = min (next+blocksize, last)
                 let chunk = sliced [next..<end]
-            
+                if let text = String(bytes: chunk, encoding: .utf8) {
+                    let terminalOutput = extract(text)
+//                    print("terminalOutput="+terminalOutput+"desu")
+                    if (terminalOutput.contains("\n") || terminalOutput.contains("\r") ){
+//                        print("newLine Found:  terminalOutput="+terminalOutput)
+                        DispatchQueue.main.async { [weak self] in
+                            self?.isNewLineEntered = true
+//                            self?.commandOutputs.append(trimmedTerminalOutput)
+//                            print("contains")
+                            guard let self = self else { return }
+
+                            if self.isNewLineEntered {
+                                if self.shouldRunFilterScript {
+                                    self.processCommandOutputs(self.commandOutputs.joined(separator: "\n"), command: self.commandEntered)
+                                }
+
+//                                print("self.commandOUtputLongest=", getLongestOutput(from: self.commandOutputs))
+                                let apiKey = "addAPIKeyHere"
+                                let client = OpenAIClient(apiKey: apiKey)
+//                                print("analysis: text=", self.commandOutputs)
+                                var longestCommandOutput = getLongestOutput(from: self.commandOutputs)
+                                // analyze the longest command Output if it is longer than 40 characters,  this may need to be improved
+                                longestCommandOutput = longestCommandOutput.filter { !($0.isWhitespace) }
+                                if longestCommandOutput.count > 40 {
+//                                    print("self.commandOUtputLongest=", longestCommandOutput, " longestCommandOutput.count=", longestCommandOutput.count)
+                                    client.analyzeText(input: longestCommandOutput, analysisType: "sentiment") { result in
+                                        switch result {
+                                        case .success(let analysis):
+                                            let chatViewModel = ChatViewModel.shared
+                                            chatViewModel.sendMessage(analysis, isUser: false)
+//                                            print("Analysis: \(analysis)")
+                                        case .failure(let error):
+                                            print("Anakysis Error: \(error.localizedDescription)")
+                                        }
+                                    }
+                                }
+                                self.commandOutputs = []
+                            }
+                        }
+                    }
+                    let trimmedTerminalOutput = terminalOutput.trimmingCharacters(in: .whitespaces)
+//                    let trimmedTerminalOutput = terminalOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmedTerminalOutput.isEmpty {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.commandOutputs.append(trimmedTerminalOutput)
+                        }
+                    }
+                    var trigger: [String] = CommandManager.shared.getAllPatterns()
+                    if let foundTrigger = trigger.first(where: { trimmedTerminalOutput.contains($0) }) {
+                        DispatchQueue.main.async { [weak self] in
+                            self?.shouldRunFilterScript = true
+                            self?.commandEntered = foundTrigger
+                        }
+                    }
+                }
                 DispatchQueue.main.sync {
                     self.feed(byteArray: chunk)
                 }
@@ -77,6 +149,51 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
             DispatchQueue.main.async {
                 self.connectionClosed (receivedEOF: true)
             }
+        }
+    }
+    
+    func removeControlCharacters(from string: String) -> String {
+        let regex = try! NSRegularExpression(pattern: "[^\\x20-\\x7E]", options: [])
+        let range = NSRange(location: 0, length: string.utf16.count)
+        return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
+    }
+    
+    func getLongestOutput(from commandOutput: [String]) -> String {
+        guard !commandOutput.isEmpty else { return "" }
+        var longestOutput = commandOutput[0]
+        for output in commandOutput {
+            if output.count > longestOutput.count {
+                longestOutput = output
+            }
+        }
+        return longestOutput
+    }
+    
+    func printBinaryRepresentation(of string: String) {
+        let utf8Bytes = Array(string.utf8)
+        print("Binary representation of string:")
+        for byte in utf8Bytes {
+            print(String(format: "%02X", byte), terminator: " ")
+        }
+        print("\n")
+    }
+    
+    func processCommandOutputs(_ output: String, command: String) {
+//        print("triggers     ", command)
+        let commandName = command.replacingOccurrences(of: " ", with: "_").lowercased()
+//        print("processCommandOutpus commandName=", commandName)
+        switch commandName {
+        case "ping":
+            processPingOutput(output)
+        case "ip_a":
+            print("ip_a")
+//            Ip_aProcess.processCommandOutput(output)
+        case "smbmap":
+            processSmbmapOutput(output)
+        case "nmap":
+            processNmapOutput(input: output)
+        default:
+            print("No handler found for command: \(command)")
         }
     }
     
@@ -337,7 +454,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
         self.serial = serial
         self.started = Date()
         try super.init (frame: frame, host: host)
-        feed (text: "Welcome to SwiftTerm\r\n\n")
+        feed (text: "Welcome to EchidnaTerm\r\n\n")
         startConnectionMonitor ()
         terminalDelegate = self
         
@@ -469,7 +586,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
     public func sizeChanged(source: TerminalView, newCols: Int, newRows: Int) {
         if let c = sessionChannel {
             Task {
-                await c.setTerminalSize(cols: newCols, rows: newRows, pixelWidth: 1, pixelHeight: 1)
+                await c.setTerminalSize(cols: newCols, rows: newRows, pixelWidth: 1, pixelHeight: 1)    // Mark, You can change the terminal cols and rows by this call
             }
         }
     }
@@ -494,7 +611,14 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
         }
         Task {
             await channel.send (Data (bytes)) { code in
-                //print ("sendResult: \(code)")
+//                print ("sendResult: \(code)")
+                if let string = String(bytes: bytes, encoding: .utf8) { // Mark inputted string is send by bytes
+//                    print("send = " + string + "END")
+                    self.shouldRunFilterScript = false
+                    self.isNewLineEntered = false
+                } else {
+                    print("not a valid UTF-8 sequence")
+                }
             }
         }
     }

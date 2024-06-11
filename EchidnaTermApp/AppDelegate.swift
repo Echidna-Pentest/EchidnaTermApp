@@ -17,7 +17,8 @@ struct SampleApp: App {
     @State var launchHost: Host?
     @StateObject var dataController: DataController
     @Environment(\.scenePhase) var scenePhase
-
+    @StateObject private var chatViewModel = ChatViewModel()
+    
     func extendLifetime () {
         // Attempts to keep the app alive, so our sockets are not killed within one second of going into the background
         var backgroundHandle: UIBackgroundTaskIdentifier? = nil
@@ -62,11 +63,17 @@ struct SampleApp: App {
                 .onChange(of: scenePhase) { newPhase in
                     if newPhase == .background {
                         extendLifetime ()
+                        TargetTreeViewModel.shared.saveJSON()
+                    }else if newPhase == .inactive {
+                        TargetTreeViewModel.shared.saveJSON()
+                    }else if newPhase == .active {
+                        TargetTreeViewModel.shared.loadJSON()
                     }
                 }
                 .environment(\.managedObjectContext, dataController.container.viewContext)
                 .environmentObject(dataController)
-
+                .environmentObject(TargetTreeViewModel.shared)
+                .environmentObject(chatViewModel)
         }
         .commands {
             TerminalCommands()
@@ -76,5 +83,23 @@ struct SampleApp: App {
             Text ("These are the macOS settings")
         }
         #endif
+    }
+}
+
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func applicationWillTerminate(_ application: UIApplication) {
+        print("applicationWillTerminate")
+        TargetTreeViewModel.shared.saveJSON()
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        print("applicationDidEnterBackground")
+        TargetTreeViewModel.shared.saveJSON()
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        print("applicationWillResignActive")
+        TargetTreeViewModel.shared.saveJSON()
     }
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -71,7 +71,6 @@
 		49A64C6126842A480069C7FA /* HostConnectionClosed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A64C6026842A480069C7FA /* HostConnectionClosed.swift */; };
 		49B49D9C27A9B7F00031A9AE /* SFTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B49D9B27A9B7F00031A9AE /* SFTP.swift */; };
 		49B49DB127AC70B40031A9AE /* SessionActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B49DB027AC70B40031A9AE /* SessionActor.swift */; };
-		49B49DB327B218960031A9AE /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B49DB227B218960031A9AE /* DataExtensions.swift */; };
 		49B84C53268137C700B36066 /* HostAuthUnknown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B84C52268137C700B36066 /* HostAuthUnknown.swift */; };
 		49B84C5526813F9400B36066 /* HostAuthKeyMismatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B84C5426813F9400B36066 /* HostAuthKeyMismatch.swift */; };
 		49BA359626751B2700B63510 /* GenerateSecureEnclave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BA359526751B2700B63510 /* GenerateSecureEnclave.swift */; };
@@ -111,6 +110,26 @@
 		49F5BEE628372F5300BAF3EF /* DataModelTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5BEE528372F5300BAF3EF /* DataModelTypes.swift */; };
 		49F5BEE82837ED5A00BAF3EF /* MemoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5BEE72837ED5A00BAF3EF /* MemoryModels.swift */; };
 		49F5BEEA2837F0C800BAF3EF /* CKey-DataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F5BEE92837F0C800BAF3EF /* CKey-DataHelpers.swift */; };
+		9A1656CB2C046D610008F8C6 /* MathParser in Frameworks */ = {isa = PBXBuildFile; productRef = 9A1656CA2C046D610008F8C6 /* MathParser */; };
+		9A16FB322C06A18E006A753B /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A16FB312C06A18E006A753B /* Chat.swift */; };
+		9A16FB382C071355006A753B /* VulnTargetDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A16FB372C071355006A753B /* VulnTargetDB.swift */; };
+		9A16FB3A2C0716D5006A753B /* vulnTargetDB.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A16FB392C0716D5006A753B /* vulnTargetDB.json */; };
+		9A16FB3C2C0972BE006A753B /* OpenAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A16FB3B2C0972BE006A753B /* OpenAIClient.swift */; };
+		9A23E01D2BFF30B900B59130 /* commands.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9A23E01C2BFF305700B59130 /* commands.txt */; };
+		9A29282F2BFC9580001B338D /* targets.json in Sources */ = {isa = PBXBuildFile; fileRef = 9A29282E2BFC9580001B338D /* targets.json */; };
+		9A2928302BFC95A3001B338D /* targets.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A29282E2BFC9580001B338D /* targets.json */; };
+		9A2928332BFC9824001B338D /* CandidateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2928312BFC9824001B338D /* CandidateCommand.swift */; };
+		9A2928382BFC9852001B338D /* nmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2928342BFC9852001B338D /* nmap.swift */; };
+		9A2928392BFC9852001B338D /* ping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2928352BFC9852001B338D /* ping.swift */; };
+		9A29283A2BFC9852001B338D /* smbmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2928362BFC9852001B338D /* smbmap.swift */; };
+		9A29283F2BFC988B001B338D /* targets.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A29283B2BFC988B001B338D /* targets.json */; };
+		9A2928402BFC988B001B338D /* TargetTreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A29283C2BFC988B001B338D /* TargetTreeView.swift */; };
+		9A2928412BFC988B001B338D /* TargetTreeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A29283D2BFC988B001B338D /* TargetTreeViewModel.swift */; };
+		9A2928452BFC996D001B338D /* DataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2928442BFC996D001B338D /* DataExtensions.swift */; };
+		9A2DC0892C0EABA300E9DEC7 /* TargetDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2DC0882C0EABA300E9DEC7 /* TargetDetailView.swift */; };
+		9A920E2B2C0061BC00782456 /* CandidateCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A920E2A2C0061BC00782456 /* CandidateCommandView.swift */; };
+		9A920E2E2C03E66600782456 /* TargetGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A920E2D2C03E66600782456 /* TargetGraph.swift */; };
+		9A920E312C03E77400782456 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 9A920E302C03E77400782456 /* SwiftGraph */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,7 +150,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4901167224553789002C1F85 /* SwiftTermApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftTermApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4901167224553789002C1F85 /* EchidnaTermApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EchidnaTermApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4901167524553789002C1F85 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4901167924553789002C1F85 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		4901167B2455378A002C1F85 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -143,7 +162,7 @@
 		4901168D2456058B002C1F85 /* KeyManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagementView.swift; sourceTree = "<group>"; };
 		4901168F245607F7002C1F85 /* Hosts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hosts.swift; sourceTree = "<group>"; };
 		49011691245622C6002C1F85 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
-		490A187226A7BE190034B2BF /* SwiftTermApp.UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftTermApp.UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		490A187226A7BE190034B2BF /* EchidnaTermApp.UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EchidnaTermApp.UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		490A187C26AA60980034B2BF /* HostConnectionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostConnectionError.swift; sourceTree = "<group>"; };
 		4911B3032463AD3E00816BAA /* GenerateKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateKey.swift; sourceTree = "<group>"; };
 		4912EB6128207D210083638C /* swiftui-introspect.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swiftui-introspect.txt"; sourceTree = "<group>"; };
@@ -185,7 +204,6 @@
 		4967BA0124592D3600A9D2A6 /* SessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsView.swift; sourceTree = "<group>"; };
 		4967BA03245A7AF300A9D2A6 /* SshUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SshUtil.swift; sourceTree = "<group>"; };
 		4967BA06245A85F800A9D2A6 /* SwCrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwCrypt.swift; sourceTree = "<group>"; };
-		497128C526656609005A2988 /* SwiftTermApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftTermApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		4973B42B24650B440087D978 /* UIViewController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+SwiftUI.swift"; sourceTree = "<group>"; };
 		498DC727279A09FA003EC3CC /* LibsshKnownHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibsshKnownHost.swift; sourceTree = "<group>"; };
 		499D36A52656B747004E307F /* QuickLauch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLauch.swift; sourceTree = "<group>"; };
@@ -218,7 +236,6 @@
 		49C650942832D8B2005DFC17 /* Main.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Main.xcdatamodel; sourceTree = "<group>"; };
 		49C650B62832F393005DFC17 /* CHost-DataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CHost-DataHelpers.swift"; sourceTree = "<group>"; };
 		49C650B828333823005DFC17 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
-		49C650BA28333AC4005DFC17 /* SwiftTermApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftTermApp.entitlements; sourceTree = "<group>"; };
 		49C650BB28333AD8005DFC17 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		49CA50E527EA6C0F00CA444E /* KeychainTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainTools.swift; sourceTree = "<group>"; };
 		49CA50E727EBBD0D00CA444E /* EnvironmentVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentVariables.swift; sourceTree = "<group>"; };
@@ -240,6 +257,25 @@
 		49F5BEE528372F5300BAF3EF /* DataModelTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTypes.swift; sourceTree = "<group>"; };
 		49F5BEE72837ED5A00BAF3EF /* MemoryModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryModels.swift; sourceTree = "<group>"; };
 		49F5BEE92837F0C800BAF3EF /* CKey-DataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKey-DataHelpers.swift"; sourceTree = "<group>"; };
+		9A16FB312C06A18E006A753B /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		9A16FB372C071355006A753B /* VulnTargetDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VulnTargetDB.swift; sourceTree = "<group>"; };
+		9A16FB392C0716D5006A753B /* vulnTargetDB.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = vulnTargetDB.json; sourceTree = "<group>"; };
+		9A16FB3B2C0972BE006A753B /* OpenAIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIClient.swift; sourceTree = "<group>"; };
+		9A23E01C2BFF305700B59130 /* commands.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = commands.txt; sourceTree = "<group>"; };
+		9A29282E2BFC9580001B338D /* targets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = targets.json; path = EchidnaTermApp/TargetTree/targets.json; sourceTree = "<group>"; };
+		9A2928312BFC9824001B338D /* CandidateCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CandidateCommand.swift; sourceTree = "<group>"; };
+		9A2928342BFC9852001B338D /* nmap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = nmap.swift; sourceTree = "<group>"; };
+		9A2928352BFC9852001B338D /* ping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ping.swift; sourceTree = "<group>"; };
+		9A2928362BFC9852001B338D /* smbmap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = smbmap.swift; sourceTree = "<group>"; };
+		9A29283B2BFC988B001B338D /* targets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = targets.json; sourceTree = "<group>"; };
+		9A29283C2BFC988B001B338D /* TargetTreeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TargetTreeView.swift; sourceTree = "<group>"; };
+		9A29283D2BFC988B001B338D /* TargetTreeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TargetTreeViewModel.swift; sourceTree = "<group>"; };
+		9A2928422BFC98C5001B338D /* EchidnaTermApp-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EchidnaTermApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		9A2928432BFC98D4001B338D /* EchidnaTermApp.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = EchidnaTermApp.entitlements; sourceTree = "<group>"; };
+		9A2928442BFC996D001B338D /* DataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataExtensions.swift; sourceTree = "<group>"; };
+		9A2DC0882C0EABA300E9DEC7 /* TargetDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetDetailView.swift; sourceTree = "<group>"; };
+		9A920E2A2C0061BC00782456 /* CandidateCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandidateCommandView.swift; sourceTree = "<group>"; };
+		9A920E2D2C03E66600782456 /* TargetGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetGraph.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,11 +283,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A1656CB2C046D610008F8C6 /* MathParser in Frameworks */,
 				49C650BC28333AD8005DFC17 /* CloudKit.framework in Frameworks */,
 				02C2FCC8282017A9005EDEC2 /* Shake in Frameworks */,
 				4912EB6828207E5C0083638C /* Introspect in Frameworks */,
 				49C1B6AF24625C7D00D54F6F /* SwiftTerm in Frameworks */,
 				4928BDEB27BF09BE00C180E6 /* CSSH in Frameworks */,
+				9A920E312C03E77400782456 /* SwiftGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,8 +313,9 @@
 		4901166924553789002C1F85 = {
 			isa = PBXGroup;
 			children = (
+				9A29282E2BFC9580001B338D /* targets.json */,
 				4943DA6027F388C700E4E2F5 /* ci_scripts */,
-				4901167424553789002C1F85 /* SwiftTermApp */,
+				4901167424553789002C1F85 /* EchidnaTermApp */,
 				49F1D13F27DAB782004A9CB1 /* UITests */,
 				4901167324553789002C1F85 /* Products */,
 				49C1B6B8246263F100D54F6F /* Frameworks */,
@@ -286,18 +325,24 @@
 		4901167324553789002C1F85 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4901167224553789002C1F85 /* SwiftTermApp.app */,
-				490A187226A7BE190034B2BF /* SwiftTermApp.UITests.xctest */,
+				4901167224553789002C1F85 /* EchidnaTermApp.app */,
+				490A187226A7BE190034B2BF /* EchidnaTermApp.UITests.xctest */,
 				49F1D13E27DAB782004A9CB1 /* UITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4901167424553789002C1F85 /* SwiftTermApp */ = {
+		4901167424553789002C1F85 /* EchidnaTermApp */ = {
 			isa = PBXGroup;
 			children = (
-				49C650BA28333AC4005DFC17 /* SwiftTermApp.entitlements */,
-				497128C526656609005A2988 /* SwiftTermApp-Bridging-Header.h */,
+				9A16FB302C06A15E006A753B /* Chat */,
+				9A920E2C2C03E64200782456 /* TargetGraph */,
+				9A2928442BFC996D001B338D /* DataExtensions.swift */,
+				9A2928432BFC98D4001B338D /* EchidnaTermApp.entitlements */,
+				9A2928422BFC98C5001B338D /* EchidnaTermApp-Bridging-Header.h */,
+				9A29283E2BFC988B001B338D /* TargetTree */,
+				9A2928372BFC9852001B338D /* commandsFilter */,
+				9A2928322BFC9824001B338D /* CandidateCommand */,
 				490116832455378A002C1F85 /* Info.plist */,
 				49DBA02D283C7D490068D16A /* Localizable.strings */,
 				49DBA02A283C7D490068D16A /* InfoPlist.strings */,
@@ -332,8 +377,10 @@
 				49B2473F245D09A50075F01B /* UIs */,
 				4943DA6A27F5F8FD00E4E2F5 /* Utilities */,
 				49C650932832D8B2005DFC17 /* Main.xcdatamodeld */,
+				9A23E01C2BFF305700B59130 /* commands.txt */,
+				9A16FB392C0716D5006A753B /* vulnTargetDB.json */,
 			);
-			path = SwiftTermApp;
+			path = EchidnaTermApp;
 			sourceTree = "<group>";
 		};
 		4901167D2455378A002C1F85 /* Preview Content */ = {
@@ -626,12 +673,60 @@
 			path = UITests;
 			sourceTree = "<group>";
 		};
+		9A16FB302C06A15E006A753B /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				9A16FB312C06A18E006A753B /* Chat.swift */,
+				9A16FB3B2C0972BE006A753B /* OpenAIClient.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		9A2928322BFC9824001B338D /* CandidateCommand */ = {
+			isa = PBXGroup;
+			children = (
+				9A2928312BFC9824001B338D /* CandidateCommand.swift */,
+				9A920E2A2C0061BC00782456 /* CandidateCommandView.swift */,
+			);
+			path = CandidateCommand;
+			sourceTree = "<group>";
+		};
+		9A2928372BFC9852001B338D /* commandsFilter */ = {
+			isa = PBXGroup;
+			children = (
+				9A2928342BFC9852001B338D /* nmap.swift */,
+				9A2928352BFC9852001B338D /* ping.swift */,
+				9A2928362BFC9852001B338D /* smbmap.swift */,
+			);
+			path = commandsFilter;
+			sourceTree = "<group>";
+		};
+		9A29283E2BFC988B001B338D /* TargetTree */ = {
+			isa = PBXGroup;
+			children = (
+				9A29283B2BFC988B001B338D /* targets.json */,
+				9A29283C2BFC988B001B338D /* TargetTreeView.swift */,
+				9A29283D2BFC988B001B338D /* TargetTreeViewModel.swift */,
+				9A16FB372C071355006A753B /* VulnTargetDB.swift */,
+			);
+			path = TargetTree;
+			sourceTree = "<group>";
+		};
+		9A920E2C2C03E64200782456 /* TargetGraph */ = {
+			isa = PBXGroup;
+			children = (
+				9A920E2D2C03E66600782456 /* TargetGraph.swift */,
+				9A2DC0882C0EABA300E9DEC7 /* TargetDetailView.swift */,
+			);
+			path = TargetGraph;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4901167124553789002C1F85 /* SwiftTermApp */ = {
+		4901167124553789002C1F85 /* EchidnaTermApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 490116862455378A002C1F85 /* Build configuration list for PBXNativeTarget "SwiftTermApp" */;
+			buildConfigurationList = 490116862455378A002C1F85 /* Build configuration list for PBXNativeTarget "EchidnaTermApp" */;
 			buildPhases = (
 				4901166E24553789002C1F85 /* Sources */,
 				4901166F24553789002C1F85 /* Frameworks */,
@@ -641,20 +736,22 @@
 			);
 			dependencies = (
 			);
-			name = SwiftTermApp;
+			name = EchidnaTermApp;
 			packageProductDependencies = (
 				49C1B6AE24625C7D00D54F6F /* SwiftTerm */,
 				4928BDEA27BF09BE00C180E6 /* CSSH */,
 				02C2FCC7282017A9005EDEC2 /* Shake */,
 				4912EB6728207E5C0083638C /* Introspect */,
+				9A920E302C03E77400782456 /* SwiftGraph */,
+				9A1656CA2C046D610008F8C6 /* MathParser */,
 			);
 			productName = testMasterDetail;
-			productReference = 4901167224553789002C1F85 /* SwiftTermApp.app */;
+			productReference = 4901167224553789002C1F85 /* EchidnaTermApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		490A187126A7BE190034B2BF /* SwiftTermApp.UITests */ = {
+		490A187126A7BE190034B2BF /* EchidnaTermApp.UITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 490A187826A7BE190034B2BF /* Build configuration list for PBXNativeTarget "SwiftTermApp.UITests" */;
+			buildConfigurationList = 490A187826A7BE190034B2BF /* Build configuration list for PBXNativeTarget "EchidnaTermApp.UITests" */;
 			buildPhases = (
 				490A186E26A7BE190034B2BF /* Sources */,
 				490A186F26A7BE190034B2BF /* Frameworks */,
@@ -665,9 +762,9 @@
 			dependencies = (
 				490A187726A7BE190034B2BF /* PBXTargetDependency */,
 			);
-			name = SwiftTermApp.UITests;
+			name = EchidnaTermApp.UITests;
 			productName = SwiftTermApp.UITests;
-			productReference = 490A187226A7BE190034B2BF /* SwiftTermApp.UITests.xctest */;
+			productReference = 490A187226A7BE190034B2BF /* EchidnaTermApp.UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		49F1D13D27DAB782004A9CB1 /* UITests */ = {
@@ -711,7 +808,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4901166D24553789002C1F85 /* Build configuration list for PBXProject "SwiftTermApp" */;
+			buildConfigurationList = 4901166D24553789002C1F85 /* Build configuration list for PBXProject "EchidnaTermApp" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -726,13 +823,16 @@
 				4928BDE927BF09BE00C180E6 /* XCRemoteSwiftPackageReference "Libssh2Prebuild" */,
 				02C2FCC6282017A9005EDEC2 /* XCRemoteSwiftPackageReference "shake-ios" */,
 				4912EB6628207E5C0083638C /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				9A920E2F2C03E71200782456 /* XCRemoteSwiftPackageReference "SwiftGraph" */,
+				9A920E322C04563300782456 /* XCRemoteSwiftPackageReference "GraphViz" */,
+				9A1656C92C046D1B0008F8C6 /* XCRemoteSwiftPackageReference "DDMathParser" */,
 			);
 			productRefGroup = 4901167324553789002C1F85 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4901167124553789002C1F85 /* SwiftTermApp */,
-				490A187126A7BE190034B2BF /* SwiftTermApp.UITests */,
+				4901167124553789002C1F85 /* EchidnaTermApp */,
+				490A187126A7BE190034B2BF /* EchidnaTermApp.UITests */,
 				49F1D13D27DAB782004A9CB1 /* UITests */,
 			);
 		};
@@ -743,8 +843,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A23E01D2BFF30B900B59130 /* commands.txt in Resources */,
+				9A2928302BFC95A3001B338D /* targets.json in Resources */,
 				495512D12800BD2A00B4CDA2 /* SourceCodePro-Italic.ttf in Resources */,
 				49DBA02C283C7D490068D16A /* InfoPlist.strings in Resources */,
+				9A29283F2BFC988B001B338D /* targets.json in Resources */,
 				49F1D13727DA5F11004A9CB1 /* openssl_1_1_1h.txt in Resources */,
 				49F1D13627DA5F11004A9CB1 /* swiftterm.txt in Resources */,
 				490116822455378A002C1F85 /* LaunchScreen.storyboard in Resources */,
@@ -752,6 +855,7 @@
 				4901167F2455378A002C1F85 /* Preview Assets.xcassets in Resources */,
 				495512CF2800BD2A00B4CDA2 /* SourceCodePro-Bold.ttf in Resources */,
 				495512D02800BD2A00B4CDA2 /* SourceCodePro-BoldItalic.ttf in Resources */,
+				9A16FB3A2C0716D5006A753B /* vulnTargetDB.json in Resources */,
 				4901167C2455378A002C1F85 /* Assets.xcassets in Resources */,
 				49DBA02F283C7D490068D16A /* Localizable.strings in Resources */,
 				4912EB6228207D210083638C /* swiftui-introspect.txt in Resources */,
@@ -782,6 +886,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A29282F2BFC9580001B338D /* targets.json in Sources */,
 				49584D85248C3C500081D015 /* ShadersBase.metal in Sources */,
 				49F5BEE628372F5300BAF3EF /* DataModelTypes.swift in Sources */,
 				49BA35E2267993E800B63510 /* DefaultHomeView.swift in Sources */,
@@ -794,6 +899,7 @@
 				49C1B6B5246260DC00D54F6F /* TerminalViewController.swift in Sources */,
 				49184C5D27BC1BA900335BFB /* ConnectionMessage.swift in Sources */,
 				4943DA6C27F5F90B00E4E2F5 /* DateFormatting.swift in Sources */,
+				9A16FB322C06A18E006A753B /* Chat.swift in Sources */,
 				49A4466126A3D76200A636DC /* Commands.swift in Sources */,
 				49EED560245D0A0B00A8794E /* STButton.swift in Sources */,
 				49BA359626751B2700B63510 /* GenerateSecureEnclave.swift in Sources */,
@@ -801,10 +907,14 @@
 				493F4F3027613F1B00838AC7 /* Session.swift in Sources */,
 				49C650B928333823005DFC17 /* DataController.swift in Sources */,
 				49DA38152839D2AF00FC4945 /* CUserSnippet-DataHelper.swift in Sources */,
+				9A2DC0892C0EABA300E9DEC7 /* TargetDetailView.swift in Sources */,
 				49BA35A4267847E100B63510 /* PEMtoSSH.swift in Sources */,
 				4967BA04245A7AF300A9D2A6 /* SshUtil.swift in Sources */,
+				9A29283A2BFC9852001B338D /* smbmap.swift in Sources */,
+				9A2928452BFC996D001B338D /* DataExtensions.swift in Sources */,
 				4943DA8E27FB712F00E4E2F5 /* Onboard.swift in Sources */,
 				49CA50E827EBBD0D00CA444E /* EnvironmentVariables.swift in Sources */,
+				9A2928402BFC988B001B338D /* TargetTreeView.swift in Sources */,
 				493F4F3227650E7800838AC7 /* Errors.swift in Sources */,
 				49584D89248C3D570081D015 /* StarNest.metal in Sources */,
 				49C1B6B72462611F00D54F6F /* SshTerminalView.swift in Sources */,
@@ -820,7 +930,7 @@
 				4967B9FC2459239700A9D2A6 /* Connections.swift in Sources */,
 				4967B9FE24592D0B00A9D2A6 /* SettingsView.swift in Sources */,
 				49BA35ED267BE7AB00B63510 /* HostKeysList.swift in Sources */,
-				49B49DB327B218960031A9AE /* DataExtensions.swift in Sources */,
+				9A2928382BFC9852001B338D /* nmap.swift in Sources */,
 				4967BA0224592D3600A9D2A6 /* SessionsView.swift in Sources */,
 				4912EB772829C52A0083638C /* UIKitRoot.swift in Sources */,
 				49BA35F1267C3F2600B63510 /* CreditsView.swift in Sources */,
@@ -830,17 +940,21 @@
 				49BA359C2676F15D00B63510 /* KeySummaryView.swift in Sources */,
 				493F4F34276511CE00838AC7 /* Channel.swift in Sources */,
 				4901168E2456058B002C1F85 /* KeyManagementView.swift in Sources */,
+				9A16FB382C071355006A753B /* VulnTargetDB.swift in Sources */,
 				49148F99268AB0B0000AB718 /* InputKeyboard.swift in Sources */,
 				49BA35982676EEB600B63510 /* KeyTools.swift in Sources */,
 				49BA359A2676EFD200B63510 /* CreateLocalKeyButtons.swift in Sources */,
+				9A920E2E2C03E66600782456 /* TargetGraph.swift in Sources */,
 				49A0A2C2249298BF002593F7 /* DigitalBrain.metal in Sources */,
 				49584D87248C3C7F0081D015 /* PlasmaGlobe.metal in Sources */,
 				49584D8C248C41620081D015 /* MetalSwiftUI.swift in Sources */,
 				49A0A2BE2491C792002593F7 /* LazyView.swift in Sources */,
+				9A2928332BFC9824001B338D /* CandidateCommand.swift in Sources */,
 				4943DA9827FC87DE00E4E2F5 /* RecentHostsView.swift in Sources */,
 				49C650952832D8B2005DFC17 /* Main.xcdatamodeld in Sources */,
 				49F02ADF24610D7A00CFEB50 /* STFilePicker.swift in Sources */,
 				49A0A2C02491CDC4002593F7 /* InteractiveLogin.swift in Sources */,
+				9A920E2B2C0061BC00782456 /* CandidateCommandView.swift in Sources */,
 				4943DA6427F3BA5000E4E2F5 /* HistoryView.swift in Sources */,
 				49F5BEE82837ED5A00BAF3EF /* MemoryModels.swift in Sources */,
 				49B84C5526813F9400B36066 /* HostAuthKeyMismatch.swift in Sources */,
@@ -851,8 +965,11 @@
 				49011690245607F7002C1F85 /* Hosts.swift in Sources */,
 				4912EB752826EE1F0083638C /* Dialogs.swift in Sources */,
 				4911B3042463AD3E00816BAA /* GenerateKey.swift in Sources */,
+				9A16FB3C2C0972BE006A753B /* OpenAIClient.swift in Sources */,
 				49F1D14A27DD0FFF004A9CB1 /* SideHostStatus.swift in Sources */,
+				9A2928392BFC9852001B338D /* ping.swift in Sources */,
 				4943DA5F27F385D500E4E2F5 /* Secrets.swift in Sources */,
+				9A2928412BFC988B001B338D /* TargetTreeViewModel.swift in Sources */,
 				49F0741024834B9D00A83CDC /* AppTerminalView.swift in Sources */,
 				4943DA5827EE471F00E4E2F5 /* SnippetEditor.swift in Sources */,
 				49F0740C2481B3ED00A83CDC /* ColorLoader.swift in Sources */,
@@ -888,12 +1005,12 @@
 /* Begin PBXTargetDependency section */
 		490A187726A7BE190034B2BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4901167124553789002C1F85 /* SwiftTermApp */;
+			target = 4901167124553789002C1F85 /* EchidnaTermApp */;
 			targetProxy = 490A187626A7BE190034B2BF /* PBXContainerItemProxy */;
 		};
 		49F1D14527DAB782004A9CB1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4901167124553789002C1F85 /* SwiftTermApp */;
+			target = 4901167124553789002C1F85 /* EchidnaTermApp */;
 			targetProxy = 49F1D14427DAB782004A9CB1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -986,7 +1103,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = "SwiftTermApp/SwiftTermApp-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "EchidnaTermApp/EchidnaTermApp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1043,7 +1160,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OBJC_BRIDGING_HEADER = "SwiftTermApp/SwiftTermApp-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "EchidnaTermApp/EchidnaTermApp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1055,23 +1172,28 @@
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Accent Color";
-				CODE_SIGN_ENTITLEMENTS = SwiftTermApp/SwiftTermApp.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"SwiftTermApp/Preview Content\"";
-				DEVELOPMENT_TEAM = PJQC57N853;
+				CODE_SIGN_ENTITLEMENTS = EchidnaTermApp/EchidnaTermApp.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_ASSET_PATHS = "\"EchidnaTermApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YH4K2K9YKG;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = SwiftTermApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				INFOPLIST_FILE = EchidnaTermApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = org.tirania.SwiftTermAppX;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.terasec0327;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = EchidnaTermApp_gmailOffline;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1083,23 +1205,28 @@
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Accent Color";
-				CODE_SIGN_ENTITLEMENTS = SwiftTermApp/SwiftTermApp.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"SwiftTermApp/Preview Content\"";
-				DEVELOPMENT_TEAM = PJQC57N853;
+				CODE_SIGN_ENTITLEMENTS = EchidnaTermApp/EchidnaTermApp.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_ASSET_PATHS = "\"EchidnaTermApp/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = YH4K2K9YKG;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = SwiftTermApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				INFOPLIST_FILE = EchidnaTermApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = org.tirania.SwiftTermAppX;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.terasec0327;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = EchidnaTermApp_gmailOffline;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1119,12 +1246,12 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.tirania.SwiftTermApp-UITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.tirania.EchidnaTermApp-UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SwiftTermApp;
+				TEST_TARGET_NAME = EchidnaTermApp;
 			};
 			name = Debug;
 		};
@@ -1142,12 +1269,12 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.tirania.SwiftTermApp-UITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.tirania.EchidnaTermApp-UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SwiftTermApp;
+				TEST_TARGET_NAME = EchidnaTermApp;
 			};
 			name = Release;
 		};
@@ -1192,7 +1319,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4901166D24553789002C1F85 /* Build configuration list for PBXProject "SwiftTermApp" */ = {
+		4901166D24553789002C1F85 /* Build configuration list for PBXProject "EchidnaTermApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				490116842455378A002C1F85 /* Debug */,
@@ -1201,7 +1328,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		490116862455378A002C1F85 /* Build configuration list for PBXNativeTarget "SwiftTermApp" */ = {
+		490116862455378A002C1F85 /* Build configuration list for PBXNativeTarget "EchidnaTermApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				490116872455378A002C1F85 /* Debug */,
@@ -1210,7 +1337,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		490A187826A7BE190034B2BF /* Build configuration list for PBXNativeTarget "SwiftTermApp.UITests" */ = {
+		490A187826A7BE190034B2BF /* Build configuration list for PBXNativeTarget "EchidnaTermApp.UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				490A187926A7BE190034B2BF /* Debug */,
@@ -1263,6 +1390,30 @@
 				kind = branch;
 			};
 		};
+		9A1656C92C046D1B0008F8C6 /* XCRemoteSwiftPackageReference "DDMathParser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/davedelong/DDMathParser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
+		9A920E2F2C03E71200782456 /* XCRemoteSwiftPackageReference "SwiftGraph" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/davecom/SwiftGraph.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
+		9A920E322C04563300782456 /* XCRemoteSwiftPackageReference "GraphViz" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftDocOrg/GraphViz.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1285,6 +1436,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 49C1B6AD24625C7D00D54F6F /* XCRemoteSwiftPackageReference "SwiftTerm" */;
 			productName = SwiftTerm;
+		};
+		9A1656CA2C046D610008F8C6 /* MathParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A1656C92C046D1B0008F8C6 /* XCRemoteSwiftPackageReference "DDMathParser" */;
+			productName = MathParser;
+		};
+		9A920E302C03E77400782456 /* SwiftGraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A920E2F2C03E71200782456 /* XCRemoteSwiftPackageReference "SwiftGraph" */;
+			productName = SwiftGraph;
 		};
 /* End XCSwiftPackageProductDependency section */
 

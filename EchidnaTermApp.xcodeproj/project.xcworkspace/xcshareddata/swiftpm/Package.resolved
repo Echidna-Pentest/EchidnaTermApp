@@ -1,5 +1,24 @@
 {
+  "originHash" : "78cab916a64cdd4f4345cfb66486d10594dd4afa1269e435b24b8e8bcb457c8e",
   "pins" : [
+    {
+      "identity" : "ddmathparser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/davedelong/DDMathParser.git",
+      "state" : {
+        "revision" : "0a159109e2393c3e1db4e2b638009c82e6650b4d",
+        "version" : "3.1.0"
+      }
+    },
+    {
+      "identity" : "graphviz",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftDocOrg/GraphViz.git",
+      "state" : {
+        "revision" : "74b6cbd8c5ecea9f64d84c4e1c88d65604dd033f",
+        "version" : "0.4.1"
+      }
+    },
     {
       "identity" : "libssh2prebuild",
       "kind" : "remoteSourceControl",
@@ -16,6 +35,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "c94e4c9437f1c1f8090f494a80ef7a1345f5fa1c"
+      }
+    },
+    {
+      "identity" : "swiftgraph",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/davecom/SwiftGraph.git",
+      "state" : {
+        "revision" : "76b5180a5cc32eda7f5236a756f4c1e0936311c6",
+        "version" : "3.1.0"
       }
     },
     {
@@ -37,5 +65,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

@@ -107,10 +107,43 @@ class TerminalViewController: UIViewController {
             terminalView.disableFirstResponderDuringViewRehosting = false
             terminalView.translatesAutoresizingMaskIntoConstraints = false
             
-            terminalView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-            terminalView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            terminalView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            view.keyboardLayoutGuide.topAnchor.constraint(equalTo: terminalView.bottomAnchor).isActive = true
+            NSLayoutConstraint.activate([
+                terminalView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                terminalView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                terminalView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                terminalView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6)
+            ])
+            
+            // Target Tree View setup
+            let targetTreeView = TargetTreeView()
+            let targetTreeHostingController = UIHostingController(rootView: targetTreeView)
+            addChild(targetTreeHostingController)
+            view.addSubview(targetTreeHostingController.view)
+            targetTreeHostingController.didMove(toParent: self)
+            targetTreeHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+
+            NSLayoutConstraint.activate([
+                targetTreeHostingController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                targetTreeHostingController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+                targetTreeHostingController.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
+                targetTreeHostingController.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4)
+            ])
+
+            // Candidate Command View setup
+            let candidateCommandView = CandidateCommandView()
+            let candidateCommandHostingController = UIHostingController(rootView: candidateCommandView)
+            addChild(candidateCommandHostingController)
+            view.addSubview(candidateCommandHostingController.view)
+            candidateCommandHostingController.didMove(toParent: self)
+            candidateCommandHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                candidateCommandHostingController.view.topAnchor.constraint(equalTo: targetTreeHostingController.view.bottomAnchor),
+                candidateCommandHostingController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+                candidateCommandHostingController.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
+                candidateCommandHostingController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+            CommandManager.shared.setHostname(hostname: self.host.hostname)
         } else {
             terminalView.frame = view.frame
             terminalView.translatesAutoresizingMaskIntoConstraints = true
@@ -144,7 +177,7 @@ class TerminalViewController: UIViewController {
         }
     }
         
-    static var visibleTerminal: AppTerminalView? 
+    static var visibleTerminal: AppTerminalView?
     static var visibleControler: TerminalViewController?
     
     override func viewWillAppear(_ animated: Bool) {
