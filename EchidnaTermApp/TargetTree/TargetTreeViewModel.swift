@@ -70,7 +70,7 @@ class TargetTreeViewModel: ObservableObject {
         // Populate children arrays and build the tree
         for target in targets {
             if let parentID = target.parent, parentID != -1 {
-                if var parent = targetMap[parentID] {
+                if let parent = targetMap[parentID] {
                     if parent.children == nil {
                         parent.children = []
                     }
@@ -129,12 +129,30 @@ class TargetTreeViewModel: ObservableObject {
         return 0
     }
 
-    func removeTarget(byId id: Int) {
-        if let index = targets.firstIndex(where: { $0.id == id }) {
-            targets.remove(at: index)
-            targetMap.removeValue(forKey: id)
-            self.targets = buildTree(targets: Array(targetMap.values))
+    func removeTarget(target: Target) {
+        // Recursively remove all children
+        if let children = target.children {
+            for childId in children {
+                if let childTarget = targetMap[childId] {
+                    removeTarget(target: childTarget)
+                }
+            }
         }
+        
+        // Remove the target itself
+        targetMap.removeValue(forKey: target.id)
+        if let index = targets.firstIndex(where: { $0.id == target.id }) {
+            targets.remove(at: index)
+        }
+        
+        // Update parent if needed
+        if let parentId = target.parent, parentId != -1, var parent = targetMap[parentId] {
+            parent.children?.removeAll(where: { $0 == target.id })
+            targetMap[parentId] = parent
+        }
+
+        // Rebuild the targets array to update the UI
+        self.targets = buildTree(targets: Array(targetMap.values))
     }
 
     func updateTarget(_ target: Target) {
@@ -154,7 +172,7 @@ class TargetTreeViewModel: ObservableObject {
     func processInput(_ input: String) {
         let lines = input.components(separatedBy: "\n").filter { !$0.isEmpty }
         for line in lines {
-            print("processInput     ", line)
+//            print("processInput     ", line)
             let components = line.components(separatedBy: "\t")
             guard components.count >= 3 else { continue }
 
@@ -162,7 +180,7 @@ class TargetTreeViewModel: ObservableObject {
             let port = components[1]
             let details = components.dropFirst(2)
 
-            var parentId: Int? = nil
+            let parentId: Int? = nil
             var tmpParentId = 0
             // Check if IP node exists
             if let ipNode = targetMap.values.first(where: { $0.value == ip }) {
@@ -170,19 +188,16 @@ class TargetTreeViewModel: ObservableObject {
             } else {
                 // Add IP node
 //                tmpParentId = addTarget(value: ip, toParent: 2)
-                print("addHost ip=", ip)
                 tmpParentId = addTarget(key: "host", value: ip, toParent: 0)
-                print("tmpParentId=", tmpParentId)
+//                print("tmpParentId=", tmpParentId)
             }
 
             // Check if Port node exists
             if let portNode = targetMap.values.first(where: { $0.value == port && $0.parent == parentId }) {
-                print("test Not Add PortNode")
                 tmpParentId = portNode.id
             } else {
                 // Add Port node
 //                tmpParentId = addTarget(value: port, toParent: tmpParentId)
-                print("test Add PortNode")
                 tmpParentId = addTarget(key:"port", value: port, toParent: tmpParentId)
             }
 
@@ -292,9 +307,9 @@ class Target: Identifiable, Codable, CustomStringConvertible {
 
             for childId in children {
                 if let tmpchild = targetMap[childId] {
-                    print("hasValues    tmpchild = \(tmpchild), target value = \(tmpchild.value), comparison value = \(value)")
+//                    print("hasValues    tmpchild = \(tmpchild), target value = \(tmpchild.value), comparison value = \(value)")
                     if tmpchild.value == value {
-                        print("Duplicate child=", tmpchild)
+//                        print("Duplicate child=", tmpchild)
                         return tmpchild
                     }
                 }

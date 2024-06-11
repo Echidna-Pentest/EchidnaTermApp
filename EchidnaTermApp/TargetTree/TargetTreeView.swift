@@ -4,8 +4,10 @@ struct TargetTreeView: View {
     @ObservedObject var viewModel = TargetTreeViewModel.shared
     @State private var selectedTarget: Target? = nil
     @State private var showingAddTargetSheet = false
+    @State private var showingRemoveTargetAlert = false
     @State private var targetForAdd: Target? = nil
-    var rootTargets: [Target]? = nil
+    @State private var targetForRemove: Target? = nil
+    var rootTargets: [Target]?
 
     var body: some View {
         VStack {
@@ -25,36 +27,68 @@ struct TargetTreeView: View {
 
                     HStack(spacing: 10) {
                         Button(action: {
-                            targetForAdd = target
-                            showingAddTargetSheet = true
+                            handleAddTarget(target: target)
                         }) {
                             Image(systemName: "plus.circle")
                         }
-                        .sheet(isPresented: $showingAddTargetSheet) {
-                            if let targetForAdd = targetForAdd {
-                                AddTargetView(isPresented: $showingAddTargetSheet, parentTarget: targetForAdd, onAdd: { key, value in
-                                    viewModel.addTarget(key: key, value: value, toParent: targetForAdd.id)
-                                })
-                            }
+                        .contentShape(Rectangle()) // Ensure entire button area is tappable
+
+                        Button(action: {
+                            handleRemoveTarget(target: target)
+                        }) {
+                            Image(systemName: "minus.circle")
                         }
+                        .contentShape(Rectangle()) // Ensure entire button area is tappable
                     }
+                    .buttonStyle(PlainButtonStyle()) // Prevent default button styling interference
                 }
             }
             .onAppear {
                 viewModel.loadJSON()
             }
+            .sheet(isPresented: $showingAddTargetSheet) {
+                if let targetForAdd = targetForAdd {
+                    AddTargetSheet(isPresented: $showingAddTargetSheet, parentTarget: targetForAdd) { key, value in
+                        viewModel.addTarget(key: key, value: value, toParent: targetForAdd.id)
+                    }
+                }
+            }
+            .alert(isPresented: $showingRemoveTargetAlert) {
+                if let targetForRemove = targetForRemove {
+                    return Alert(
+                        title: Text("Confirm Removal"),
+                        message: Text("Is it ok to remove \(targetForRemove.value)?"),
+                        primaryButton: .destructive(Text("Yes")) {
+                            viewModel.removeTarget(target: targetForRemove)
+                        },
+                        secondaryButton: .cancel()
+                    )
+                } else {
+                    return Alert(title: Text("Error"))
+                }
+            }
         }
     }
     
     private func handleTargetSelection(_ target: Target) {
-        print("Selected target: \(target.value)")
-        let commandManager = CommandManager.shared
-        commandManager.updateCandidateCommand(target: target)
+//        print("Selected target: \(target.value)")
+        CommandManager.shared.updateCandidateCommand(target: target)
+    }
+    
+    private func handleAddTarget(target: Target) {
+//        print("Add button clicked for target: \(target.value)")
+        targetForAdd = target
+        showingAddTargetSheet = true
+    }
+
+    private func handleRemoveTarget(target: Target) {
+//        print("Remove button clicked for target: \(target.value)")
+        targetForRemove = target
+        showingRemoveTargetAlert = true
     }
 }
 
-
-struct AddTargetView: View {
+struct AddTargetSheet: View {
     @Binding var isPresented: Bool
     var parentTarget: Target
     @State private var newKey = ""
