@@ -14,8 +14,8 @@
             filePath = "EchidnaTermApp/commandsFilter/nmap.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
             landmarkName = "portDetailsOld(lines:)"
             landmarkType = "9">
          </BreakpointContent>

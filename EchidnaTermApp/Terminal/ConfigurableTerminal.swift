@@ -99,7 +99,7 @@ struct ConfigurableUITerminal: View {
             }
         }
     }
-    
+
     func terminalGetter () -> AppTerminalView? {
         return TerminalViewController.visibleTerminal
     }

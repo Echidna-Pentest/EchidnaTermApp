@@ -13,26 +13,29 @@ let HOST = try! NSRegularExpression(pattern: "^Nmap scan report for (\\S+)(\\([^
 func processNmapOutput(input: String) {
     let viewModel = TargetTreeViewModel.shared
     let lines = input.components(separatedBy: .newlines)
+//    print("Nmap lines=", lines)
     var lineIterator = lines.makeIterator()
     if let host = findHost(lines: &lineIterator) {
         skipToPortHeader(lines: &lineIterator)
         while let portData = ports(lines: &lineIterator) {
             let portDetails = portData.0
-            let versionInfo = portData.1
-            let details = portData.2
+            let details = portData.1
 
-            print("Nmap Host + Port", (host + portDetails).joined(separator: "\t"))
-            viewModel.processInput((host + portDetails).joined(separator: "\t"))
+            for portDetail in portDetails {
+                print("Nmap Host + Port", (host + portDetail).joined(separator: "\t"))
+                viewModel.processInput((host + portDetail).joined(separator: "\t"))
 
-            // Version Information
-            if !versionInfo.isEmpty {
-                print("Nmap Host + Port", (host + portDetails + versionInfo).joined(separator: "\t"))
-                viewModel.processInput((host + portDetails + versionInfo).joined(separator: "\t"))
-            }
-
-            for detail in details {
-                print("Nmap Host + Port", (host + portDetails + detail).joined(separator: "\t"))
-                viewModel.processInput((host + portDetails + detail).joined(separator: "\t"))
+                var cleanedPortDetail = portDetail
+                if let versionIndex = portDetail.firstIndex(of: "version"), versionIndex + 1 < portDetail.count {
+                    cleanedPortDetail.remove(at: versionIndex + 1) // Remove the element after "version"
+                    cleanedPortDetail.remove(at: versionIndex) // Remove "version"
+                }
+                
+                for detail in details {
+                    print("Nmap Host + Port portDetail=", portDetail, " detail=", detail)
+//                    viewModel.processInput((host + portDetail + detail).joined(separator: "\t"))
+                    viewModel.processInput((host + cleanedPortDetail + detail).joined(separator: "\t"))
+                }
             }
         }
     }
@@ -65,30 +68,22 @@ func skipToPortHeader(lines: inout IndexingIterator<[String]>) {
     }
 }
 
-func ports(lines: inout IndexingIterator<[String]>) -> ([String], [String], [[String]])? {
-    var result = [String]()
-    var versionInfo = [String]()
+func ports(lines: inout IndexingIterator<[String]>) -> ([[String]], [[String]])? {
+    var result = [[String]]()
     var details = [[String]]()
 
     while let line = lines.next() {
         let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-        
         if trimmedLine.isEmpty {
             continue
         }
 
-        // ポートの新しいエントリの開始を検出
         let firstComponent = trimmedLine.split(separator: " ", maxSplits: 1).first
-        if firstComponent?.rangeOfCharacter(from: .decimalDigits) != nil {
-            // 以前のポートの詳細がある場合は戻る
-            if !result.isEmpty {
-                return (result, versionInfo, details)
-            }
-
+        if let firstComponent = firstComponent, firstComponent.contains("/") {
             let components = trimmedLine.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
             guard components.count >= 3 else { continue }
 
-            let service = String(components[0].split(separator: "/")[0])
+            let port = String(components[0].split(separator: "/")[0])
             let state = String(components[1])
             let name = String(components[2].split(separator: " ")[0])
             
@@ -96,20 +91,22 @@ func ports(lines: inout IndexingIterator<[String]>) -> ([String], [String], [[St
                 break
             }
             
-            result = [service, "service: " + name]
-            
             if components.count > 2 {
                 let version = components[2].split(separator: " ", maxSplits: 1, omittingEmptySubsequences: true)
                 if version.count > 1 {
-                    versionInfo = ["version", String(version[1])]
+                    result.append([port, "service: " + name, "version", String(version[1])])
+                } else {
+                    result.append([port, "service: " + name])
                 }
+            } else {
+                result.append([port, "service: " + name])
             }
         } else if trimmedLine.hasPrefix("|") || trimmedLine.hasPrefix("Service Info:") {
             details.append(["detail", trimmedLine])
         }
     }
-
-    return (result, versionInfo, details).0.isEmpty ? nil : (result, versionInfo, details)
+    
+    return result.isEmpty ? nil : (result, details)
 }
 
 func portDetails(lines: inout IndexingIterator<[String]>) -> [[String]] {
