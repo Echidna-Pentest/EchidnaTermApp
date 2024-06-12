@@ -123,6 +123,16 @@ struct ConfigurableUITerminal: View {
                         Button (action: { self.showChat = true }) {
                             Image(systemName: "bubble.left.and.bubble.right")
                         }
+                        Button (action: {
+                            if let terminalVC = TerminalViewController.shared {
+//                                print("toggleTerminalViewFullscreen")
+                                terminalVC.toggleTerminalViewFullscreen()
+                            } else{
+//                                print("No toggleTerminalViewFullscreen")
+                            }
+                        }) {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        }
                     }
                 }
             }

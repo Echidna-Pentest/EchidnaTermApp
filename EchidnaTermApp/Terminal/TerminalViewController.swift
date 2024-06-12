@@ -26,30 +26,31 @@ class TerminalViewController: UIViewController {
     var host: Host
     static var Serial: Int = 0
     var serial: Int
+    var isTerminalViewFullScreen = false
+    var targetTreeHostingController: UIHostingController<TargetTreeView>?
+    var candidateCommandHostingController: UIHostingController<CandidateCommandView>?
 
-    // Because we are sharing the TerminalView, we do not want to
-    // mess with its size, unless we have it attached to this view
-    func isTerminalViewAttached () -> Bool {
+    static var shared: TerminalViewController?
+
+    func isTerminalViewAttached() -> Bool {
         if let t = terminalView {
             return view.subviews.contains(t)
         }
         return false
     }
     
-    // This constructor is used to launch a new instance, and will trigger the SSH workflow
-    init (host: Host, interactive: Bool, serial: Int = -1)
     {
+    init(host: Host, interactive: Bool, serial: Int = -1) {
         TerminalViewController.Serial += 1
         self.host = host
         self.interactive = interactive
         self.serial = serial
         globalDataController.used(host: host)
         super.init(nibName: nil, bundle: nil)
+        TerminalViewController.shared = self
     }
 
-    // This consturctor is used to create a fresh TerminalViewController from an existing TerminalView
-    init (terminalView: SshTerminalView, interactive: Bool)
-    {
+    init(terminalView: SshTerminalView, interactive: Bool) {
         TerminalViewController.Serial += 1
         self.terminalView = terminalView
         self.host = terminalView.host
@@ -57,6 +58,7 @@ class TerminalViewController: UIViewController {
         self.serial = terminalView.serial
         globalDataController.used(host: host)
         super.init(nibName: nil, bundle: nil)
+        TerminalViewController.shared = self
     }
 
     required init?(coder: NSCoder) {
@@ -68,23 +70,23 @@ class TerminalViewController: UIViewController {
             let tv = try SshTerminalView(frame: view.frame, host: host)
             tv.serial = self.serial
             if host.style == "" {
-                tv.applyTheme (theme: settings.getTheme())
+                tv.applyTheme(theme: settings.getTheme())
             } else {
                 tv.applyTheme(theme: settings.getTheme(themeName: host.style))
             }
             return tv
         } catch MyError.noValidKey(let msg) {
-            terminalViewCreationError (msg)
+            terminalViewCreationError(msg)
         } catch {
-            terminalViewCreationError ("general")
+            terminalViewCreationError("general")
         }
         return nil
     }
 
     override func viewDidLoad() {
+        print("viewDidLoad")
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view, typically from a nib.
         if terminalView == nil {
             terminalView = startConnection()
         }
@@ -94,14 +96,7 @@ class TerminalViewController: UIViewController {
         
         self.terminalView = terminalView
         
-        // Now setup the keyboard tracking capabilities, try to use the new iOS 15 features if available.
         if #available(iOS 15.0, *) {
-            // This is here because otherwise, the resignFirstResponder will produce a crash on iPad when
-            // the terminal we are using is still visible, and we need to rehost the view in another place
-            //
-            // What I think I need to do is instead make it so that I can "transplant" the terminal from
-            // one terminalview host to another - but this will require also keeping other UIView and Ssh
-            // context separate.
             terminalView.disableFirstResponderDuringViewRehosting = true
             view.addSubview(terminalView)
             terminalView.disableFirstResponderDuringViewRehosting = false
@@ -114,35 +109,36 @@ class TerminalViewController: UIViewController {
                 terminalView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6)
             ])
             
-            // Target Tree View setup
             let targetTreeView = TargetTreeView()
-            let targetTreeHostingController = UIHostingController(rootView: targetTreeView)
-            addChild(targetTreeHostingController)
-            view.addSubview(targetTreeHostingController.view)
-            targetTreeHostingController.didMove(toParent: self)
-            targetTreeHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+            targetTreeHostingController = UIHostingController(rootView: targetTreeView)
+            addChild(targetTreeHostingController!)
+            view.addSubview(targetTreeHostingController!.view)
+            targetTreeHostingController!.didMove(toParent: self)
+            targetTreeHostingController!.view.translatesAutoresizingMaskIntoConstraints = false
 
             NSLayoutConstraint.activate([
-                targetTreeHostingController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-                targetTreeHostingController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
-                targetTreeHostingController.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
-                targetTreeHostingController.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4)
+                targetTreeHostingController!.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                targetTreeHostingController!.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+                targetTreeHostingController!.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
+                targetTreeHostingController!.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4)
             ])
 
-            // Candidate Command View setup
             let candidateCommandView = CandidateCommandView()
-            let candidateCommandHostingController = UIHostingController(rootView: candidateCommandView)
-            addChild(candidateCommandHostingController)
-            view.addSubview(candidateCommandHostingController.view)
-            candidateCommandHostingController.didMove(toParent: self)
-            candidateCommandHostingController.view.translatesAutoresizingMaskIntoConstraints = false
+            candidateCommandHostingController = UIHostingController(rootView: candidateCommandView)
+            addChild(candidateCommandHostingController!)
+            view.addSubview(candidateCommandHostingController!.view)
+            candidateCommandHostingController!.didMove(toParent: self)
+            candidateCommandHostingController!.view.translatesAutoresizingMaskIntoConstraints = false
             
             NSLayoutConstraint.activate([
-                candidateCommandHostingController.view.topAnchor.constraint(equalTo: targetTreeHostingController.view.bottomAnchor),
-                candidateCommandHostingController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
-                candidateCommandHostingController.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
-                candidateCommandHostingController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+                candidateCommandHostingController!.view.topAnchor.constraint(equalTo: targetTreeHostingController!.view.bottomAnchor),
+                candidateCommandHostingController!.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+                candidateCommandHostingController!.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
+                candidateCommandHostingController!.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             ])
+            
+//            setupToggleButton()
+
             CommandManager.shared.setHostname(hostname: self.host.hostname)
         } else {
             terminalView.frame = view.frame
@@ -162,12 +158,73 @@ class TerminalViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if !interactive && isTerminalViewAttached () {
+        if !interactive && isTerminalViewAttached() {
             terminalView!.frame = view.frame
         }
     }
-    func terminalViewCreationError (_ msg: String)
-    {
+    /*
+    private let toggleButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "arrow.up.left.and.arrow.down.right")
+        button.setImage(image, for: .normal)
+        button.tintColor = .systemBlue
+        button.addTarget(self, action: #selector(toggleTerminalViewFullscreen), for: .touchUpInside)
+        return button
+    }()
+    
+    private func setupToggleButton() {
+        view.addSubview(toggleButton)
+        toggleButton.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            toggleButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            toggleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+*/
+    private func updateToggleButtonIcon() {
+        let imageName = isTerminalViewFullScreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right"
+        let image = UIImage(systemName: imageName)
+//        toggleButton.setImage(image, for: .normal)
+    }
+    
+    @objc public func toggleTerminalViewFullscreen() {
+        guard let terminalView = terminalView else { return }
+
+        isTerminalViewFullScreen.toggle()
+
+        NSLayoutConstraint.deactivate(terminalView.constraints)
+        NSLayoutConstraint.deactivate(targetTreeHostingController!.view.constraints)
+        NSLayoutConstraint.deactivate(candidateCommandHostingController!.view.constraints)
+
+        if isTerminalViewFullScreen {
+            terminalView.frame = view.frame
+            terminalView.translatesAutoresizingMaskIntoConstraints = true
+            terminalView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+            targetTreeHostingController?.view.isHidden = true
+            candidateCommandHostingController?.view.isHidden = true
+        } else {
+            terminalView.translatesAutoresizingMaskIntoConstraints = false
+
+            NSLayoutConstraint.activate([
+                terminalView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                terminalView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                terminalView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                terminalView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6)
+            ])
+            targetTreeHostingController?.view.isHidden = false
+            candidateCommandHostingController?.view.isHidden = false
+        }
+        
+        updateToggleButtonIcon()
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+//        view.bringSubviewToFront(toggleButton)
+    }
+
+    func terminalViewCreationError(_ msg: String) {
         let alert = UIAlertController(title: "Connection Problem", message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: { _ in
             NSLog("The \"OK\" alert occured.")
@@ -191,6 +248,7 @@ class TerminalViewController: UIViewController {
         TerminalViewController.visibleControler = nil
     }
 }
+
 
 typealias Controller = TerminalViewController
 
