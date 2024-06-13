@@ -13,7 +13,7 @@ let HOST = try! NSRegularExpression(pattern: "^Nmap scan report for (\\S+)(\\([^
 func processNmapOutput(input: String) {
     let viewModel = TargetTreeViewModel.shared
     let lines = input.components(separatedBy: .newlines)
-//    print("Nmap lines=", lines)
+    print("Nmap lines=", lines)
     var lineIterator = lines.makeIterator()
     if let host = findHost(lines: &lineIterator) {
         skipToPortHeader(lines: &lineIterator)
@@ -88,7 +88,7 @@ func ports(lines: inout IndexingIterator<[String]>) -> ([[String]], [[String]])?
             let name = String(components[2].split(separator: " ")[0])
             
             if state == "closed" {
-                break
+                continue    
             }
             
             if components.count > 2 {
