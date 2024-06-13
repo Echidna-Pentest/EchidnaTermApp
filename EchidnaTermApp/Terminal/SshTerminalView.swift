@@ -192,6 +192,8 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
             processSmbmapOutput(output)
         case "nmap":
             processNmapOutput(input: output)
+        case "hydra":
+            processHydraOutput(output)
         default:
             print("No handler found for command: \(command)")
         }
