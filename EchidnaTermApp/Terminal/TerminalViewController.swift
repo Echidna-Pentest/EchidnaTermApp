@@ -39,7 +39,6 @@ class TerminalViewController: UIViewController {
         return false
     }
     
-    {
     init(host: Host, interactive: Bool, serial: Int = -1) {
         TerminalViewController.Serial += 1
         self.host = host
