@@ -169,10 +169,9 @@ class TargetTreeViewModel: ObservableObject {
     }
 
     // New function to process input
-    func processInput(_ input: String) {
+    func processInput(_ input: String, key: String? = nil) {
         let lines = input.components(separatedBy: "\n").filter { !$0.isEmpty }
         for line in lines {
-//            print("processInput     ", line)
             let components = line.components(separatedBy: "\t")
             guard components.count >= 3 else { continue }
 
@@ -180,38 +179,34 @@ class TargetTreeViewModel: ObservableObject {
             let port = components[1]
             let details = components.dropFirst(2)
 
-            let parentId: Int? = nil
-            var tmpParentId = 0
+            var parentId: Int
             // Check if IP node exists
             if let ipNode = targetMap.values.first(where: { $0.value == ip }) {
-                tmpParentId = ipNode.id
+                parentId = ipNode.id
             } else {
                 // Add IP node
-//                tmpParentId = addTarget(value: ip, toParent: 2)
-                tmpParentId = addTarget(key: "host", value: ip, toParent: 0)
-//                print("tmpParentId=", tmpParentId)
+                parentId = addTarget(key: "host", value: ip, toParent: 0)
             }
 
             // Check if Port node exists
             if let portNode = targetMap.values.first(where: { $0.value == port && $0.parent == parentId }) {
-                tmpParentId = portNode.id
+                parentId = portNode.id
             } else {
                 // Add Port node
-//                tmpParentId = addTarget(value: port, toParent: tmpParentId)
-                tmpParentId = addTarget(key:"port", value: port, toParent: tmpParentId)
+                parentId = addTarget(key:"port", value: port, toParent: parentId)
             }
 
-            // Check if SMBDrive node exists
             // Add details nodes
             for detail in details {
                 if !detail.isEmpty {
-//                    tmpParentId = addTarget(value: detail, toParent: tmpParentId)
-                    tmpParentId = addTarget(key:"detail", value: detail, toParent: tmpParentId)
+                    parentId = addTarget(key: key ?? "detail", value: detail, toParent: parentId)
                 }
             }
         }
 
-        self.targets = buildTree(targets: Array(targetMap.values))
+        let targets = buildTree(targets: Array(targetMap.values))
+        // Do something with the targets, e.g., assign to a property or process further
+//        print(targets)  // Just for debugging
     }
     
     func saveJSON() {

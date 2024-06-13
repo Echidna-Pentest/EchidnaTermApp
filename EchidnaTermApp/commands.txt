@@ -42,7 +42,7 @@ pattern: ip (-4 )*n.*
 pattern: smbmap
 description: scan shared drive via SMB using smbmap
 template: smbmap -H {host}
-template: smbmap -H {host} -u "<username>" -p "<password>"
+template: smbmap -H {host} -u "{user}" -p "{pass}"
 condition: ["139", "445", "netbios", "microsoft-ds"]
 group: SMB
 [end]
@@ -145,8 +145,8 @@ group: FTP Command
 
 [Echidna]
 description: connect via FTP using ftp command
-template: ftp ftp://{port.user}:{port.user.pass}@{host}
-template: ftp ftp://{port.user}@{host}
+template: ftp ftp://{user}:{pass}@{host}
+template: ftp ftp://{user}@{host}
 template: ftp anonymous@{host}
 template: ftp {host}
 condition: ["ftp", "21"]
@@ -211,4 +211,21 @@ group: Meterpreter Command
 [Echidna]
 description: cewl is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper
 template: cewl {host} > wordlist.txt
-condition: ["80", "443
+condition: ["80", "443]
+[end]
+
+[Echidna]
+pattern: hydra
+pattern: sudo hydra
+description: Hydra is a parallelized login cracker which supports numerous protocols to attack.
+template: hydra {host} -l user -P $passwordfile$
+template: hydra {host} -l user -P $passwordfile$ {port.name}
+template: hydra {host} -L $userfile$ -P $passwordfile$
+template: hydra {host} -L $userfile$ -P $passwordfile$ {port.name}
+template: hydra {host} -l user -e nsr
+template: hydra {host} -l user -e nsr {port.name}
+template: hydra {host} -L $userfile$ -e nsr
+template: hydra {host} -L $userfile$ -e nsr {port.name}
+condition: ["ftp", "ssh", "http", "RDP", "21", "22", "80", "3389"]
+group: Bruteforce attack (hydra)
+[end]

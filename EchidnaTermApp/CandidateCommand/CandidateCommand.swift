@@ -78,7 +78,7 @@ class CommandManager: ObservableObject {
                 for template in templates {
                     let command = Command(template: template, patterns: patterns, condition: conditions, group: group, description: description)
                     commands.append(command)
-                    print("Loaded command: \(command)")
+//                    print("Loaded command: \(command)")
                 }
             }
         } catch {
@@ -88,7 +88,7 @@ class CommandManager: ObservableObject {
     
     func setHostname(hostname: String){
         self.hostname = hostname
-        print("sethostname=", self.hostname)
+//        print("sethostname=", self.hostname)
     }
     
     func updateCandidateCommand(target: Target) {
@@ -104,12 +104,22 @@ class CommandManager: ObservableObject {
     }
     
     private func shouldDisplayCommand(command: Command, for target: Target) -> Bool {
-        for keyword in command.condition {
-            if target.value.contains(keyword) {
-                print("keyword=", keyword, "  target.value=", target.value)
-                return true
+        var currentTarget: Target? = target
+
+        while let target = currentTarget {
+            for keyword in command.condition {
+                if target.value.contains(keyword) {
+//                    print("keyword=", keyword, "  target.value=", target.value)
+                    return true
+                }
+            }
+            if let parentId = target.parent {
+                currentTarget = targetMap[parentId]
+            } else {
+                currentTarget = nil
             }
         }
+
         return false
     }
     
@@ -121,9 +131,30 @@ class CommandManager: ObservableObject {
         }
 
         while let target = currentTarget {
-            if let range = displayName.range(of: "{\(target.key)}") {
-                displayName.replaceSubrange(range, with: target.value)
+            if target.key == "multiple" {
+                // Parse the target.value to check for key1=value1; key2=value2 format
+                let keyValuePairs = target.value.components(separatedBy: "; ")
+                var replacements: [String: String] = [:]
+                for pair in keyValuePairs {
+                    let keyValue = pair.components(separatedBy: "=")
+                    if keyValue.count == 2 {
+                        let key = keyValue[0].trimmingCharacters(in: .whitespaces)
+                        let value = keyValue[1].trimmingCharacters(in: .whitespaces)
+                        replacements[key] = value
+                    }
+                }
+                // Replace keys in displayName with their corresponding values
+                for (key, value) in replacements {
+                    if let range = displayName.range(of: "{\(key)}") {
+                        displayName.replaceSubrange(range, with: value)
+                    }
+                }
+            } else {
+                if let range = displayName.range(of: "{\(target.key)}") {
+                    displayName.replaceSubrange(range, with: target.value)
+                }
             }
+            
             if let parentId = target.parent {
                 currentTarget = targetMap[parentId]
             } else {
