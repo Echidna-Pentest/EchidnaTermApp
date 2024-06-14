@@ -50,7 +50,7 @@ struct FilteredTargetTreeView: View {
     let rootTarget: Target
 
     var body: some View {
-        TargetTreeView(rootTargets: [rootTarget])
+        TargetTreeView(rootTargets: [rootTarget], initialExpandedNode: rootTarget)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
     }
