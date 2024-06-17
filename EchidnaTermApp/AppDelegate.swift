@@ -12,7 +12,7 @@ import SwiftUI
 var globalDataController = DataController ()
 
 @main
-struct SampleApp: App {
+    struct SampleApp: App {
     @State var dates = [Date]()
     @State var launchHost: Host?
     @StateObject var dataController: DataController
@@ -66,9 +66,9 @@ struct SampleApp: App {
                         TargetTreeViewModel.shared.saveJSON()
                     }else if newPhase == .inactive {
                         TargetTreeViewModel.shared.saveJSON()
-                    }else if newPhase == .active {
+                    }/*else if newPhase == .active {
                         TargetTreeViewModel.shared.loadJSON()
-                    }
+                    }*/
                 }
                 .environment(\.managedObjectContext, dataController.container.viewContext)
                 .environmentObject(dataController)

@@ -9,10 +9,11 @@ import SwiftUI
 import Combine
 import SwiftGraph
 
-struct Node: Identifiable {
+class Node: Identifiable, ObservableObject {
     let id: Int
     let value: String
-    var position: CGPoint = .zero
+    @Published var position: CGPoint = .zero
+    @Published var isHighlighted: Bool = false
     
     init(target: Target) {
         self.id = target.id
@@ -20,35 +21,54 @@ struct Node: Identifiable {
     }
 }
 
-struct Edge: Identifiable {
+class Edge: Identifiable, ObservableObject {
     let id = UUID()
     let from: Int
     let to: Int
+    @Published var fromPosition: CGPoint = .zero
+    @Published var toPosition: CGPoint = .zero
+    
+    init(from: Int, to: Int) {
+        self.from = from
+        self.to = to
+    }
 }
 
 struct TargetGraphView: View {
     @State private var nodes: [Node] = []
     @State private var edges: [Edge] = []
     @State private var graph: UnweightedGraph<String> = UnweightedGraph<String>()
+    @State private var searchText: String = ""
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                ForEach(edges) { edge in
-                    EdgeView(edge: edge, nodes: nodes)
+        VStack {
+            TextField("Search...", text: $searchText)
+                .padding()
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding([.leading, .trailing])
+                .onChange(of: searchText) { _ in
+                    highlightNodes()
                 }
-                ForEach(nodes) { node in
-                    NodeView(node: node, geometry: geometry.size)
+            
+            GeometryReader { geometry in
+                ZStack {
+                    ForEach(edges) { edge in
+                        EdgeView(edge: edge, nodes: nodes)
+                    }
+                    ForEach(nodes) { node in
+                        NodeView(node: node, geometry: geometry.size)
+                    }
                 }
-            }
-            .onAppear {
-                processTargets(geometry: geometry.size)
+                .onAppear {
+                    processTargets(geometry: geometry.size)
+                }
             }
         }
     }
     
     private func processTargets(geometry: CGSize) {
         let filteredTargets = targetMap.values.filter { $0.key == "Network" || $0.key == "host" }
+        print("Graph: filteredTargets=", filteredTargets)
         nodes = filteredTargets.map { Node(target: $0) }
         
         for node in nodes {
@@ -64,6 +84,11 @@ struct TargetGraphView: View {
             graph.addEdge(from: String(edge.from), to: String(edge.to), directed: true)
         }
         
+        updateNodePositions(geometry: geometry)
+        updateEdgePositions()
+    }
+    
+    private func updateNodePositions(geometry: CGSize) {
         let center = CGPoint(x: geometry.width / 2, y: geometry.height / 2)
         let radius: CGFloat = min(geometry.width, geometry.height) / 3
         let angleIncrement = CGFloat(2 * Double.pi) / CGFloat(nodes.count)
@@ -75,16 +100,34 @@ struct TargetGraphView: View {
             )
         }
     }
+    
+    private func updateEdgePositions() {
+        for edge in edges {
+            if let fromNode = nodes.first(where: { $0.id == edge.from }),
+               let toNode = nodes.first(where: { $0.id == edge.to }) {
+                print("Graph: toNode=", toNode.value)
+                edge.fromPosition = fromNode.position
+                edge.toPosition = toNode.position
+            }
+        }
+    }
+    
+    private func highlightNodes() {
+        for node in nodes {
+            node.isHighlighted = node.value.lowercased().contains(searchText.lowercased()) && !searchText.isEmpty
+            print("Graph: : node.isHighlighted=", node.isHighlighted)
+        }
+    }
 }
 
 struct NodeView: View {
-    @State private var node: Node
+    @ObservedObject var node: Node
     let geometry: CGSize
     @State private var showingDetail = false
     @ObservedObject var connections = Connections.shared
     
     init(node: Node, geometry: CGSize) {
-        self._node = State(initialValue: node)
+        self.node = node
         self.geometry = geometry
     }
 
@@ -93,10 +136,10 @@ struct NodeView: View {
             Image(systemName: "server.rack")
                 .resizable()
                 .frame(width: 30, height: 30)
-                .foregroundColor(.black)
+                .foregroundColor(node.isHighlighted ? .yellow : .black)
             Text(node.value)
                 .padding(8)
-                .background(Circle().fill(Color.blue.opacity(0.5)))
+                .background(Circle().fill(node.isHighlighted ? Color.yellow.opacity(0.5) : Color.blue.opacity(0.5)))
         }
         .position(x: node.position.x, y: node.position.y)
         .onTapGesture {
@@ -146,18 +189,15 @@ struct NodeView: View {
 }
 
 struct EdgeView: View {
-    let edge: Edge
+    @ObservedObject var edge: Edge
     let nodes: [Node]
 
     var body: some View {
-        if let fromNode = nodes.first(where: { $0.id == edge.from }),
-           let toNode = nodes.first(where: { $0.id == edge.to }) {
-            Path { path in
-                path.move(to: fromNode.position)
-                path.addLine(to: toNode.position)
-            }
-            .stroke(Color.blue, lineWidth: 2)
+        Path { path in
+            path.move(to: edge.fromPosition)
+            path.addLine(to: edge.toPosition)
         }
+        .stroke(Color.blue, lineWidth: 2)
     }
 }
 

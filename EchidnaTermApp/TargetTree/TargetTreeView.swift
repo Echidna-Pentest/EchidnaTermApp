@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TargetTreeView: View {
-    @ObservedObject var viewModel = TargetTreeViewModel.shared
+    @StateObject private var viewModel = TargetTreeViewModel.shared
     @State private var selectedTarget: Target? = nil
     @State private var showingAddTargetSheet = false
     @State private var showingRemoveTargetAlert = false
@@ -26,7 +26,7 @@ struct TargetTreeView: View {
                 }
             }
             .onAppear {
-                viewModel.loadJSON()
+//                viewModel.loadJSON()
                 // Expand the initial node on first appearance
                 if let initialTarget = initialExpandedNode {
                     expandedNodes.insert(initialTarget.id)

@@ -10,6 +10,7 @@ class TargetTreeViewModel: ObservableObject {
         loadJSON()
     }
 
+    
     func loadJSON() {
         print("loadJSON")
         if let url = Bundle.main.url(forResource: "targets", withExtension: "json") {
@@ -211,6 +212,7 @@ class TargetTreeViewModel: ObservableObject {
     
     func saveJSON() {
         do {
+            print("saveJSON")
             let encoder = JSONEncoder()
             encoder.outputFormatting = .prettyPrinted
 //            let data = try encoder.encode(targetMap)
