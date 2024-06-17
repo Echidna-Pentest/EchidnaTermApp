@@ -5,7 +5,8 @@ var targetMap = [Int: Target]()
 class TargetTreeViewModel: ObservableObject {
     static let shared = TargetTreeViewModel()
     @Published var targets: [Target] = []
-
+    @Published var searchResult: Target? = nil
+    
     init() {
         loadJSON()
     }
@@ -233,6 +234,29 @@ class TargetTreeViewModel: ObservableObject {
         }
     }
 
+    func searchTarget(with value: String) {
+        for target in targets {
+            if let result = target.containsValue(value: value) {
+                searchResult = result
+                break
+            }
+        }
+    }
+    
+    private func expandParent(_ target: Target) {
+        target.shouldHighlight = true
+        if let parentId = target.parent, let parent = targetMap[parentId] {
+            expandParent(parent)
+        }
+    }
+    
+    private func highlightTarget(_ target: Target) {
+        target.shouldHighlight = true
+        if let parentId = target.parent, let parent = targetMap[parentId] {
+            expandParent(parent)
+        }
+    }
+    
     private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
@@ -309,6 +333,21 @@ class Target: Identifiable, Codable, CustomStringConvertible {
 //                        print("Duplicate child=", tmpchild)
                         return tmpchild
                     }
+                }
+            }
+        }
+        return nil
+    }
+    
+    func containsValue(value: String) -> Target? {
+        let lowercasedValue = value.lowercased()
+        if self.value.lowercased().contains(lowercasedValue) {
+            return self
+        }
+        if let childrenTargets = self.childrenTargets {
+            for child in childrenTargets {
+                if let result = child.containsValue(value: lowercasedValue) {
+                    return result
                 }
             }
         }

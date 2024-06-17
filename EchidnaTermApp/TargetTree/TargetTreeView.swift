@@ -8,11 +8,25 @@ struct TargetTreeView: View {
     @State private var targetForAdd: Target? = nil
     @State private var targetForRemove: Target? = nil
     @State private var expandedNodes: Set<Int> = []  // Set to keep track of expanded nodes
+    @State private var searchText: String = ""  // State to hold the search text
     var rootTargets: [Target]?
     var initialExpandedNode: Target?  // Initial node to be expanded
 
     var body: some View {
         VStack {
+            // Search bar
+            HStack {
+                TextField("Search...", text: $searchText, onCommit: {
+                    search()
+                })
+                .padding(6)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .frame(height: 30)  // Adjust the height here
+                .padding(.horizontal)
+            }
+            .padding(.top, 10)
+
             List {
                 ForEach(rootTargets ?? [viewModel.targets.first(where: { $0.id == 0 })].compactMap { $0 }, id: \.id) { target in
                     ExpandableRow(
@@ -26,7 +40,6 @@ struct TargetTreeView: View {
                 }
             }
             .onAppear {
-//                viewModel.loadJSON()
                 // Expand the initial node on first appearance
                 if let initialTarget = initialExpandedNode {
                     expandedNodes.insert(initialTarget.id)
@@ -59,6 +72,22 @@ struct TargetTreeView: View {
             }
         }
     }
+
+    private func search() {
+        viewModel.searchTarget(with: searchText)
+        if let result = viewModel.searchResult {
+            expandToTarget(result)
+        }
+    }
+
+    private func expandToTarget(_ target: Target) {
+        var currentTarget: Target? = target
+        while let parent = currentTarget?.parent, let parentTarget = targetMap[parent] {
+            expandedNodes.insert(parentTarget.id)
+            currentTarget = parentTarget
+        }
+        expandedNodes.insert(target.id)
+    }
     
     private func handleTargetSelection(_ target: Target) {
         // Call the command update function when a target is selected
@@ -75,6 +104,7 @@ struct TargetTreeView: View {
         showingRemoveTargetAlert = true
     }
 }
+
 
 struct ExpandableRow: View {
     var target: Target
