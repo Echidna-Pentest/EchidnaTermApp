@@ -11,7 +11,8 @@ struct TargetTreeView: View {
     @State private var searchText: String = ""  // State to hold the search text
     var rootTargets: [Target]?
     var initialExpandedNode: Target?  // Initial node to be expanded
-
+    var initialSearchText: String = ""  // Initial search text
+    
     var body: some View {
         VStack {
             // Search bar
@@ -47,6 +48,11 @@ struct TargetTreeView: View {
                 } else if let firstTarget = viewModel.targets.first(where: { $0.id == 0 }) {
                     expandedNodes.insert(firstTarget.id)
                     handleTargetSelection(firstTarget)
+                }
+                // Perform the initial search if provided
+                if !initialSearchText.isEmpty {
+                    searchText = initialSearchText
+                    search()
                 }
             }
             .sheet(isPresented: $showingAddTargetSheet) {

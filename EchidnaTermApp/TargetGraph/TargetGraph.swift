@@ -56,7 +56,7 @@ struct TargetGraphView: View {
                         EdgeView(edge: edge, nodes: nodes)
                     }
                     ForEach(nodes) { node in
-                        NodeView(node: node, geometry: geometry.size)
+                        NodeView(node: node, geometry: geometry.size, searchText: searchText)
                     }
                 }
                 .onAppear {
@@ -65,7 +65,7 @@ struct TargetGraphView: View {
             }
         }
     }
-    
+       
     private func processTargets(geometry: CGSize) {
         let filteredTargets = targetMap.values.filter { $0.key == "Network" || $0.key == "host" }
         print("Graph: filteredTargets=", filteredTargets)
@@ -113,10 +113,54 @@ struct TargetGraphView: View {
     }
     
     private func highlightNodes() {
+        let matchingHosts = findHostsMatching(searchText)
+        print("highlightNodes: matchingHosts=", matchingHosts)
         for node in nodes {
-            node.isHighlighted = node.value.lowercased().contains(searchText.lowercased()) && !searchText.isEmpty
+            node.isHighlighted = matchingHosts.contains(node.value) && !searchText.isEmpty
             print("Graph: : node.isHighlighted=", node.isHighlighted)
         }
+    }
+
+    private func findHostsMatching(_ searchText: String) -> Set<String> {
+        var matchingHosts: Set<String> = []
+        for node in nodes {
+            if let target = targetMap[node.id] {
+                if target.value.lowercased().contains(searchText.lowercased()) ||
+                   (findParentHost(for: target, matching: searchText.lowercased()) != nil) {
+                    if target.key == "host" {
+                        matchingHosts.insert(target.value)
+                    } else if let host = findHostAncestor(of: target) {
+                        matchingHosts.insert(host.value)
+                    }
+               }
+            }
+        }
+        return matchingHosts
+    }
+
+    private func findParentHost(for target: Target, matching value: String) -> Target? {
+        if target.value.lowercased().contains(value) {
+            return findHostAncestor(of: target)
+        }
+        if let childrenTargets = target.childrenTargets {
+            for child in childrenTargets {
+                if let result = findParentHost(for: child, matching: value) {
+                    return result
+                }
+            }
+        }
+        return nil
+    }
+
+    private func findHostAncestor(of target: Target) -> Target? {
+        var currentTarget: Target? = target
+        while let parent = currentTarget?.parent, let parentTarget = targetMap[parent] {
+            if parentTarget.key == "host" {
+                return parentTarget
+            }
+            currentTarget = parentTarget
+        }
+        return nil
     }
 }
 
@@ -125,10 +169,12 @@ struct NodeView: View {
     let geometry: CGSize
     @State private var showingDetail = false
     @ObservedObject var connections = Connections.shared
+    var searchText: String
     
-    init(node: Node, geometry: CGSize) {
+    init(node: Node, geometry: CGSize, searchText: String) {
         self.node = node
         self.geometry = geometry
+        self.searchText = searchText
     }
 
     var body: some View {
@@ -149,7 +195,7 @@ struct NodeView: View {
             if let target = targetMap[node.id] {
                 VStack {
                     HStack {
-                        FilteredTargetTreeView(rootTarget: target)
+                        FilteredTargetTreeView(rootTarget: target, initialSearchText: searchText)
                             .frame(maxWidth: .infinity)
                         VStack {
                             if let terminalView = connections.getTerminals().first {

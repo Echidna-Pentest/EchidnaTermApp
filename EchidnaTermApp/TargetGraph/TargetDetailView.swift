@@ -48,9 +48,10 @@ struct TargetTree: View {
 
 struct FilteredTargetTreeView: View {
     let rootTarget: Target
+    var initialSearchText: String
 
     var body: some View {
-        TargetTreeView(rootTargets: [rootTarget], initialExpandedNode: rootTarget)
+        TargetTreeView(rootTargets: [rootTarget], initialExpandedNode: rootTarget, initialSearchText: initialSearchText)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
     }
