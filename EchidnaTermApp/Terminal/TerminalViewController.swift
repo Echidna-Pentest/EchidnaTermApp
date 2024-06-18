@@ -119,7 +119,7 @@ class TerminalViewController: UIViewController {
                 targetTreeHostingController!.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 targetTreeHostingController!.view.rightAnchor.constraint(equalTo: view.rightAnchor),
                 targetTreeHostingController!.view.leftAnchor.constraint(equalTo: terminalView.rightAnchor),
-                targetTreeHostingController!.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4)
+                targetTreeHostingController!.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.6)
             ])
 
             let candidateCommandView = CandidateCommandView()

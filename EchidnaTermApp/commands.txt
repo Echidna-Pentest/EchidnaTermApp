@@ -100,7 +100,7 @@ group: Exploit Command
 [Echidna]
 description: connect shared drive via SMB using smbclient
 template: smbclient -L //{host}
-template: smbclient //{host}/{port.SMBDrive}
+template: smbclient -N //{host}/{SMBDrive}
 condition: ["139", "445", ".*netbios.*", ".*microsoft-ds.*"]
 group: SMB
 [end]
