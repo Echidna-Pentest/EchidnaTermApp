@@ -28,7 +28,6 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
     var completeConnectSetup: () -> () = { }
     var session: SocketSession?
     var sessionChannel: Channel?
-    @MainActor private var shouldRunFilterScript = false
     @MainActor private var isNewLineEntered = false
     @MainActor private var commandOutputs: [String] = []
     @MainActor private var commandEntered = ""
@@ -95,7 +94,8 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                             guard let self = self else { return }
 
                             if self.isNewLineEntered {
-                                if self.shouldRunFilterScript {
+//                                print("isNewLineEntered")
+                                if !self.commandEntered.isEmpty {
                                     self.processCommandOutputs(self.commandOutputs.joined(separator: "\n"), command: self.commandEntered)
                                 }
 
@@ -130,11 +130,11 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                             self?.commandOutputs.append(trimmedTerminalOutput)
                         }
                     }
-                    var trigger: [String] = CommandManager.shared.getAllPatterns()
+                    let trigger: [String] = CommandManager.shared.getAllPatterns()
                     if let foundTrigger = trigger.first(where: { trimmedTerminalOutput.contains($0) }) {
                         DispatchQueue.main.async { [weak self] in
-                            self?.shouldRunFilterScript = true
                             self?.commandEntered = foundTrigger
+//                            print("commandEntered=", self?.commandEntered)
                         }
                     }
                 }
@@ -183,20 +183,23 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
         let commandName = command.replacingOccurrences(of: " ", with: "_").lowercased()
 //        print("processCommandOutpus commandName=", commandName)
         switch commandName {
-        case "ping":
-            processPingOutput(output)
-        case "ip_a":
-            print("ip_a")
-//            Ip_aProcess.processCommandOutput(output)
-        case "smbmap":
-            processSmbmapOutput(output)
-        case "nmap":
-            processNmapOutput(input: output)
-        case "hydra":
-            processHydraOutput(output)
-        default:
-            print("No handler found for command: \(command)")
+            case "ping":
+                processPingOutput(output)
+            case "ip_a":
+                print("ip_a")
+    //            Ip_aProcess.processCommandOutput(output)
+            case "smbmap":
+                processSmbmapOutput(output)
+            case "nmap":
+                processNmapOutput(input: output)
+            case "hydra":
+                processHydraOutput(output)
+            case "nikto":
+                processNiktoOutput(lines: output)
+            default:
+                print("No handler found for command: \(command)")
         }
+//        self.commandEntered = ""
     }
     
     // UTF-8, allow setting cursor color, xterm mouse sequences, RGB colors using SGR, setting terminal title, fill rects, margin support
@@ -616,7 +619,6 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
 //                print ("sendResult: \(code)")
                 if let string = String(bytes: bytes, encoding: .utf8) { // Mark inputted string is send by bytes
 //                    print("send = " + string + "END")
-                    self.shouldRunFilterScript = false
                     self.isNewLineEntered = false
                 } else {
                     print("not a valid UTF-8 sequence")

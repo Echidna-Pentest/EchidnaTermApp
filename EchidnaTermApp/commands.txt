@@ -17,7 +17,7 @@ group: nmap
 
 [Echidna]
 description: nikto is used to scan a web-server for the vulnerability that can be exploited and can compromise the server.
-pattern: nikto -h
+pattern: nikto
 template: nikto -h http://{host}/
 template: nikto -h http://{host}:{port}/
 template: nikto -h {url}
