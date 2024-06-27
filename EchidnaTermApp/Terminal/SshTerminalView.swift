@@ -196,6 +196,8 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                 processHydraOutput(output)
             case "nikto":
                 processNiktoOutput(lines: output)
+            case "whatweb":
+                processWhatwebOutput(lines: output)
             default:
                 print("No handler found for command: \(command)")
         }

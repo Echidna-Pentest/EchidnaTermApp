@@ -229,3 +229,12 @@ template: hydra {host} -L $userfile$ -e nsr {port.name}
 condition: ["ftp", "ssh", "http", "RDP", "21", "22", "80", "3389"]
 group: Bruteforce attack (hydra)
 [end]
+
+[Echidna]
+pattern: whatweb
+description: WhatWeb identifies websites. It recognises web technologies including content management systems (CMS), blogging platforms, statistic/analytics packages, JavaScript libraries, web servers, and embedded devices.
+template: whatweb {host}
+template: whatweb {host}:{port.name}
+condition: ["http", "https", "80", "443"]
+group: HTTP
+[end]
