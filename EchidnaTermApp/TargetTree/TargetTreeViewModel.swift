@@ -113,9 +113,15 @@ class TargetTreeViewModel: ObservableObject {
                     setHighlight(newChild)
                     if let machineName = result["machine_name"] as? String {
                         print("Similar machine is " + machineName)
-                        chatViewModel.sendMessage("Similar machine is " + machineName, isUser: false)
+                        for (key, value) in result {
+                            if key != "machine_name" {
+                                if let valueString = value as? String {
+//                                    print("Key: \(key), Value: \(valueString)")
+                                    chatViewModel.sendMessage("\(valueString) is interesting. Similar machine is " + machineName, isUser: false)
+                                }
+                            }
+                        }
                     } else {
-                        print("Similar machine is not String!")
                         print("Error: machine_name not found or not a String in result")
                     }
                 } else {

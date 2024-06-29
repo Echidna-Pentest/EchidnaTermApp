@@ -21,14 +21,13 @@ class VulnerabilityDatabase {
         let fileManager = FileManager.default
         let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
         let fileURL = documentDirectory.appendingPathComponent(criticalScanFile)
-        */
+         */
+
+        /*
         let projectDirectory = "/Users/yu/work/EchidnaApp/release/EchidnaTermApp/EchidnaTermApp"
         let filePath = "\(projectDirectory)/vulnTargetDB.json"
         let fileURL = URL(fileURLWithPath: filePath)
 
-/*        guard fileManager.fileExists(atPath: fileURL.path) else {
-            return
-        }*/
         
         do {
             let data = try Data(contentsOf: fileURL)
@@ -39,6 +38,19 @@ class VulnerabilityDatabase {
         } catch {
             print("Error reading critical scan database: \(error)")
         }
+         */
+        
+        if let fileURL = Bundle.main.url(forResource: "vulnTargetDB", withExtension: "json") {
+            do {
+                let data = try Data(contentsOf: fileURL)
+                if let jsonArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] {
+                    criticalScanDB = jsonArray
+                }
+                //            print("vulnTargetDB criticalScanDB=", criticalScanDB)
+            } catch {
+                print("Error reading critical scan database: \(error)")
+            }
+        }
     }
 
     func getValues(for key: String) -> [Any] {
@@ -47,6 +59,7 @@ class VulnerabilityDatabase {
 
     func searchValue(for targetValue: String, obj: [[String: Any]]? = nil, machineName: String? = nil) -> [String: Any]? {
         let database = obj ?? criticalScanDB
+        print("searchValue= datbase=", database)
 //        print("searchValue=", database)
         for dict in database {
             for (prop, value) in dict {

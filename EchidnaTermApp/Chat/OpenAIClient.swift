@@ -27,14 +27,18 @@ class OpenAIClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let parameters: [String: Any] = [
-            "model": "gpt-3.5-turbo",
+            "model": "gpt-4",
             "messages": [
-                ["role": "system", "content": "You are a helpful assistant."],
-/*                ["role": "system", "content": "You are a penetration test assistant. Analyze the provided string for security risks, vulnerabilities, or potential for exploitation. For a 'HIGH RISK' finding, reply with 'HIGH RISK: ' plus briefly state the risk and necessary steps for exploitation. For 'LOW RISK' or 'NONE', just simply reply with the category ('LOW RISK' or 'NONE') only.\n"],*/
+                ["role": "system", "content": "You are a penetration test assistant. Analyze the provided string for security risks, vulnerabilities, or potential for exploitation. For a 'HIGH RISK' finding, reply with 'HIGH RISK: ' plus briefly state the risk and necessary steps for exploitation within 150 words. For 'LOW RISK' or 'NONE', just simply reply with the category ('LOW RISK' or 'NONE') only.\n"],
                 ["role": "user", "content": generatePrompt(input: input, analysisType: analysisType)]
             ],
-            "max_tokens": 150
+            "max_tokens": 150,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "frequency_penalty": 0.0,
+            "presence_penalty": 0.0
         ]
+
 
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
