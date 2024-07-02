@@ -14,26 +14,26 @@ class TargetTreeViewModel: ObservableObject {
     
     func loadJSON() {
         print("loadJSON")
-        if let url = Bundle.main.url(forResource: "targets", withExtension: "json") {
-            //let url = getDocumentsDirectory().appendingPathComponent("targets.json")
+//        if let url = Bundle.main.url(forResource: "targets", withExtension: "json") {
+        let url = getDocumentsDirectory().appendingPathComponent("targets.json")
         /*
         let projectDirectory = "/Users/yu/work/EchidnaApp/release/EchidnaTermApp/EchidnaTermApp/TargetTree"
         let filePath = "\(projectDirectory)/targets.json"
         let url = URL(fileURLWithPath: filePath)
          */
             do {
-                print("loadJson url=", url)
+//                print("loadJson url=", url)
                 let data = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
                 var targets = try decoder.decode([Target].self, from: data)
-                print("loadJSON targets=", targets)
+//                print("loadJSON targets=", targets)
                 targets.sort { $0.id < $1.id }
                 self.targets = buildTree(targets: targets)
             } catch {
                 print("Error loading JSON: \(error)")
             }
 
-        }
+//        }
     }
     
     /*
@@ -86,19 +86,17 @@ class TargetTreeViewModel: ObservableObject {
             }
         }
 //        print("buildTree    ", targetMap)
-        print("buildTree    ", targetMap.mapValues { "\($0)" })
+//        print("buildTree    ", targetMap.mapValues { "\($0)" })
         return rootTargets
     }
 
 //    func addTarget(value: String, toParent parentId: Int) -> Int {
     func addTarget(key:String, value: String, toParent parentId: Int) -> Int {
-        print("addTarget: parentId", parentId)
+//        print("addTarget: parentId", parentId)
         if var parent = targetMap[parentId] {
-//            print("addTarget parent = ", parent)
             if let existingChild = parent.hasValues(withValue: value) {
-                print("Child with value '\(value)' already exists: \(existingChild)")
+//                print("Child with value '\(value)' already exists: \(existingChild)")
                 return existingChild.id
-//                return 0
             }
             if let newChild = parent.add(key: key, value: value) {
 //                setHighlight(newChild)
@@ -235,6 +233,11 @@ class TargetTreeViewModel: ObservableObject {
             let urlDebug = URL(fileURLWithPath: filePath)
             try data.write(to: urlDebug)
             print("Data saved successfully at \(urlDebug.path)")
+            
+            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let fileURL = documentsDirectory.appendingPathComponent("targets.json")
+            try data.write(to: fileURL)
+            
         } catch {
             print("Error saving JSON: \(error)")
         }
