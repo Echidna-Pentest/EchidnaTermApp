@@ -16,7 +16,7 @@ struct APIKeyManagementView: View {
     @State private var apiKey: String? = nil
     
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             HStack {
                 Spacer()
                 Button(action: {
@@ -32,13 +32,17 @@ struct APIKeyManagementView: View {
                 Spacer()
             }
             
-            Toggle(isOn: $isAIAnalysisEnabled) {
+            HStack {
                 Text("Enable AI Analysis")
+                    .font(.headline)
+                Spacer()
+                Toggle("", isOn: $isAIAnalysisEnabled)
+                    .toggleStyle(SwitchToggleStyle(tint: .blue))
             }
             .padding()
             
             if let apiKey = apiKey {
-                VStack {
+                VStack(spacing: 10) {
                     HStack {
                         Text("Current API Key")
                             .font(.headline)
@@ -48,11 +52,13 @@ struct APIKeyManagementView: View {
                     
                     HStack {
                         Text(maskedAPIKey(apiKey))
+                            .font(.body)
                         Spacer()
                         Button(action: {
                             self.addEditKeyShown = true
                         }) {
                             Image(systemName: "pencil")
+                                .foregroundColor(.blue)
                         }
                     }
                     .padding()
@@ -71,16 +77,22 @@ struct APIKeyManagementView: View {
                 .padding()
             } else {
                 Spacer()
-                HStack(alignment: .top) {
+                VStack(spacing: 10) {
                     Image(systemName: "key")
-                        .font(.title)
-                    Text("No API Key registered. Add an API Key to enable secure access to APIs.")
+                        .font(.largeTitle)
+                        .foregroundColor(.gray)
+                    Text("No API Key registered.")
+                        .font(.headline)
+                    Text("Add an API Key to enable secure access to APIs.")
                         .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
                 }
                 .padding()
                 Spacer()
             }
         }
+        .padding()
         .navigationTitle("API Keys")
         .onAppear(perform: loadAPIKey)
     }

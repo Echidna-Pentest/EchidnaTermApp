@@ -73,7 +73,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                 self.feed(byteArray: sliced)
             }
             #else
-            let blocksize = 102400
+            let blocksize = 1024000
             var next = 0
             let last = sliced.endIndex
             
@@ -173,8 +173,8 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
         switch commandName {
             case "ping":
                 processPingOutput(output)
-            case "ip_a":
-                print("ip_a")
+//            case "ip_a":
+//                print("ip_a")
     //            Ip_aProcess.processCommandOutput(output)
             case "smbmap":
                 processSmbmapOutput(output)
