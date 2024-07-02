@@ -98,25 +98,13 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                                 if !self.commandEntered.isEmpty {
                                     self.processCommandOutputs(self.commandOutputs.joined(separator: "\n"), command: self.commandEntered)
                                 }
-
 //                                print("self.commandOUtputLongest=", getLongestOutput(from: self.commandOutputs))
-                                let apiKey = "addAPIKeyHere"
-                                let client = OpenAIClient(apiKey: apiKey)
-//                                print("analysis: text=", self.commandOutputs)
-                                var longestCommandOutput = getLongestOutput(from: self.commandOutputs)
-                                // analyze the longest command Output if it is longer than 40 characters,  this may need to be improved
-                                longestCommandOutput = longestCommandOutput.filter { !($0.isWhitespace) }
-                                if longestCommandOutput.count > 40 {
-//                                    print("self.commandOUtputLongest=", longestCommandOutput, " longestCommandOutput.count=", longestCommandOutput.count)
-                                    client.analyzeText(input: longestCommandOutput, analysisType: "sentiment") { result in
-                                        switch result {
-                                        case .success(let analysis):
-                                            let chatViewModel = ChatViewModel.shared
-                                            chatViewModel.sendMessage(analysis, isUser: false)
-//                                            print("Analysis: \(analysis)")
-                                        case .failure(let error):
-                                            print("Anakysis Error: \(error.localizedDescription)")
-                                        }
+                                if UserDefaults.standard.bool(forKey: "EnableAIAnalysis") {
+                                    var longestCommandOutput = getLongestOutput(from: self.commandOutputs)
+                                    // analyze the longest command Output if it is longer than 40 characters,  this may need to be improved
+                                    longestCommandOutput = longestCommandOutput.filter { !($0.isWhitespace) }
+                                    if longestCommandOutput.count > 40 {
+                                        APIManager.shared.performAIAnalysis(text: longestCommandOutput)
                                     }
                                 }
                                 self.commandOutputs = []
