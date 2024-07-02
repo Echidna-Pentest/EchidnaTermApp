@@ -221,6 +221,12 @@ struct HomeView: View {
                         Label("Keys", systemImage: "key")
                     })
                 NavigationLink(
+                    destination: APIKeyManagementView(),
+                    label: {
+                        Label("API Keys", systemImage: "key")
+                    })
+
+                NavigationLink(
                     destination: HostKeysList (),
                     label: {
                         Label("Known Hosts", systemImage: "lock.desktopcomputer")
