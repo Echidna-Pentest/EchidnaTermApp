@@ -17,10 +17,7 @@ struct ChatMessage: Identifiable {
 class ChatViewModel: ObservableObject {
     static let shared = ChatViewModel()
     @Published var messages: [ChatMessage] = [
-        ChatMessage(message: "READ, WRITE might be interesting. Similar machine is Bastion", isUser: false),
-        ChatMessage(message: "@AI Please analysis this machine", isUser: false),
-        ChatMessage(message: "Invalid API Key", isUser: false),
-        ChatMessage(message: "test message", isUser: false)
+        ChatMessage(message: "You can get the analysis result from openAI API if you enable the option from API Keys menu.", isUser: false),
     ]
     
     func sendMessage(_ message: String, isUser: Bool) {
