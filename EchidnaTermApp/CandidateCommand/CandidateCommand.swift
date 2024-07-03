@@ -78,7 +78,6 @@ class CommandManager: ObservableObject {
                 for template in templates {
                     let command = Command(template: template, patterns: patterns, condition: conditions, group: group, description: description)
                     commands.append(command)
-//                    print("Loaded command: \(command)")
                 }
             }
         } catch {
@@ -86,9 +85,8 @@ class CommandManager: ObservableObject {
         }
     }
     
-    func setHostname(hostname: String){
+    func setHostname(hostname: String) {
         self.hostname = hostname
-//        print("sethostname=", self.hostname)
     }
     
     func updateCandidateCommand(target: Target) {
@@ -103,13 +101,19 @@ class CommandManager: ObservableObject {
         }
     }
     
+    func showAllCommands() {
+        for command in commands {
+            command.displayName = command.template
+        }
+        objectWillChange.send()
+    }
+    
     private func shouldDisplayCommand(command: Command, for target: Target) -> Bool {
         var currentTarget: Target? = target
 
         while let target = currentTarget {
             for keyword in command.condition {
                 if target.value.contains(keyword) {
-//                    print("keyword=", keyword, "  target.value=", target.value)
                     return true
                 }
             }

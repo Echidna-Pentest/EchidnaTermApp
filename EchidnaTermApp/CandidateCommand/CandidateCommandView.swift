@@ -15,7 +15,7 @@ struct CandidateCommandView: View {
     @State private var selectedCommand: Command? = nil
     @State private var showCommandDescription: Bool = false
     @State private var commandDescription: String = ""
-    
+
     var body: some View {
         VStack {
             List {
@@ -44,10 +44,32 @@ struct CandidateCommandView: View {
             }
             .listStyle(InsetGroupedListStyle())
 
-            /*            if let selectedCommand = selectedCommand {
-                Text("Selected command: \(selectedCommand.displayName)")
-                    .padding()
-            }*/
+            HStack {
+                Button(action: {
+                    commandManager.showAllCommands()
+                }) {
+                    Text("Show All Commands")
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal)
+
+                Button(action: {
+                    // Add command action
+                }) {
+                    Text("Add Command")
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal)
+            }
+            .padding(.bottom)
         }
         .onAppear {
             print("Commands loaded: \(commandManager.commands.count)")
@@ -69,15 +91,6 @@ struct CandidateCommandView: View {
             Text(command.displayName)
                 .font(.subheadline)
                 .contextMenu {
-                    /*
-                    Button(action: {
-                        UIPasteboard.general.string = command.displayName
-                    }) {
-                        Text("Copy")
-                        Image(systemName: "doc.on.doc")
-//                        showCommandDescription(command: command)
-                    }
-                     */
                     Button(action: {
                         showCommandDescription(command: command)
                     }) {
@@ -100,7 +113,6 @@ struct CandidateCommandView: View {
         selectedCommand = command
         print("Selected command: \(command.displayName)")
         guard let current = TerminalViewController.visibleTerminal else { return }
-        print("current=", current)
         current.send(txt: command.displayName + "\n")
     }
     
@@ -109,3 +121,4 @@ struct CandidateCommandView: View {
         showCommandDescription = true
     }
 }
+
