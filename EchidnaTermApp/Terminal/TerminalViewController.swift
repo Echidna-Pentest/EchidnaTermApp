@@ -121,13 +121,13 @@ class TerminalViewController: UIViewController {
                 targetTreeHostingController!.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.6)
             ])
 
-            let candidateCommandView = CandidateCommandView()
+            let candidateCommandView = CandidateCommandView(isSinglePage: false)
             candidateCommandHostingController = UIHostingController(rootView: candidateCommandView)
             addChild(candidateCommandHostingController!)
             view.addSubview(candidateCommandHostingController!.view)
             candidateCommandHostingController!.didMove(toParent: self)
             candidateCommandHostingController!.view.translatesAutoresizingMaskIntoConstraints = false
-            
+
             NSLayoutConstraint.activate([
                 candidateCommandHostingController!.view.topAnchor.constraint(equalTo: targetTreeHostingController!.view.bottomAnchor),
                 candidateCommandHostingController!.view.rightAnchor.constraint(equalTo: view.rightAnchor),

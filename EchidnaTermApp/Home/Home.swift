@@ -254,7 +254,7 @@ struct HomeView: View {
                     })
 
                 NavigationLink(
-                    destination: CandidateCommandView(),
+                    destination: CandidateCommandView(isSinglePage: true),
                     label: {
                         Label("CandidateCommand", systemImage: "clock")
                     })

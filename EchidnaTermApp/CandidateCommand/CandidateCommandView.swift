@@ -15,6 +15,9 @@ struct CandidateCommandView: View {
     @State private var selectedCommand: Command? = nil
     @State private var showCommandDescription: Bool = false
     @State private var commandDescription: String = ""
+    @State private var showAddCommandView: Bool = false
+    
+    var isSinglePage: Bool
 
     var body: some View {
         VStack {
@@ -43,33 +46,40 @@ struct CandidateCommandView: View {
                 }
             }
             .listStyle(InsetGroupedListStyle())
-
-            HStack {
-                Button(action: {
-                    commandManager.showAllCommands()
-                }) {
-                    Text("Show All Commands")
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+            
+            if isSinglePage {
+                HStack {
+                    Button(action: {
+                        commandManager.showAllCommands()
+                    }) {
+                        Text("Show All Commands")
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                    .padding(.horizontal)
+                    
+                    Button(action: {
+                        showAddCommandView = true
+                    }) {
+                        Text("Add Command")
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                    .padding(.horizontal)
+                    .sheet(isPresented: $showAddCommandView) {
+                        AddCommandView { newCommand in
+                            commandManager.addCommand(newCommand)
+                        }
+                    }
                 }
-                .padding(.horizontal)
-
-                Button(action: {
-                    // Add command action
-                }) {
-                    Text("Add Command")
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .padding(.horizontal)
+                .padding(.bottom)
             }
-            .padding(.bottom)
         }
         .onAppear {
             print("Commands loaded: \(commandManager.commands.count)")
@@ -121,4 +131,3 @@ struct CandidateCommandView: View {
         showCommandDescription = true
     }
 }
-

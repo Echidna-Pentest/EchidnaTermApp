@@ -203,7 +203,7 @@ struct NodeView: View {
                                     .frame(maxWidth: .infinity)
                                     .frame(height: geometry.height * 0.6)
                             }
-                            CandidateCommandView()
+                            CandidateCommandView(isSinglePage: false)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: geometry.height * 0.4)
                         }

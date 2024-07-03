@@ -108,6 +108,11 @@ class CommandManager: ObservableObject {
         objectWillChange.send()
     }
     
+    func addCommand(_ command: Command) {
+        commands.append(command)
+        objectWillChange.send()
+    }
+    
     private func shouldDisplayCommand(command: Command, for target: Target) -> Bool {
         var currentTarget: Target? = target
 
