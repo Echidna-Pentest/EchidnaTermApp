@@ -15,8 +15,8 @@ class APIManager {
     
     private init() {}
     
-    func performAIAnalysis(text: String) {
-        guard UserDefaults.standard.bool(forKey: "EnableAIAnalysis") else {
+    func performAIAnalysis(text: String, fromUserRequest: Bool = false) {
+        guard fromUserRequest || UserDefaults.standard.bool(forKey: "EnableAIAnalysis") else {
             print("AI Analysis is disabled.")
             return
         }
@@ -28,20 +28,17 @@ class APIManager {
 
         let client = OpenAIClient(apiKey: apiKey)
 
-        
         client.analyzeText(input: text, analysisType: "sentiment") { result in
             switch result {
             case .success(let analysis):
                 let chatViewModel = ChatViewModel.shared
                 chatViewModel.sendMessage(analysis, isUser: false)
-//                                            print("Analysis: \(analysis)")
             case .failure(let error):
-                print("Anakysis Error: \(error.localizedDescription)")
+                print("Analysis Error: \(error.localizedDescription)")
             }
         }
-        
     }
-    
+
     private func retrieveAPIKey() -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

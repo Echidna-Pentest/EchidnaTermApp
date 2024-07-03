@@ -23,6 +23,14 @@ class ChatViewModel: ObservableObject {
     func sendMessage(_ message: String, isUser: Bool) {
         let chatMessage = ChatMessage(message: message, isUser: isUser)
         messages.append(chatMessage)
+        
+        if isUser && message.hasPrefix("@AI") {
+            handleAICommand(message: message, fromUserRequest: true)
+        }
+    }
+    
+    private func handleAICommand(message: String, fromUserRequest: Bool) {
+        APIManager.shared.performAIAnalysis(text: message, fromUserRequest: fromUserRequest)
     }
 }
 
