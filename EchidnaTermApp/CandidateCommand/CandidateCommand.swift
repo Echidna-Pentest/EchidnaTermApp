@@ -1,6 +1,6 @@
 //
 //  CandidateCommand.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Terada Yu on 2024/05/20.
 //  Copyright © 2024 Miguel de Icaza. All rights reserved.

@@ -84,17 +84,15 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                 let chunk = sliced [next..<end]
                 if let text = String(bytes: chunk, encoding: .utf8) {
                     let terminalOutput = extract(text)
-//                    print("terminalOutput="+terminalOutput+"desu")
+//                    print("terminalOutput="+terminalOutput+" END")
                     if (terminalOutput.contains("\n") || terminalOutput.contains("\r") ){
 //                        print("newLine Found:  terminalOutput="+terminalOutput)
                         DispatchQueue.main.async { [weak self] in
                             self?.isNewLineEntered = true
 //                            self?.commandOutputs.append(trimmedTerminalOutput)
-//                            print("contains")
                             guard let self = self else { return }
 
                             if self.isNewLineEntered {
-//                                print("isNewLineEntered")
                                 if !self.commandEntered.isEmpty {
                                     self.processCommandOutputs(self.commandOutputs.joined(separator: "\n"), command: self.commandEntered)
                                 }
@@ -165,9 +163,9 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
         }
         print("\n")
     }
-    
+
+    // Execute parser process to add the result to TargetTree
     func processCommandOutputs(_ output: String, command: String) {
-//        print("triggers     ", command)
         let commandName = command.replacingOccurrences(of: " ", with: "_").lowercased()
 //        print("processCommandOutpus commandName=", commandName)
         switch commandName {

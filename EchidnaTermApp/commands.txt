@@ -234,7 +234,7 @@ group: Bruteforce attack (hydra)
 pattern: whatweb
 description: WhatWeb identifies websites. It recognises web technologies including content management systems (CMS), blogging platforms, statistic/analytics packages, JavaScript libraries, web servers, and embedded devices.
 template: whatweb {host}
-template: whatweb {host}:{port.name}
+template: whatweb {host}:{port}
 condition: ["http", "https", "80", "443"]
 group: HTTP
 [end]

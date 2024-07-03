@@ -83,7 +83,6 @@ class TerminalViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        print("viewDidLoad")
         super.viewDidLoad()
         
         if terminalView == nil {
@@ -161,26 +160,7 @@ class TerminalViewController: UIViewController {
             terminalView!.frame = view.frame
         }
     }
-    /*
-    private let toggleButton: UIButton = {
-        let button = UIButton(type: .system)
-        let image = UIImage(systemName: "arrow.up.left.and.arrow.down.right")
-        button.setImage(image, for: .normal)
-        button.tintColor = .systemBlue
-        button.addTarget(self, action: #selector(toggleTerminalViewFullscreen), for: .touchUpInside)
-        return button
-    }()
     
-    private func setupToggleButton() {
-        view.addSubview(toggleButton)
-        toggleButton.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            toggleButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            toggleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-        ])
-    }
-*/
     private func updateToggleButtonIcon() {
         let imageName = isTerminalViewFullScreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right"
         let image = UIImage(systemName: imageName)

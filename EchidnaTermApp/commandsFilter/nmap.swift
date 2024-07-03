@@ -1,6 +1,6 @@
 //
 //  nmap.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Terada Yu on 2024/05/20.
 //  Copyright © 2024 Miguel de Icaza. All rights reserved.
@@ -13,7 +13,7 @@ let HOST = try! NSRegularExpression(pattern: "^Nmap scan report for (\\S+)(\\([^
 func processNmapOutput(input: String) {
     let viewModel = TargetTreeViewModel.shared
     let lines = input.components(separatedBy: .newlines)
-    print("Nmap lines=", lines)
+//    print("Nmap lines=", lines)
     var lineIterator = lines.makeIterator()
     if let host = findHost(lines: &lineIterator) {
         skipToPortHeader(lines: &lineIterator)
@@ -22,7 +22,7 @@ func processNmapOutput(input: String) {
             let details = portData.1
 
             for portDetail in portDetails {
-                print("Nmap Host + Port", (host + portDetail).joined(separator: "\t"))
+//                print("Nmap Host + Port", (host + portDetail).joined(separator: "\t"))
                 viewModel.processInput((host + portDetail).joined(separator: "\t"))
 
                 var cleanedPortDetail = portDetail
@@ -32,7 +32,7 @@ func processNmapOutput(input: String) {
                 }
                 
                 for detail in details {
-                    print("Nmap Host + Port portDetail=", portDetail, " detail=", detail)
+//                    print("Nmap Host + Port portDetail=", portDetail, " detail=", detail)
 //                    viewModel.processInput((host + portDetail + detail).joined(separator: "\t"))
                     viewModel.processInput((host + cleanedPortDetail + detail).joined(separator: "\t"))
                 }
