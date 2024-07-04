@@ -184,6 +184,8 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                 processNiktoOutput(lines: output)
             case "whatweb":
                 processWhatwebOutput(lines: output)
+            case "smb_version":
+                processSmbVersionScanOutput(lines: output)
             default:
                 print("No handler found for command: \(command)")
         }

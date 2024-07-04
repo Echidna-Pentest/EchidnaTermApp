@@ -29,6 +29,7 @@ group: HTTP
 description: ip address
 template: ip addr
 pattern: ip a
+group: Useful Command
 [end]
 
 [Echidna]
@@ -36,6 +37,7 @@ description: The ip neigh command manipulates neighbour objects that establish b
 template: ip neigh
 template: ip -4 neigh
 pattern: ip (-4 )*n.*
+group: Useful Command
 [end]
 
 [Echidna]
@@ -158,6 +160,7 @@ description: search exploit code
 template: searchsploit {version}
 template: searchsploit -m {exploitPath}
 condition: ["exploitPath", "version"]
+group: EXPLOIT
 [end]
 
 [Echidna]
@@ -212,6 +215,7 @@ group: Meterpreter Command
 description: cewl is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper
 template: cewl {host} > wordlist.txt
 condition: ["80", "443]
+group: HTTP
 [end]
 
 [Echidna]
@@ -226,7 +230,7 @@ template: hydra {host} -l user -e nsr
 template: hydra {host} -l user -e nsr {port.name}
 template: hydra {host} -L $userfile$ -e nsr
 template: hydra {host} -L $userfile$ -e nsr {port.name}
-condition: ["ftp", "ssh", "http", "RDP", "21", "22", "80", "3389"]
+condition: ["ftp", "ssh", "http", "https", ""RDP", "21", "22", "80", "443", """3389"]
 group: Bruteforce attack (hydra)
 [end]
 
@@ -238,3 +242,12 @@ template: whatweb {host}:{port}
 condition: ["http", "https", "80", "443"]
 group: HTTP
 [end]
+
+[Echidna]
+pattern: smb_version
+name: Scan smb version via metasploit module
+template: msfconsole -q -x "use auxiliary/scanner/smb/smb_version; set rhosts {host}; exploit"
+condition: ["139", "445", "netbios", "microsoft-ds"]
+group: SMB
+[end]
+
