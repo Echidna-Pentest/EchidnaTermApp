@@ -1,6 +1,6 @@
 //
 //  StarNest.metal
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 // This is a port of Star Nest by Pablo Roman Andrioli
 // licensed under the MIT X11 license, found here:

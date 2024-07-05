@@ -3,7 +3,7 @@
 //  any app-specific enhancements that should be shared across front-ends (Ssh and Local
 //  when this works in Catalyst)
 //
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/30/20.
 //  Copyright © 2020 Miguel de Icaza. All rights reserved.
@@ -16,7 +16,7 @@ import Combine
 
 /**
  * AppTerminalView is the subclass of TerminalView that provides the integration
- * into SwiftTermApp, it monitors the global `settings` for changes and
+ * into EchidnaTermApp, it monitors the global `settings` for changes and
  * applies that to the terminal and also handles the Metal changes for the
  * Live backgrounds.
  *

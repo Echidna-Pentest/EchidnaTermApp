@@ -1,6 +1,6 @@
 //
 //  DataModelTypes.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/19/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.

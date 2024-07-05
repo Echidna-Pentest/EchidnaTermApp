@@ -1,6 +1,6 @@
 //
 //  TerminalButton.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/1/20.
 //  Copyright © 2020 Miguel de Icaza. All rights reserved.

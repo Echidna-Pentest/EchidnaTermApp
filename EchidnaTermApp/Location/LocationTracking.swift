@@ -1,6 +1,6 @@
 //
 //  LocationTracking.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 11/2/21.
 //  Copyright © 2021 Miguel de Icaza. All rights reserved.

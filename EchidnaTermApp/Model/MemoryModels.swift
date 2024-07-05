@@ -1,6 +1,6 @@
 //
 //  MemoryModels.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/20/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.

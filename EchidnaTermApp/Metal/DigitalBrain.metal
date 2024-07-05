@@ -1,5 +1,5 @@
 //  DigitalBrain.metal
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 6/11/20.
 // by struss 2013, Shader Toy, modified to move less, and have fewer highlights, no input noise and ported to Metal by Miguel

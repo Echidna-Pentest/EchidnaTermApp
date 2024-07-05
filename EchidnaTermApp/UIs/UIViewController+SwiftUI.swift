@@ -1,6 +1,6 @@
 //
 //  UIViewController+SwiftUI.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 // From Timothy Costa
 //

@@ -1,6 +1,6 @@
 //
 //  SFTP.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 2/1/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.

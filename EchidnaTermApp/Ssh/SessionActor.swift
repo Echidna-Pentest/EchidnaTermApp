@@ -4,7 +4,7 @@
 //  - Do I still care about timeout as a global?   With this async framework, perhaps the timeout needs to be implemented elsewhere
 //
 //  SessionActor.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 2/3/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  UIKitRoot.swift: UIKit APIs to deal with root windows, and root view controllers
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/9/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.

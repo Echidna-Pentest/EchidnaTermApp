@@ -1,6 +1,6 @@
 //
 //  PlasmaGlobe.metal
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 // Plasma Globe by nimitz (twitter: @stormoid), extracted from the
 // MIT licensed github.com/warrenm/Shadertweak by Warren Moore

@@ -1,6 +1,6 @@
 //
 //  LazyView.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 // From: Chris Eidhof: https://gist.github.com/chriseidhof/d2fcafb53843df343fe07f3c0dac41d5
 // Discussion: https://twitter.com/chriseidhof/status/1144242544680849410?lang=en

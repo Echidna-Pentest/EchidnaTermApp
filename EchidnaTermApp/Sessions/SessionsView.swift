@@ -1,6 +1,6 @@
 //
 //  SessionsView.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 // Displays live sessions.
 //

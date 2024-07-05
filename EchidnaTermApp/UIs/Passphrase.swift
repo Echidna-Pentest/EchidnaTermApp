@@ -1,6 +1,6 @@
 //
 //  Passphrase.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 6/14/21.
 //  Copyright © 2021 Miguel de Icaza. All rights reserved.

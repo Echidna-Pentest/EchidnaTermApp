@@ -1,6 +1,6 @@
 //
 //  HostAuthKeyMismatch.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 6/21/21.
 //  Copyright © 2021 Miguel de Icaza. All rights reserved.

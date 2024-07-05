@@ -1,6 +1,6 @@
 //
 //  CUserSnippet.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/21/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.
