@@ -1,6 +1,6 @@
 //
 //  HistoryView.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 3/29/22.
 //  Copyright © 2022 Miguel de Icaza. All rights reserved.

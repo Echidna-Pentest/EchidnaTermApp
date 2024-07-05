@@ -1,6 +1,6 @@
 //
 //  Asn1Parser.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 // Comes from SwiftyRSA under the MIT license
 // https://github.com/noncenz/SwiftyRSA

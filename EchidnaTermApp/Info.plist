@@ -83,9 +83,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Initial request: By tracking the location, iOS will keep the terminal running and your connection alive</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>SwiftTermApp needs access to your microphone so you can attach voice notes when reporting an issue</string>
+	<string>EchidnaTermApp needs access to your microphone so you can attach voice notes when reporting an issue</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>SwiftTermApp needs access to your photo library so you can attach images when reporting an issue.</string>
+	<string>EchidnaTermApp needs access to your photo library so you can attach images when reporting an issue.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SourceCodePro-Medium.ttf</string>

@@ -1,6 +1,6 @@
 //
 //  CreditsView.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 6/17/21.
 //  Copyright © 2021 Miguel de Icaza. All rights reserved.
@@ -80,7 +80,7 @@ struct CreditsView: View {
     var body: some View {
         VStack {
             HStack {
-                Text ("SwiftTermApp is built using the kind work of many open source developers, these are the projects that are used by SwiftTermApp")
+                Text ("EchidnaTermApp is built based on the kind work of SwiftTermApp and implemented by integrating the features of Echidna.Both of them are open source, and SwiftTermApp is available in the App Store for iPhone and iPad.")
             }.padding()
             List {
                 // Seems like I no longer use it?

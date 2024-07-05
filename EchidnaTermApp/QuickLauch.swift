@@ -1,6 +1,6 @@
 //
 //  QuickLauch.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/20/21.
 //  Copyright © 2021 Miguel de Icaza. All rights reserved.

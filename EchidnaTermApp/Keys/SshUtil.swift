@@ -1,7 +1,7 @@
 //
 //  SshUtil.swift - Utility functions to interoperate with SSH
 //
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 4/29/20.
 //  Copyright © 2020 Miguel de Icaza. All rights reserved.

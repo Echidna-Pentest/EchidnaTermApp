@@ -1,6 +1,6 @@
 //
 //  GenerateKey.swift
-//  SwiftTermApp
+//  EchidnaTermApp
 //
 //  Created by Miguel de Icaza on 5/6/20.
 //  Copyright © 2020 Miguel de Icaza. All rights reserved.
