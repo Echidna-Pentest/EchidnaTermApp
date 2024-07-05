@@ -11,9 +11,9 @@ import Foundation
 func processSmbmapOutput(_ output: String) {
     let viewModel = TargetTreeViewModel.shared
     let reader = LineReader(string: output)
-    print("processSmbmapOutput      ", output)
+//    print("processSmbmapOutput      ", output)
     for target in targets(reader: reader) {
-        print("ParserOutput***      \(target.0)\t\(target.1)\t\(target.2)")
+//        print("ParserOutput***      \(target.0)\t\(target.1)\t\(target.2)")
 //        viewModel.processInput("\(target.0)\t\(target.1)\t\(target.2)")
         viewModel.processInput("\(target.0)\t\(target.1)\t\(target.2)", key: "SMBDrive")
     }

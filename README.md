@@ -3,7 +3,7 @@
 <img src="img/EchidnaIcon180.PNG">
 
 EchidnaTermApp is a terminal emulator and SSH client application for iOS  specialized for learning cyber attack techniques.
-This tool is created based on SwiftTermApp and implemented by integrating the features of Echidna.
+This tool is created based on SwiftTermApp and implemented by integrating the features of Echidna to learn Cyber Security. 
 Both of them are open source, and SwiftTermApp is available in the App Store for iPhone and iPad.
 - https://github.com/migueldeicaza/SwiftTermApp
 - https://github.com/Echidna-Pentest/Echidna
@@ -24,6 +24,7 @@ Unlike Echidna, no setup work is required on Kali Linux; you can use it just by 
 
 Since it can be run on an iPad, my goal is to make it possible to casually learn about hacking even when relaxing in the living room or on the sofa, even for students or children.
 
+<img src="img/idealImage.png" width="50%">
 
 ### Target Tree
 Extract command output results and automatically reflect them in the Target Tree Component.

@@ -80,11 +80,13 @@ struct CreditsView: View {
     var body: some View {
         VStack {
             HStack {
-                Text ("EchidnaTermApp is built based on the kind work of SwiftTermApp and implemented by integrating the features of Echidna.Both of them are open source, and SwiftTermApp is available in the App Store for iPhone and iPad.")
+                Text ("EchidnaTermApp is built based on the kind work of SwiftTermApp and implemented by integrating the features of Echidna to learn Cyber Security. Both of them are open source, and SwiftTermApp is available in the App Store for iPhone and iPad.")
             }.padding()
             List {
                 // Seems like I no longer use it?
                 //LicenseShort (name: "LazyView", authors: "Chris Eidhof", license: "")
+                LicenseShort (name: "SwiftTermApp", url: "https://www.libssh2.org", authors: "libssh2 project", license: "libssh")
+
                 LicenseShort (name: "libssh", url: "https://www.libssh2.org", authors: "libssh2 project", license: "libssh")
                 LicenseShort (name: "OpenSSL", authors: "Eric Young, OpenSSL project", license: "openssl_1_1_1h")
                 LicenseShort (name: "SwCrypt", authors: "Soyer", license: "swcrypt")
