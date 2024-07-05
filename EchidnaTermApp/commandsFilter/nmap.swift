@@ -8,7 +8,7 @@
 
 import Foundation
 
-let HOST = try! NSRegularExpression(pattern: "^Nmap scan report for (\\S+)(\\([^\\)]*\\))?")
+let HOST = try! NSRegularExpression(pattern: "^Nmap scan report for (\\S+)( \\(([^\\)]*)\\))?")
 
 func processNmapOutput(input: String) {
     let viewModel = TargetTreeViewModel.shared
@@ -16,29 +16,37 @@ func processNmapOutput(input: String) {
 //    print("Nmap lines=", lines)
     var lineIterator = lines.makeIterator()
     if let host = findHost(lines: &lineIterator) {
+        print("procesNmapOutput: host=", host)
         skipToPortHeader(lines: &lineIterator)
+        
+        var metadata: [String: Any]? = nil
+        var hostname: String = host[0]
+        if host.count == 2 {
+            metadata = ["ipaddress": host[1]]
+        }
+
         while let portData = ports(lines: &lineIterator) {
             let portDetails = portData.0
             let details = portData.1
 
             for portDetail in portDetails {
-//                print("Nmap Host + Port", (host + portDetail).joined(separator: "\t"))
-                viewModel.processInput((host + portDetail).joined(separator: "\t"))
+                let input = ([hostname] + portDetail).joined(separator: "\t")
+                viewModel.processInput(input, metadata: metadata)
 
                 var cleanedPortDetail = portDetail
                 if let versionIndex = portDetail.firstIndex(of: "version"), versionIndex + 1 < portDetail.count {
                     cleanedPortDetail.remove(at: versionIndex + 1) // Remove the element after "version"
                     cleanedPortDetail.remove(at: versionIndex) // Remove "version"
                 }
-                
+
                 for detail in details {
-//                    print("Nmap Host + Port portDetail=", portDetail, " detail=", detail)
-//                    viewModel.processInput((host + portDetail + detail).joined(separator: "\t"))
-                    viewModel.processInput((host + cleanedPortDetail + detail).joined(separator: "\t"))
+                    let detailInput = ([hostname] + cleanedPortDetail + detail).joined(separator: "\t")
+                    viewModel.processInput(detailInput, metadata: metadata)
                 }
             }
         }
     }
+
 }
 
 func findHost(lines: inout IndexingIterator<[String]>) -> [String]? {
@@ -47,16 +55,17 @@ func findHost(lines: inout IndexingIterator<[String]>) -> [String]? {
         if let match = HOST.firstMatch(in: line, options: [], range: range) {
             if let hostRange = Range(match.range(at: 1), in: line) {
                 let host = String(line[hostRange])
-                if match.range(at: 2).location != NSNotFound, let addressRange = Range(match.range(at: 2), in: line) {
-                    return [host, String(line[addressRange])]
+                if match.range(at: 3).location != NSNotFound, let addressRange = Range(match.range(at: 3), in: line) {
+                    return [host, String(line[addressRange])]   // return [hostname, ipaddress] if scaned by hostname
                 } else {
-                    return [host]
+                    return [host]   // return [ipaddress] only
                 }
             }
         }
     }
     return ["host", "unknown"]
 }
+
 
 func skipToPortHeader(lines: inout IndexingIterator<[String]>) {
     let headerPattern = try! NSRegularExpression(pattern: "PORT\\s+STATE\\s+SERVICE")

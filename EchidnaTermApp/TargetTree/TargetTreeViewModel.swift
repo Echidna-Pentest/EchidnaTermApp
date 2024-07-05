@@ -26,7 +26,7 @@ class TargetTreeViewModel: ObservableObject {
                 let data = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
                 var targets = try decoder.decode([Target].self, from: data)
-//                print("loadJSON targets=", targets)
+                print("loadJSON targets=", targets)
                 targets.sort { $0.id < $1.id }
                 self.targets = buildTree(targets: targets)
             } catch {
@@ -86,19 +86,19 @@ class TargetTreeViewModel: ObservableObject {
             }
         }
 //        print("buildTree    ", targetMap)
-//        print("buildTree    ", targetMap.mapValues { "\($0)" })
+        print("buildTree    ", targetMap.mapValues { "\($0)" })
         return rootTargets
     }
 
 //    func addTarget(value: String, toParent parentId: Int) -> Int {
-    func addTarget(key:String, value: String, toParent parentId: Int) -> Int {
-//        print("addTarget: parentId", parentId)
+    func addTarget(key:String, value: String, toParent parentId: Int, metadata: [String: Any]? = nil) -> Int {
+        print("addTarget: metadata=", metadata)
         if var parent = targetMap[parentId] {
             if let existingChild = parent.hasValues(withValue: value) {
 //                print("Child with value '\(value)' already exists: \(existingChild)")
                 return existingChild.id
             }
-            if let newChild = parent.add(key: key, value: value) {
+            if let newChild = parent.add(key: key, value: value, metadata: metadata) {
 //                setHighlight(newChild)
                 let vulnerabilityDatabase = VulnerabilityDatabase()
                 let chatViewModel = ChatViewModel.shared
@@ -175,7 +175,7 @@ class TargetTreeViewModel: ObservableObject {
     }
 
     // New function to process input
-    func processInput(_ input: String, key: String? = nil) {
+    func processInput(_ input: String, key: String? = nil, metadata: [String: Any]? = nil) {
         let lines = input.components(separatedBy: "\n").filter { !$0.isEmpty }
         for line in lines {
             let components = line.components(separatedBy: "\t")
@@ -190,8 +190,13 @@ class TargetTreeViewModel: ObservableObject {
             if let ipNode = targetMap.values.first(where: { $0.value == ip }) {
                 parentId = ipNode.id
             } else {
-                // Add IP node
-                parentId = addTarget(key: "host", value: ip, toParent: 0)
+                // Add IP node with "ipaddress" metadata if available
+                var ipMetadata: [String: Any]? = nil
+                if let metadata = metadata, let ipAddress = metadata["ipaddress"] as? String {
+                    ipMetadata = ["ipaddress": ipAddress]
+                }
+//                print("ipaddress contains ipMetadata=", ipMetadata)
+                parentId = addTarget(key: "host", value: ip, toParent: 0, metadata: ipMetadata)
             }
 
             // Check if Port node exists
@@ -212,8 +217,9 @@ class TargetTreeViewModel: ObservableObject {
 
         let targets = buildTree(targets: Array(targetMap.values))
         // Do something with the targets, e.g., assign to a property or process further
-//        print(targets)  // Just for debugging
+    //    print(targets)  // Just for debugging
     }
+
     
     func saveJSON() {
         do {
@@ -278,19 +284,56 @@ class Target: Identifiable, Codable, CustomStringConvertible {
     let value: String
     var parent: Int?
     var children: [Int]?
+    var metadata: [String: Any]?
     @Published var shouldHighlight: Bool = false
 
     enum CodingKeys: String, CodingKey {
-        case id, key, value, parent, children
+        case id
+        case key
+        case value
+        case parent
+        case children
+        case metadata
+        case shouldHighlight
     }
 
-    init(id: Int, key: String, value: String, parent: Int?, children: [Int]?) {
+    init(id: Int, key: String, value: String, parent: Int? = nil, children: [Int]? = nil, metadata: [String: Any]? = nil, shouldHighlight: Bool = false) {
         self.id = id
         self.key = key
         self.value = value
         self.parent = parent
         self.children = children
+        self.metadata = metadata
+        self.shouldHighlight = shouldHighlight
     }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        key = try container.decode(String.self, forKey: .key)
+        value = try container.decode(String.self, forKey: .value)
+        parent = try container.decodeIfPresent(Int.self, forKey: .parent)
+        children = try container.decodeIfPresent([Int].self, forKey: .children)
+        shouldHighlight = try container.decodeIfPresent(Bool.self, forKey: .shouldHighlight) ?? false
+        if let metadataData = try container.decodeIfPresent(Data.self, forKey: .metadata) {
+            metadata = try JSONSerialization.jsonObject(with: metadataData, options: []) as? [String: Any]
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(key, forKey: .key)
+        try container.encode(value, forKey: .value)
+        try container.encode(parent, forKey: .parent)
+        try container.encode(children, forKey: .children)
+        try container.encode(shouldHighlight, forKey: .shouldHighlight)
+        if let metadata = metadata {
+            let metadataData = try JSONSerialization.data(withJSONObject: metadata, options: [])
+            try container.encode(metadataData, forKey: .metadata)
+        }
+    }
+
 
     // Dynamically resolve children targets
     var childrenTargets: [Target]? {
@@ -300,7 +343,7 @@ class Target: Identifiable, Codable, CustomStringConvertible {
         }
     }
 
-    func add(key:String, value: String) -> Target? {
+    func add(key:String, value: String, metadata: [String: Any]? = nil) -> Target? {
         // Check if a child with the same value already exists
         if let children = self.children {
             for childId in children {
@@ -315,7 +358,7 @@ class Target: Identifiable, Codable, CustomStringConvertible {
 
         // Create a new child
         let newId = (targetMap.keys.max() ?? 0) + 1
-        let child = Target(id: newId, key: key, value: value, parent: self.id, children: nil)
+        let child = Target(id: newId, key: key, value: value, parent: self.id, children: nil, metadata: metadata)
 
         // Update the parent's children array
         if self.children == nil {
@@ -364,6 +407,7 @@ class Target: Identifiable, Codable, CustomStringConvertible {
     }
     
     var description: String {
-        return "Target(id: \(id), key: \(key), value: \(value), parent: \(parent ?? -1), children: \(children ?? []), shouldHighlight: \(shouldHighlight))"
+        return "Target(id: \(id), key: \(key), value: \(value), parent: \(parent ?? -1), children: \(children ?? []), shouldHighlight: \(shouldHighlight), metadata: \(String(describing: metadata))"
     }
+    
 }
