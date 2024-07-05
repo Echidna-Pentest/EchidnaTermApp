@@ -5,7 +5,7 @@ struct TargetTreeView: View {
     @State private var selectedTarget: Target? = nil
     @State private var showingAddTargetSheet = false
     @State private var showingRemoveTargetAlert = false
-    @State private var targetForAdd: Target? = nil
+    @State private var targetForAdd: Target? = targetMap[0]
     @State private var targetForRemove: Target? = nil
     @State private var expandedNodes: Set<Int> = []  // Set to keep track of expanded nodes
     @State private var searchText: String = ""  // State to hold the search text
@@ -64,14 +64,22 @@ struct TargetTreeView: View {
             }
             .alert(isPresented: $showingRemoveTargetAlert) {
                 if let targetForRemove = targetForRemove {
-                    return Alert(
-                        title: Text("Confirm Removal"),
-                        message: Text("Is it ok to remove \(targetForRemove.value)?"),
-                        primaryButton: .destructive(Text("Yes")) {
-                            viewModel.removeTarget(target: targetForRemove)
-                        },
-                        secondaryButton: .cancel()
-                    )
+                    if targetForRemove.id == 0 {
+                        return Alert(
+                            title: Text("Error"),
+                            message: Text("Root Target cannot be removed."),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    } else {
+                        return Alert(
+                            title: Text("Confirm Removal"),
+                            message: Text("Is it ok to remove \(targetForRemove.value)?"),
+                            primaryButton: .destructive(Text("Yes")) {
+                                viewModel.removeTarget(target: targetForRemove)
+                            },
+                            secondaryButton: .cancel()
+                        )
+                    }
                 } else {
                     return Alert(title: Text("Error"))
                 }
