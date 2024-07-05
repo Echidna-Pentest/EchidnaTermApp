@@ -19,7 +19,7 @@ struct AddEditAPIKeyView: View {
         NavigationView {
             Form {
                 Section(header: Text("API Key")) {
-                    TextField("API Key", text: $apiKey)
+                    SecureField("API Key", text: $apiKey)
                 }
                 
                 Button(action: {

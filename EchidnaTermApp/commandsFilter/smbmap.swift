@@ -54,12 +54,6 @@ func targets(reader: LineReader) -> [(String, String, String)] {
                     let details2 = "\tPermissions: \(scandetails[2].trimmingCharacters(in: .whitespacesAndNewlines))"
 //                    print("detail2=", details2)
                     let details3 = "\tComment: \(scandetails[3].trimmingCharacters(in: .whitespacesAndNewlines))"
-//                    print("detail3=", details3)
-//                    result.append((host, "\(port)", "SMBDrive:\t\(details1)"))
-//                    result.append((host, "port: \(port)", "SMBDrive: \(details1)\(details2)"))
-//                    result.append((host, "port: \(port)", "SMBDrive: \(details1)\(details3)"))
-//                    result.append((host, "\(port)", "SMBDrive: \(details1)\(details2)"))
-//                    result.append((host, "\(port)", "SMBDrive: \(details1)\(details3)"))
                     result.append((host, "\(port)", "\(details1)\(details2)"))
                     result.append((host, "\(port)", "\(details1)\(details3)"))
                 }
