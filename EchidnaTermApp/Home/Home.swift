@@ -221,12 +221,6 @@ struct HomeView: View {
                         Label("Keys", systemImage: "key")
                     })
                 NavigationLink(
-                    destination: APIKeyManagementView(),
-                    label: {
-                        Label("API Keys", systemImage: "key")
-                    })
-
-                NavigationLink(
                     destination: HostKeysList (),
                     label: {
                         Label("Known Hosts", systemImage: "lock.desktopcomputer")
@@ -247,6 +241,21 @@ struct HomeView: View {
                     label: {
                         Label("History", systemImage: "clock")
                     })
+
+                NavigationLink(
+                    destination: TargetGraphView(),
+                    label: {
+                        Label("Target Graph", systemImage: "network")
+                    })
+
+
+                NavigationLink(
+                    destination: APIKeyManagementView(),
+                    label: {
+                        Label("API Keys", systemImage: "key")
+                    })
+
+
                 NavigationLink(
                     destination: TargetTreeView(),
                     label: {
@@ -257,12 +266,6 @@ struct HomeView: View {
                     destination: CandidateCommandView(isSinglePage: true),
                     label: {
                         Label("Candidate Command", systemImage: "command")
-                    })
-
-                NavigationLink(
-                    destination: TargetGraphView(),
-                    label: {
-                        Label("Target Graph", systemImage: "network")
                     })
 
             }
