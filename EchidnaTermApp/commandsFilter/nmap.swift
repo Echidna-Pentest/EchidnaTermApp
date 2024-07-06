@@ -8,7 +8,7 @@
 
 import Foundation
 
-let HOST = try! NSRegularExpression(pattern: "^Nmap scan report for (\\S+)( \\(([^\\)]*)\\))?")
+let HOST = try! NSRegularExpression(pattern: "Nmap scan report for (\\S+)( \\(([^\\)]*)\\))?")
 
 func processNmapOutput(input: String) {
     let viewModel = TargetTreeViewModel.shared

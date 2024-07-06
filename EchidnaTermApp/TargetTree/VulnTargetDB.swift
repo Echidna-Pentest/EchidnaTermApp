@@ -59,7 +59,7 @@ class VulnerabilityDatabase {
 
     func searchValue(for targetValue: String, obj: [[String: Any]]? = nil, machineName: String? = nil) -> [String: Any]? {
         let database = obj ?? criticalScanDB
-        print("searchValue= datbase=", database)
+//        print("searchValue= datbase=", database)
 //        print("searchValue=", database)
         for dict in database {
             for (prop, value) in dict {
