@@ -31,6 +31,7 @@ class CommandManager: ObservableObject {
     static let shared = CommandManager()
     @Published var commands: [Command] = []
     var hostname = ""
+    var isInitialShellEstablished = false
     
     init() {
         loadCommandsFromFile()
@@ -88,6 +89,13 @@ class CommandManager: ObservableObject {
     func setHostname(hostname: String) {
         self.hostname = hostname
     }
+
+    func setInitialShellEstablishedFlag(isInitialShellEstablished: Bool) {
+        self.isInitialShellEstablished = isInitialShellEstablished
+//        objectWillChange.send()
+//        print("setInitialShellEstablishedFlag=", self.isInitialShellEstablished)
+    }
+
     
     func updateCandidateCommand(target: Target) {
         for command in commands {
@@ -115,7 +123,13 @@ class CommandManager: ObservableObject {
     
     private func shouldDisplayCommand(command: Command, for target: Target) -> Bool {
         var currentTarget: Target? = target
-
+//        print("shouldDisplayCommand: command=", command.condition)
+        
+        if command.condition.contains("isInitialShellEstablished") {
+//            print("shouldDisplayCommand: CommandManager.shared.isInitialShellEstablished=", CommandManager.shared.isInitialShellEstablished)
+            return CommandManager.shared.isInitialShellEstablished
+        }
+        
         while let target = currentTarget {
             for keyword in command.condition {
                 if target.value.contains(keyword) {

