@@ -5,8 +5,10 @@ struct TargetTreeView: View {
     @State private var selectedTarget: Target? = nil
     @State private var showingAddTargetSheet = false
     @State private var showingRemoveTargetAlert = false
+    @State private var showingEditTargetSheet = false
     @State private var targetForAdd: Target? = targetMap[0]
     @State private var targetForRemove: Target? = nil
+    @State private var targetForEdit: Target? = nil
     @State private var expandedNodes: Set<Int> = []  // Set to keep track of expanded nodes
     @State private var searchText: String = ""  // State to hold the search text
     var rootTargets: [Target]?
@@ -36,7 +38,8 @@ struct TargetTreeView: View {
                         selectedTarget: $selectedTarget,
                         handleAddTarget: handleAddTarget,
                         handleRemoveTarget: handleRemoveTarget,
-                        handleTargetSelection: handleTargetSelection
+                        handleTargetSelection: handleTargetSelection,
+                        handleEditTarget: handleEditTarget
                     )
                 }
             }
@@ -59,6 +62,13 @@ struct TargetTreeView: View {
                 if let targetForAdd = targetForAdd {
                     AddTargetSheet(isPresented: $showingAddTargetSheet, parentTarget: targetForAdd) { key, value in
                         viewModel.addTarget(key: key, value: value, toParent: targetForAdd.id)
+                    }
+                }
+            }
+            .sheet(isPresented: $showingEditTargetSheet) {
+                if let targetForEdit = targetForEdit {
+                    EditTargetSheet(isPresented: $showingEditTargetSheet, target: targetForEdit) { newValue in
+                        viewModel.updateTarget(targetForEdit, with: newValue)
                     }
                 }
             }
@@ -117,8 +127,12 @@ struct TargetTreeView: View {
         targetForRemove = target
         showingRemoveTargetAlert = true
     }
+    
+    private func handleEditTarget(target: Target) {
+        targetForEdit = target
+        showingEditTargetSheet = true
+    }
 }
-
 
 struct ExpandableRow: View {
     var target: Target
@@ -127,6 +141,7 @@ struct ExpandableRow: View {
     var handleAddTarget: (Target) -> Void
     var handleRemoveTarget: (Target) -> Void
     var handleTargetSelection: (Target) -> Void
+    var handleEditTarget: (Target) -> Void
     
     var body: some View {
         VStack {
@@ -139,6 +154,9 @@ struct ExpandableRow: View {
                     .onTapGesture {
                         selectedTarget = target
                         handleTargetSelection(target)
+                    }
+                    .onLongPressGesture {
+                        handleEditTarget(target)
                     }
                 
                 Spacer()
@@ -179,7 +197,8 @@ struct ExpandableRow: View {
                         selectedTarget: $selectedTarget,
                         handleAddTarget: handleAddTarget,
                         handleRemoveTarget: handleRemoveTarget,
-                        handleTargetSelection: handleTargetSelection
+                        handleTargetSelection: handleTargetSelection,
+                        handleEditTarget: handleEditTarget
                     )
                     .padding(.leading, 20)
                 }
@@ -192,6 +211,34 @@ struct ExpandableRow: View {
             expandedNodes.remove(target.id)
         } else {
             expandedNodes.insert(target.id)
+        }
+    }
+}
+
+struct EditTargetSheet: View {
+    @Binding var isPresented: Bool
+    var target: Target
+    var onUpdate: (String) -> Void
+    
+    @State private var newValue: String = ""
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Edit Target")) {
+                    TextField("Value", text: $newValue)
+                        .onAppear {
+                            newValue = target.value
+                        }
+                }
+            }
+            .navigationBarTitle("Edit Target", displayMode: .inline)
+            .navigationBarItems(leading: Button("Cancel") {
+                isPresented = false
+            }, trailing: Button("Save") {
+                onUpdate(newValue)
+                isPresented = false
+            })
         }
     }
 }
