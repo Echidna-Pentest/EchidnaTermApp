@@ -1,6 +1,6 @@
 [
   {
-    "value" : "192.168.137.0\/24",
+    "value" : "Target Network",
     "id" : 0,
     "children" : [
       1
@@ -14,7 +14,6 @@
     "parent" : 0,
     "key" : "host",
     "children" : [
-
     ]
   }
 ]
