@@ -8,7 +8,7 @@ struct TargetTreeView: View {
     @State private var showingEditTargetSheet = false
     @State private var targetForAdd: Target? = targetMap[0]
     @State private var targetForRemove: Target? = nil
-    @State private var targetForEdit: Target? = nil
+    @State private var targetForEdit: Target? = targetMap[0]
     @State private var expandedNodes: Set<Int> = []  // Set to keep track of expanded nodes
     @State private var searchText: String = ""  // State to hold the search text
     var rootTargets: [Target]?

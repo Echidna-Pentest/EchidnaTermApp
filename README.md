@@ -1,12 +1,18 @@
 # EchidnaTermApp
 
-<img src="img/EchidnaIcon180.PNG">
+<img src="img/EchidnaIcon180.PNG"　width="25%">
 
 EchidnaTermApp is a terminal emulator and SSH client application for iOS  specialized for learning cyber attack techniques.
 This tool is created based on SwiftTermApp and implemented by integrating the features of Echidna to learn Cyber Security. 
 Both of them are open source, and SwiftTermApp is available in the App Store for iPhone and iPad.
 - https://github.com/migueldeicaza/SwiftTermApp
 - https://github.com/Echidna-Pentest/Echidna
+
+The main page of EchidnaTermApp is as follows, where the terminal, target information, and candidate commands for attack are displayed simultaneously.
+
+
+<img src="img/mainPage.png" width="60%">
+
 
 In addition to the features of SwiftTermApp, the following features from Echidna have been additionally implemented to facilitate learning cyber attack techniques.
 
@@ -24,7 +30,7 @@ Unlike Echidna, no setup work is required on Kali Linux; you can use it just by 
 
 Since it can be run on an iPad, my goal is to make it possible to casually learn about hacking even when relaxing in the living room or on the sofa, even for students or children.
 
-<img src="img/idealImage.png" width="50%">
+<img src="img/idealImage.png" width="25%">
 
 ### Target Tree
 Extract command output results and automatically reflect them in the Target Tree Component.
@@ -33,7 +39,12 @@ Implementing a parser script for each command is required to reflect the termina
 Parser scripts for the below commands are implemented currently.
 - Scan commands (commands to use before initial shell)
   
-  hydra, nikto, nmap, ping, smbmap, whatweb
+  nmap, ping, hydra, nikto, smbmap, whatweb
+
+You can add and remove target nodes by pressing plus/minus button.
+You can also edit target node values by long pressing the target node. 
+
+<img src="img/editNode.png" width="40%">
 
 
 ### Command Suggestion
@@ -74,16 +85,13 @@ ms17-010, exploit for vsftpd 2.3.4, HttpFileServer 2.3.x, tomcat, sqlmap, etc
 
 ftp, ssh, crackmapexec, vncviewer, telnet, rlogin, etc
 
-You can also add your own command from CandidateCommand Page in real time.
+You can add your own command from CandidateCommand Page in real time.
 
 <img src="img/candidateCommand.png" width="60%">
 
-### Chat and AI Analysis
-If you enable the AI ​​Analysis option on the API Key page and register your OpenAI API Key, the terminal output will be analyzed using the OpenAI API.
-If you add @AI to the beginning, Echidna will analyze the received text using the OpenAI API.
-Analysis results are returned through the chat component.
+You can press and hold a command to see its description.
 
-<img src="img/chat.png" width="50%">
+<img src="img/commandExplanation.png" width="60%">
 
 
 ### Target Graph
@@ -92,3 +100,13 @@ It's possible to search target information and exeute commands from this graph.
 This Graph will be helpful when you attack multiple hosts in a Network like Hack The Box Pro Labs, VULNLAB, etc.
 
 <img src="img/graph.png" width="50%">
+
+
+
+### Chat and AI Analysis
+If you enable the AI ​​Analysis option on the API Key page and register your OpenAI API Key, the terminal output will be analyzed using the OpenAI API.
+If you add @AI to the beginning, Echidna will analyze the received text using the OpenAI API.
+Analysis results are returned through the chat component.
+
+<img src="img/chat.png" width="50%">
+

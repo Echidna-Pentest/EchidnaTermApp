@@ -1,52 +1,55 @@
 {
   "images" : [
     {
-      "filename" : "iPhone_Notifications_20_2x.png",
+      "filename" : "EchidnaIcon152 12.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "iPhone_Notifications_20_3x.png",
+      "filename" : "EchidnaIcon152 11.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
+      "filename" : "EchidnaIcon152 14.png",
       "idiom" : "iphone",
       "scale" : "1x",
       "size" : "29x29"
     },
     {
-      "filename" : "EchidnaIcon76 13.png",
+      "filename" : "EchidnaIcon152 13.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "EchidnaIcon76 12.png",
+      "filename" : "EchidnaIcon152 15.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
-      "filename" : "EchidnaIcon76 11.png",
+      "filename" : "EchidnaIcon152 19.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "EchidnaIcon76 10.png",
+      "filename" : "EchidnaIcon152 18.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "40x40"
     },
     {
+      "filename" : "EchidnaIcon152 16.png",
       "idiom" : "iphone",
       "scale" : "1x",
       "size" : "57x57"
     },
     {
+      "filename" : "EchidnaIcon152 17.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "57x57"
@@ -64,60 +67,61 @@
       "size" : "60x60"
     },
     {
-      "filename" : "EchidnaIcon76 9.png",
+      "filename" : "EchidnaIcon152 10.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "20x20"
     },
     {
-      "filename" : "EchidnaIcon76 8.png",
+      "filename" : "EchidnaIcon152 9.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "EchidnaIcon76 7.png",
+      "filename" : "EchidnaIcon152 8.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "29x29"
     },
     {
-      "filename" : "EchidnaIcon76 6.png",
+      "filename" : "EchidnaIcon152 7.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "EchidnaIcon76 5.png",
+      "filename" : "EchidnaIcon152 6.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "40x40"
     },
     {
-      "filename" : "EchidnaIcon76 4.png",
+      "filename" : "EchidnaIcon152 5.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "EchidnaIcon76 3.png",
+      "filename" : "EchidnaIcon152 3.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "50x50"
     },
     {
+      "filename" : "EchidnaIcon152 4.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "50x50"
     },
     {
-      "filename" : "EchidnaIcon76 2.png",
+      "filename" : "EchidnaIcon152 2.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "72x72"
     },
     {
-      "filename" : "EchidnaIcon76 1.png",
+      "filename" : "EchidnaIcon152 1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "72x72"
@@ -129,7 +133,7 @@
       "size" : "76x76"
     },
     {
-      "filename" : "EchidnaIcon120 1.png",
+      "filename" : "EchidnaIcon152.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "76x76"
