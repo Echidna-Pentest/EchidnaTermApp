@@ -1,6 +1,6 @@
 # EchidnaTermApp
 
-<img src="img/EchidnaIcon180.PNG" width="25%">
+<img src="img/EchidnaIcon180.png" width="25%">
 
 EchidnaTermApp is a terminal emulator and SSH client application for iOS  specialized for learning cyber attack techniques.
 This tool is created based on SwiftTermApp and implemented by integrating the features of Echidna to learn Cyber Security. 
