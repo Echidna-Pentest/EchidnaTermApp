@@ -15,7 +15,7 @@ class OpenAIClient {
         self.apiKey = apiKey
     }
     
-    func analyzeText(input: String, analysisType: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func analyzeText(input: String, analysisType: String, isUserRequest: Bool = false, completion: @escaping (Result<String, Error>) -> Void) {
         guard let url = URL(string: apiUrl) else {
             completion(.failure(OpenAIClientError.invalidURL))
             return
@@ -25,21 +25,36 @@ class OpenAIClient {
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let parameters: [String: Any] = [
-            "model": "gpt-4",
-            "messages": [
-                ["role": "system", "content": "You are a penetration test assistant. Analyze the provided string for security risks, vulnerabilities, or potential for exploitation. For a 'HIGH RISK' finding, reply with 'HIGH RISK: ' plus briefly state the risk and necessary steps for exploitation within 150 words. For 'LOW RISK' or 'NONE', just simply reply with the category ('LOW RISK' or 'NONE') only.\n"],
-                ["role": "user", "content": generatePrompt(input: input, analysisType: analysisType)]
-            ],
-            "max_tokens": 150,
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "frequency_penalty": 0.0,
-            "presence_penalty": 0.0
-        ]
+        var parameters: [String: Any]
 
-
+        if isUserRequest {
+            parameters = [
+                "model": "gpt-4",
+                "messages": [
+                    ["role": "system", "content": "You are a penetration test assistant. Respond to the user's questions or requests\n"],
+                    ["role": "user", "content": generatePrompt(input: input, analysisType: analysisType)]
+                ],
+                "max_tokens": 150,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "frequency_penalty": 0.0,
+                "presence_penalty": 0.0
+            ]
+        } else {
+            parameters = [
+                "model": "gpt-4",
+                "messages": [
+                    ["role": "system", "content": "You are a penetration test assistant. Analyze the provided string for security risks, vulnerabilities, or potential for exploitation. For a 'HIGH RISK' finding, reply with 'HIGH RISK: ' plus briefly state the risk and necessary steps for exploitation within 150 words. For 'LOW RISK' or 'NONE', just simply reply with the category ('LOW RISK' or 'NONE') only.\n"],
+                    ["role": "user", "content": generatePrompt(input: input, analysisType: analysisType)]
+                ],
+                "max_tokens": 150,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "frequency_penalty": 0.0,
+                "presence_penalty": 0.0
+            ]
+        }
+            
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
         } catch {

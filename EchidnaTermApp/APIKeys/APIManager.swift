@@ -28,13 +28,13 @@ class APIManager {
 
         let client = OpenAIClient(apiKey: apiKey)
 
-        client.analyzeText(input: text, analysisType: "sentiment") { result in
+        client.analyzeText(input: text, analysisType: "penetration_testing", isUserRequest: fromUserRequest) { result in
             switch result {
             case .success(let analysis):
                 let chatViewModel = ChatViewModel.shared
                 chatViewModel.sendMessage(analysis, isUser: false)
             case .failure(let error):
-                print("Analysis Error: \(error.localizedDescription)")
+                print("Analysis Error: \(error)")
             }
         }
     }
