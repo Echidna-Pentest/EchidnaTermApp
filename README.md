@@ -100,6 +100,7 @@ It's possible to search target information and exeute commands from this graph.
 This Graph will be helpful when you attack multiple hosts in a Network like Hack The Box Pro Labs, VULNLAB, etc.
 
 <img src="img/graph.png" width="50%">
+
 ![](img/Graph.gif)
 
 
