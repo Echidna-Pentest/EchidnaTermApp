@@ -16,7 +16,7 @@ func processNmapOutput(input: String) {
 //    print("Nmap lines=", lines)
     var lineIterator = lines.makeIterator()
     if let host = findHost(lines: &lineIterator) {
-        print("procesNmapOutput: host=", host)
+//        print("procesNmapOutput: host=", host)
         skipToPortHeader(lines: &lineIterator)
         
         var metadata: [String: Any]? = nil

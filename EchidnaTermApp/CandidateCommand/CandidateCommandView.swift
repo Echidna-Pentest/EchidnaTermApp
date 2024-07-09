@@ -82,7 +82,7 @@ struct CandidateCommandView: View {
             }
         }
         .onAppear {
-            print("Commands loaded: \(commandManager.commands.count)")
+//            print("Commands loaded: \(commandManager.commands.count)")
         }
         .alert(isPresented: $showCommandDescription) {
             Alert(title: Text("Command Description"), message: Text(commandDescription), dismissButton: .default(Text("OK")))

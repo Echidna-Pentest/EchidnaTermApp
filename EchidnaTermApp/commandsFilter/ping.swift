@@ -10,7 +10,7 @@ func processPingOutput(_ input: String) {
     let linesReader = LinesReader(string: input)
 //    for target in targets(linesReader) {
     for target in targets(linesReader) {
-        print("ParserOutput*** ",target)
+//        print("ParserOutput*** ",target)
         //        print("remote\t\(target)")
 //        viewModel.addTarget(value: target, toParent: 0)
         viewModel.addTarget(key:"host", value: target, toParent: 0)

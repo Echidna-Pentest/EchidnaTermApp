@@ -183,7 +183,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
     // Execute parser process to add the result to TargetTree
     func processCommandOutputs(_ output: String, command: String) {
         let commandName = command.replacingOccurrences(of: " ", with: "_").lowercased()
-        print("processCommandOutpus commandName=", commandName)
+//        print("processCommandOutpus commandName=", commandName)
         switch commandName {
             case "ping":
                 processPingOutput(output)

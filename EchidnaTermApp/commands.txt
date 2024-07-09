@@ -228,7 +228,7 @@ group: Meterpreter Command
 [Echidna]
 description: cewl is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper
 template: cewl {host} > wordlist.txt
-condition: ["80", "443]
+condition: ["http", "https", "80", "443"]
 group: HTTP
 [end]
 
@@ -243,7 +243,7 @@ template: hydra {host} -l user -e nsr
 template: hydra {host} -l user -e nsr {port.name}
 template: hydra {host} -L $userfile$ -e nsr
 template: hydra {host} -L $userfile$ -e nsr {port.name}
-condition: ["ftp", "ssh", "http", "https", ""RDP", "21", "22", "80", "443", """3389"]
+condition: ["ftp", "ssh", "http", "https", ""RDP", "21", "22", "80", "443", "3389"]
 group: Bruteforce attack (hydra)
 [end]
 
