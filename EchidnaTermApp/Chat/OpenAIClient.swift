@@ -97,8 +97,8 @@ class OpenAIClient {
     
     private func generatePrompt(input: String, analysisType: String) -> String {
         switch analysisType {
-        case "sentiment":
-            return "Analyze the sentiment of the following text: \(input)"
+        case "penetration_testing":
+            return "Respond to the the following text: \(input)"
         case "summarize":
             return "Summarize the following text: \(input)"
         case "translate":
