@@ -31,7 +31,13 @@ func processNmapOutput(input: String) {
 
             for portDetail in portDetails {
                 let input = ([hostname] + portDetail).joined(separator: "\t")
-                viewModel.processInput(input, metadata: metadata)
+//                print("port: portDetail[0]=", portDetail[0], "portDetail[1]=", portDetail[1])
+                if portDetail.count > 2 && portDetail[2] == "version" {
+//                    viewModel.processInput("", metadata: metadata)
+                    viewModel.processInput("\(hostname)\t\(portDetail[0])\t\(portDetail[1])\t\(portDetail[3].trimmingCharacters(in: .whitespacesAndNewlines))", key: "version")
+                } else {
+                    viewModel.processInput(input, metadata: metadata)
+                }
 
                 var cleanedPortDetail = portDetail
                 if let versionIndex = portDetail.firstIndex(of: "version"), versionIndex + 1 < portDetail.count {
