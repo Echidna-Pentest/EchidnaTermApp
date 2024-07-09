@@ -10,7 +10,7 @@ Both of them are open source, and SwiftTermApp is available in the App Store for
 
 The main page of EchidnaTermApp is as follows, where the terminal, target information, and candidate commands for attack are displayed simultaneously.
 
-
+![](img/Main.gif)
 <img src="img/mainPage.png" width="60%">
 
 
@@ -100,7 +100,7 @@ It's possible to search target information and exeute commands from this graph.
 This Graph will be helpful when you attack multiple hosts in a Network like Hack The Box Pro Labs, VULNLAB, etc.
 
 <img src="img/graph.png" width="50%">
-
+![](img/Graph.gif)
 
 
 ### Chat and AI Analysis
