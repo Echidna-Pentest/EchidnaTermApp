@@ -8,6 +8,9 @@ class TargetTreeViewModel: ObservableObject {
     @Published var searchResult: Target? = nil
     
     init() {
+        let initialTarget = Target(id: 0, key: "Network", value: "Target Network", parent: -1, children: [])
+        targets.append(initialTarget)
+        targetMap[0] = initialTarget
         loadJSON()
     }
 
@@ -92,7 +95,7 @@ class TargetTreeViewModel: ObservableObject {
 
 //    func addTarget(value: String, toParent parentId: Int) -> Int {
     func addTarget(key:String, value: String, toParent parentId: Int, metadata: [String: Any]? = nil) -> Int {
-        print("addTarget: metadata=", metadata)
+//        print("addTarget: metadata=", metadata)
         if var parent = targetMap[parentId] {
             if let existingChild = parent.hasValues(withValue: value) {
 //                print("Child with value '\(value)' already exists: \(existingChild)")
@@ -123,7 +126,7 @@ class TargetTreeViewModel: ObservableObject {
                         print("Error: machine_name not found or not a String in result")
                     }
                 } else {
-                    print("Not found: targetValues=", trimmedValue)
+//                    print("Not found: targetValues=", trimmedValue)
                 }
                 
                 targetMap[parentId] = parent
