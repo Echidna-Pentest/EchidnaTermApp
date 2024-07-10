@@ -41,7 +41,7 @@ struct AddCommandView: View {
             .navigationBarItems(leading: Button("Cancel") {
                 presentationMode.wrappedValue.dismiss()
             }, trailing: Button("Save") {
-                let conditions = condition.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+                let conditions: [String] = condition.isEmpty ? [] : condition.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
                 let newCommand = Command(
                     template: template,
                     patterns: [pattern],
