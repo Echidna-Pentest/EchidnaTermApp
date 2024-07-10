@@ -171,8 +171,7 @@ group: FTP Command
 [Echidna]
 description: search exploit code
 template: searchsploit {version}
-template: searchsploit -m {exploitPath}
-condition: ["exploitPath", "version"]
+condition: ["version"]
 group: Exploit
 [end]
 

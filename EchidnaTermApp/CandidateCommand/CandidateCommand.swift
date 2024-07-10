@@ -135,6 +135,9 @@ class CommandManager: ObservableObject {
                 if target.value.contains(keyword) {
                     return true
                 }
+                if target.key.contains(keyword) {
+                    return true
+                }
             }
             if let parentId = target.parent {
                 currentTarget = targetMap[parentId]
