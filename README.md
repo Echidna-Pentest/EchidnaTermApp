@@ -1,4 +1,4 @@
-# EchidnaTermApp
+# EchidnaTermApp: Penetration Test Assist Tool
 
 <img src="img/EchidnaIcon180.png" width="25%">
 

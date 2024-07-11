@@ -85,7 +85,7 @@ struct CreditsView: View {
             List {
                 // Seems like I no longer use it?
                 //LicenseShort (name: "LazyView", authors: "Chris Eidhof", license: "")
-                LicenseShort (name: "SwiftTermApp", url: "https://www.libssh2.org", authors: "libssh2 project", license: "libssh")
+                LicenseShort (name: "SwiftTermApp", url: "https://github.com/migueldeicaza/SwiftTermApp", authors: "Miguel de Icaza", license: "MIT")
 
                 LicenseShort (name: "libssh", url: "https://www.libssh2.org", authors: "libssh2 project", license: "libssh")
                 LicenseShort (name: "OpenSSL", authors: "Eric Young, OpenSSL project", license: "openssl_1_1_1h")

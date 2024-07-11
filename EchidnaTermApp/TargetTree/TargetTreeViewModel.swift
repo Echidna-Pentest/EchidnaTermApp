@@ -89,7 +89,7 @@ class TargetTreeViewModel: ObservableObject {
             }
         }
 //        print("buildTree    ", targetMap)
-//        print("buildTree    ", targetMap.mapValues { "\($0)" })
+        print("buildTree    ", targetMap.mapValues { "\($0)" })
         return rootTargets
     }
 
@@ -164,10 +164,14 @@ class TargetTreeViewModel: ObservableObject {
         self.targets = buildTree(targets: Array(targetMap.values))
     }
 
-    func updateTarget(_ target: Target, with newValue: String) {
+    func updateTarget(_ target: Target, with newKey: String, _ newValue: String, _ newMetadata: [String: Any]) {
         if let index = targets.firstIndex(where: { $0.id == target.id }) {
+            targets[index].key = newKey
             targets[index].value = newValue
+            targets[index].metadata = newMetadata
+            targetMap[target.id]?.key = newKey
             targetMap[target.id]?.value = newValue
+            targetMap[target.id]?.metadata = newMetadata
             self.targets = buildTree(targets: Array(targetMap.values))
             saveJSON()
         }
@@ -284,7 +288,7 @@ class TargetTreeViewModel: ObservableObject {
 
 class Target: Identifiable, Codable, CustomStringConvertible {
     let id: Int
-    let key: String
+    var key: String
     var value: String
     var parent: Int?
     var children: [Int]?

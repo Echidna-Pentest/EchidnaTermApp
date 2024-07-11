@@ -67,8 +67,8 @@ struct TargetTreeView: View {
             }
             .sheet(isPresented: $showingEditTargetSheet) {
                 if let targetForEdit = targetForEdit {
-                    EditTargetSheet(isPresented: $showingEditTargetSheet, target: targetForEdit) { newValue in
-                        viewModel.updateTarget(targetForEdit, with: newValue)
+                    EditTargetSheet(isPresented: $showingEditTargetSheet, target: targetForEdit) { newKey, newValue, newMetadata in
+                        viewModel.updateTarget(targetForEdit, with: newKey, newValue, newMetadata)
                     }
                 }
             }
@@ -218,27 +218,56 @@ struct ExpandableRow: View {
 struct EditTargetSheet: View {
     @Binding var isPresented: Bool
     var target: Target
-    var onUpdate: (String) -> Void
+    var onUpdate: (String, String, [String: Any]) -> Void
     
+    @State private var newKey: String = ""
     @State private var newValue: String = ""
+    @State private var newMetadata: [String: String] = [:]
     
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Edit Target")) {
-                    TextField("Value", text: $newValue)
-                        .onAppear {
-                            newValue = target.value
+                    HStack {
+                        Text("Key")
+                        Spacer()
+                        TextField("Key", text: $newKey)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Value")
+                        Spacer()
+                        TextField("Value", text: $newValue)
+                            .multilineTextAlignment(.trailing)
+                    }
+                }
+                Section(header: Text("Metadata")) {
+                    ForEach(newMetadata.keys.sorted(), id: \.self) { key in
+                        HStack {
+                            Text(key)
+                            Spacer()
+                            TextField("Value", text: Binding(
+                                get: { newMetadata[key] ?? "" },
+                                set: { newMetadata[key] = $0 }
+                            ))
+                            .multilineTextAlignment(.trailing)
                         }
+                    }
                 }
             }
             .navigationBarTitle("Edit Target", displayMode: .inline)
             .navigationBarItems(leading: Button("Cancel") {
                 isPresented = false
             }, trailing: Button("Save") {
-                onUpdate(newValue)
+                let updatedMetadata = newMetadata.mapValues { $0 as Any }
+                onUpdate(newKey, newValue, updatedMetadata)
                 isPresented = false
             })
+            .onAppear {
+                newKey = target.key
+                newValue = target.value
+                newMetadata = target.metadata?.mapValues { "\($0)" } ?? [:]
+            }
         }
     }
 }
