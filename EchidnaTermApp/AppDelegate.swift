@@ -64,8 +64,10 @@ var globalDataController = DataController ()
                     if newPhase == .background {
                         extendLifetime ()
                         TargetTreeViewModel.shared.saveJSON()
+                        CommandManager.shared.saveCommandsToFile()
                     }else if newPhase == .inactive {
                         TargetTreeViewModel.shared.saveJSON()
+                        CommandManager.shared.saveCommandsToFile()
                     }/*else if newPhase == .active {
                         TargetTreeViewModel.shared.loadJSON()
                     }*/
@@ -91,15 +93,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         print("applicationWillTerminate")
         TargetTreeViewModel.shared.saveJSON()
+        CommandManager.shared.saveCommandsToFile()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         print("applicationDidEnterBackground")
         TargetTreeViewModel.shared.saveJSON()
+        CommandManager.shared.saveCommandsToFile()
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
         print("applicationWillResignActive")
         TargetTreeViewModel.shared.saveJSON()
+        CommandManager.shared.saveCommandsToFile()
     }
 }

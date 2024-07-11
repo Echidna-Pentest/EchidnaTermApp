@@ -38,6 +38,9 @@ struct CandidateCommandView: View {
                         ForEach(commands) { command in
                             commandRow(command: command)
                         }
+                        .onDelete { indices in
+                            removeCommands(at: indices, from: group)
+                        }
                     } label: {
                         Text(group)
                             .font(.subheadline)
@@ -129,5 +132,22 @@ struct CandidateCommandView: View {
     private func showCommandDescription(command: Command) {
         commandDescription = command.description
         showCommandDescription = true
+    }
+    
+    private func removeCommands(at offsets: IndexSet, from group: String) {
+        let commandsInGroup = commandManager.commands.filter { $0.group == group }
+        for index in offsets {
+            if let command = commandsInGroup[safe: index] {
+                if let commandIndex = commandManager.commands.firstIndex(where: { $0.id == command.id }) {
+                    commandManager.commands.remove(at: commandIndex)
+                }
+            }
+        }
+    }
+}
+
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }

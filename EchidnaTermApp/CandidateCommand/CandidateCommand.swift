@@ -34,12 +34,38 @@ class CommandManager: ObservableObject {
     var isInitialShellEstablished = false
     
     init() {
+        copyCommandsFileIfNeeded()
         loadCommandsFromFile()
     }
     
+    func copyCommandsFileIfNeeded() {
+        let fileManager = FileManager.default
+        let documentDirectory = getDocumentsDirectory()
+        let destinationURL = documentDirectory.appendingPathComponent("commands.txt")
+        
+        guard !fileManager.fileExists(atPath: destinationURL.path) else {
+            print("commands.txt already exists at \(destinationURL.path)")
+            return
+        }
+        
+        if let sourceURL = Bundle.main.url(forResource: "commands", withExtension: "txt") {
+            print("commands.txt found in bundle at \(sourceURL.path)")
+            do {
+                try fileManager.copyItem(at: sourceURL, to: destinationURL)
+                print("commands.txt successfully copied to \(destinationURL.path)")
+            } catch {
+                print("Failed to copy commands.txt: \(error)")
+            }
+        } else {
+            print("commands.txt not found in bundle")
+        }
+    }
+    
     func loadCommandsFromFile() {
-        guard let fileURL = Bundle.main.url(forResource: "commands", withExtension: "txt") else {
-            print("commands.txt not found")
+        let fileURL = getDocumentsDirectory().appendingPathComponent("commands.txt")
+        
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            print("commands.txt not found at \(fileURL.path)")
             return
         }
         
@@ -84,6 +110,43 @@ class CommandManager: ObservableObject {
         } catch {
             print("Error reading commands.txt: \(error)")
         }
+    }
+    
+    func saveCommandsToFile() {
+        print("saveCommandsToFile")
+        var fileContents = ""
+        
+        for command in commands {
+            fileContents += "[Echidna]\n"
+            for pattern in command.patterns {
+                fileContents += "pattern: \(pattern)\n"
+            }
+            fileContents += "description: \(command.description)\n"
+            fileContents += "template: \(command.template)\n"
+            if !command.condition.isEmpty {
+                if let conditionData = try? JSONSerialization.data(withJSONObject: command.condition, options: []),
+                   let conditionString = String(data: conditionData, encoding: .utf8) {
+                    fileContents += "condition: \(conditionString)\n"
+                }
+            }
+            if let group = command.group {
+                fileContents += "group: \(group)\n"
+            }
+            fileContents += "[end]\n\n"
+        }
+        
+        let fileURL = getDocumentsDirectory().appendingPathComponent("commands.txt")
+        
+        do {
+            try fileContents.write(to: fileURL, atomically: true, encoding: .utf8)
+        } catch {
+            print("Failed to write to file: \(error)")
+        }
+    }
+    
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
     
     func setHostname(hostname: String) {
