@@ -14,6 +14,11 @@ The main page of EchidnaTermApp is as follows, where the terminal, target inform
 <img src="img/mainPage.png" width="60%">
 
 
+This is a demo of EchidnaTermApp being used on an actual iPad.
+
+![](img/iphoneiPad.gif)
+
+
 In addition to the features of SwiftTermApp, the following features from Echidna have been additionally implemented to facilitate learning cyber attack techniques.
 
 Some of the features:
@@ -101,7 +106,10 @@ This Graph will be helpful when you attack multiple hosts in a Network like Hack
 
 <img src="img/graph.png" width="50%">
 
-![](img/Graph.gif)
+
+This gif demonstrates the Graph Function and adding Candidate Command.
+
+![Graph Function demo and adding Candidate Command](img/Graph.gif)
 
 
 ### Chat and AI Analysis
