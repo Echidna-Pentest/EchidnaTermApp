@@ -117,8 +117,6 @@
 /* No comment provided by engineer. */
 "Hello, World!" = "Hola, Mundo!";
 
-/* No comment provided by engineer. */
-"History" = "Historia";
 
 /* No comment provided by engineer. */
 "Host" = "Computadora";
@@ -149,9 +147,6 @@
 
 /* No comment provided by engineer. */
 "Live" = "En vivo";
-
-/* No comment provided by engineer. */
-"Location unavailable" = "La ubicación no está disponible";
 
 /* No comment provided by engineer. */
 "Moved" = "Cambió de lugar";
@@ -274,9 +269,6 @@
 "To get started, create a new host definition that includes the address of the machine you want to connect to, and the username to login as." = "Para empezar, cree una nueva definición de la computadora que incluya la dirección a conectarse, y el nombre de usuario.";
 
 /* No comment provided by engineer. */
-"Track Location" = "Seguir tu ubicación";
-
-/* No comment provided by engineer. */
 "Type" = "Tipo";
 
 /* No comment provided by engineer. */
@@ -340,8 +332,6 @@
 "Add Snippet" = "Añadir Fragmento";
 
 "Prevents sleep mode from activating while you are connected" = "Evita que el sistema de apagado del sistema se active cuando estás conectado a una computadora remota";
-
-"Tracks your location to keep the terminal running in the background, you can review the locations from the History tab" = "Al seguir tu ubicación, el sistema mantendrá la terminal ejecutándose en el fondo, sin terminar tu conección.  Puedes revisar la historia de lugares a los que te has conectado en la pestaña Historia.";
 
 "Name" = "Nombre";
 

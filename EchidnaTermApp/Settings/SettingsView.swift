@@ -24,7 +24,7 @@ class Settings: ObservableObject {
             defaults?.set (keepOn, forKey: "keepOn")
         }
     }
-    
+    /*
     @Published var locationTrack: Bool = false {
         didSet {
             if locationTrack {
@@ -35,7 +35,7 @@ class Settings: ObservableObject {
             defaults?.set (keepOn, forKey: "locationTrack")
         }
     }
-    
+    */
     @Published var beepConfig: BeepKind = .vibrate {
         didSet {
             defaults?.set (beepConfig.rawValue, forKey: "beepConfig")
@@ -352,7 +352,7 @@ struct SettingsViewCore: View {
     @Binding var fontName: String
     @Binding var fontSize: CGFloat
     @Binding var keepOn: Bool
-    @Binding var locationTrack: Bool
+//    @Binding var locationTrack: Bool
     @Binding var beepConfig: BeepKind
     @Binding var backgroundStyle: String
     
@@ -379,13 +379,14 @@ struct SettingsViewCore: View {
                         Text ("Prevents sleep mode from activating while you are connected").font (.subheadline).foregroundColor(.secondary)
                     }
                 }
+                /*
                 Toggle(isOn: $locationTrack) {
                     VStack (alignment: .leading){
                             Text ("Track Location")
                         Text ("Tracks your location to keep the terminal running in the background, you can review the locations from the History tab").font (.subheadline).foregroundColor(.secondary)
                     }
                 }
-
+*/
                 // Keyboard
                 Picker (selection: $beepConfig, label: Text ("Beep")) {
                     Text ("Silent").tag (BeepKind.silent)
@@ -405,7 +406,7 @@ struct SettingsView: View {
                           fontName: $gset.fontName,
                           fontSize: $gset.fontSize,
                           keepOn: $gset.keepOn,
-                          locationTrack: $gset.locationTrack,
+//                          locationTrack: $gset.locationTrack,
                           beepConfig: $gset.beepConfig,
                           backgroundStyle: $gset.backgroundStyle)
     }

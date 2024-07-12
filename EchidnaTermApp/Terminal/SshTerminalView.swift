@@ -414,7 +414,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
         history.hostkind = host.hostKind
         history.port = Int32 (host.port)
         
-        history.event = HistoryOperation.connected(at: getLocation()).getAsData()
+//        history.event = HistoryOperation.connected(at: getLocation()).getAsData()
         do {
             try moc.save()
         } catch (let err) {

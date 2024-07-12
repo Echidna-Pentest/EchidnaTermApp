@@ -37,9 +37,9 @@ var globalDataController = DataController ()
 //                Shake.registerUser(userId: userId)
 //            }
 //        }
-        if settings.locationTrack {
-            locationTrackerStart()
-        }
+//        if settings.locationTrack {
+//            locationTrackerStart()
+//        }
 //        for family in UIFont.familyNames.sorted() {
 //            let names = UIFont.fontNames(forFamilyName: family)
 //            print("Family: \(family) Font names: \(names)")
@@ -54,11 +54,11 @@ var globalDataController = DataController ()
             ContentView()
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                     if Connections.shared.sessions.count > 0 {
-                        locationTrackerResume()
+//                        locationTrackerResume()
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    locationTrackerSuspend()
+//                    locationTrackerSuspend()
                 }
                 .onChange(of: scenePhase) { newPhase in
                     if newPhase == .background {

@@ -215,33 +215,7 @@ struct HomeView: View {
                             .cornerRadius(3)
                             .foregroundColor(Color (.systemGray))
                     })
-                NavigationLink(
-                    destination: KeyManagementView(),
-                    label: {
-                        Label("Keys", systemImage: "key")
-                    })
-                NavigationLink(
-                    destination: HostKeysList (),
-                    label: {
-                        Label("Known Hosts", systemImage: "lock.desktopcomputer")
-                    })
-                NavigationLink(
-                    destination: SnippetBrowser(),
-                    label: {
-                        Label ("Snippets", systemImage: "note.text")
-                    })
-                NavigationLink(
-                    destination: SettingsView(),
-                    label: {
-                        Label("Settings", systemImage: "gear")
-                    })
-                NavigationLink(
-                    
-                    destination: HistoryView(),
-                    label: {
-                        Label("History", systemImage: "clock")
-                    })
-
+                
                 NavigationLink(
                     destination: TargetGraphView(),
                     label: {
@@ -268,6 +242,34 @@ struct HomeView: View {
                         Label("Candidate Command", systemImage: "command")
                     })
 
+                NavigationLink(
+                    destination: KeyManagementView(),
+                    label: {
+                        Label("Keys", systemImage: "key")
+                    })
+                NavigationLink(
+                    destination: HostKeysList (),
+                    label: {
+                        Label("Known Hosts", systemImage: "lock.desktopcomputer")
+                    })
+                NavigationLink(
+                    destination: SnippetBrowser(),
+                    label: {
+                        Label ("Snippets", systemImage: "note.text")
+                    })
+                NavigationLink(
+                    destination: SettingsView(),
+                    label: {
+                        Label("Settings", systemImage: "gear")
+                    })
+                /*
+                NavigationLink(
+                    
+                    destination: HistoryView(),
+                    label: {
+                        Label("History", systemImage: "clock")
+                    })
+*/
             }
             
             Section {

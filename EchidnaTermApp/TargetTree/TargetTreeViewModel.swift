@@ -89,7 +89,7 @@ class TargetTreeViewModel: ObservableObject {
             }
         }
 //        print("buildTree    ", targetMap)
-        print("buildTree    ", targetMap.mapValues { "\($0)" })
+//        print("buildTree    ", targetMap.mapValues { "\($0)" })
         return rootTargets
     }
 
