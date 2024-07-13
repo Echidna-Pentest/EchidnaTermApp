@@ -16,7 +16,7 @@ The main page of EchidnaTermApp is as follows, where the terminal, target inform
 
 This is a demo of EchidnaTermApp being used on an actual iPad.
 
-![](img/iphoneiPad.gif)
+![](img/iPhoneiPad.gif)
 
 
 In addition to the features of SwiftTermApp, the following features from Echidna have been additionally implemented to facilitate learning cyber attack techniques.

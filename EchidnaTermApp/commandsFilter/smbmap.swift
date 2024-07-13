@@ -6,10 +6,9 @@
 //  Copyright © 2024 Miguel de Icaza. All rights reserved.
 //
 import Foundation
-
+let viewModel = TargetTreeViewModel.shared
 
 func processSmbmapOutput(_ output: String) {
-    let viewModel = TargetTreeViewModel.shared
     let reader = LineReader(string: output)
 //    print("processSmbmapOutput      ", output)
     for target in targets(reader: reader) {
@@ -19,7 +18,7 @@ func processSmbmapOutput(_ output: String) {
     }
 }
 
-func findHost(lines: LineReader) -> (String, Int)? {
+func findHost(lines: LineReader) -> (String, String, Int)? {
     let HEADER = try! NSRegularExpression(pattern: "\\[\\+\\] IP: (\\S+):(\\S+)\\s+Name: (\\S+)", options: [])
 
     while let line = lines.nextLine() {
@@ -31,7 +30,7 @@ func findHost(lines: LineReader) -> (String, Int)? {
             let port = Int(portString) ?? 445
             _ = lines.nextLine() // skip 2 lines since line after header is no useful data
             _ = lines.nextLine()
-            return (host, port)
+            return (ip, host, port)
         }
     }
     return nil
@@ -40,7 +39,9 @@ func findHost(lines: LineReader) -> (String, Int)? {
 func targets(reader: LineReader) -> [(String, String, String)] {
     var result = [(String, String, String)]()
     while true {
-        guard let (host, port) = findHost(lines: reader) else { break }
+        guard let (ip, host, port) = findHost(lines: reader) else { break }
+        viewModel.processInput("\(host)\t\(port)", metadata: ["ipaddress": ip])
+
         while let line = reader.nextLine() {
             if line == "\n" { break }
             let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)

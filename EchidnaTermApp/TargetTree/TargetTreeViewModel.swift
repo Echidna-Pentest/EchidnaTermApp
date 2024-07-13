@@ -89,7 +89,6 @@ class TargetTreeViewModel: ObservableObject {
             }
         }
 //        print("buildTree    ", targetMap)
-//        print("buildTree    ", targetMap.mapValues { "\($0)" })
         return rootTargets
     }
 
@@ -187,7 +186,7 @@ class TargetTreeViewModel: ObservableObject {
         let lines = input.components(separatedBy: "\n").filter { !$0.isEmpty }
         for line in lines {
             let components = line.components(separatedBy: "\t")
-            guard components.count >= 3 else { continue }
+            guard components.count >= 2 else { continue }
 
             let ip = components[0]
             let port = components[1]
