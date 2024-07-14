@@ -109,16 +109,6 @@ struct CandidateCommandView: View {
         HStack {
             Text(command.displayName)
                 .font(.subheadline)
-                .contextMenu {
-                    Button(action: {
-                        selectedCommand = command
-//                        print("Selected command: \(selectedCommand?.displayName ?? "None")")
-                        showCommandDescription = true
-                    }) {
-                        Text("Show Description")
-                        Image(systemName: "info.circle")
-                    }
-                }
             Spacer()
         }
         .padding(.vertical, 4)
@@ -138,6 +128,7 @@ struct CandidateCommandView: View {
     }
     
     private func showCommandDescription(command: Command) {
+        selectedCommand = command
         commandDescription = command.description
         showCommandDescription = true
     }

