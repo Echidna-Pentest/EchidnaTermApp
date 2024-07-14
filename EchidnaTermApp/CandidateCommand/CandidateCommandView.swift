@@ -86,9 +86,15 @@ struct CandidateCommandView: View {
         }
         .onAppear {
 //            print("Commands loaded: \(commandManager.commands.count)")
+            // print("Commands loaded: \(commandManager.commands.count)")
         }
-        .alert(isPresented: $showCommandDescription) {
-            Alert(title: Text("Command Description"), message: Text(commandDescription), dismissButton: .default(Text("OK")))
+        .sheet(isPresented: $showCommandDescription) {
+            CommandDetailsView(command: selectedCommand ?? Command(template: "", patterns: [], condition: [], description: ""))
+        }
+        .onChange(of: selectedCommand) { newCommand in
+            if newCommand != nil {
+                showCommandDescription = true
+            }
         }
     }
 
@@ -105,7 +111,9 @@ struct CandidateCommandView: View {
                 .font(.subheadline)
                 .contextMenu {
                     Button(action: {
-                        showCommandDescription(command: command)
+                        selectedCommand = command
+//                        print("Selected command: \(selectedCommand?.displayName ?? "None")")
+                        showCommandDescription = true
                     }) {
                         Text("Show Description")
                         Image(systemName: "info.circle")

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-class Command: Identifiable, ObservableObject {
+class Command: Identifiable, ObservableObject, Equatable {
     let id = UUID()
     @Published var template: String
     @Published var displayName: String
@@ -24,6 +24,10 @@ class Command: Identifiable, ObservableObject {
         self.condition = condition
         self.group = group
         self.description = description
+    }
+    
+    static func == (lhs: Command, rhs: Command) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 
