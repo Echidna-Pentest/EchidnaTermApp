@@ -90,6 +90,10 @@ ms17-010, exploit for vsftpd 2.3.4, HttpFileServer 2.3.x, tomcat, sqlmap, etc
 
 ftp, ssh, crackmapexec, vncviewer, telnet, rlogin, etc
 
+- Privilege escalation commands (commands to use after the initial shell)
+
+meterpreter related commands, spawn shell commands, netstat, etc
+
 You can add your own command from CandidateCommand Page in real time.
 
 <img src="img/candidateCommand.png" width="60%">
@@ -104,7 +108,9 @@ You can view the target tree graphically by clicking the Graph button in the nav
 It's possible to search target information and exeute commands from this graph.
 This Graph will be helpful when you attack multiple hosts in a Network like Hack The Box Pro Labs, VULNLAB, etc.
 
-<img src="img/graph.png" width="50%">
+Additionally, this feature is user-friendly and easy for beginners to get started with as it visualizes the target information.
+
+<img src="img/graph.png" width="80%">
 
 
 This gif demonstrates the Graph Function and adding Candidate Command.
