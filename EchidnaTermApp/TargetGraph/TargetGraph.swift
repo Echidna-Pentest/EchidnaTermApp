@@ -12,12 +12,16 @@ import SwiftGraph
 class Node: Identifiable, ObservableObject {
     let id: Int
     let value: String
+    let ipAddress: String?
+    let isSubnet: Bool
     @Published var position: CGPoint = .zero
     @Published var isHighlighted: Bool = false
     
-    init(target: Target) {
+    init(target: Target, isSubnet: Bool = false) {
         self.id = target.id
         self.value = target.value
+        self.ipAddress = target.metadata?["ipaddress"] as? String
+        self.isSubnet = isSubnet
     }
 }
 
@@ -68,44 +72,133 @@ struct TargetGraphView: View {
        
     private func processTargets(geometry: CGSize) {
         let filteredTargets = targetMap.values.filter { $0.key == "Network" || $0.key == "host" }
-        print("Graph: filteredTargets=", filteredTargets)
         nodes = filteredTargets.map { Node(target: $0) }
-        
+
+        /*
         for node in nodes {
             graph.addVertex(String(node.id))
         }
+        */
         
-        edges = filteredTargets.flatMap { target in
-            target.children?.map { childId in
-                Edge(from: target.id, to: childId)
-            } ?? []
-        }
-        for edge in edges {
-            graph.addEdge(from: String(edge.from), to: String(edge.to), directed: true)
+        edges = []
+        processIPAddresses()
+        
+        // Ensure no direct edges from Target Network to host nodes
+        for target in filteredTargets {
+            if target.key == "host", let parent = target.parent {
+                if let parentTarget = targetMap[parent], parentTarget.key != "subnet" {
+                    // Skip creating an edge from Target Network to host
+                    continue
+                }
+            }
         }
         
         updateNodePositions(geometry: geometry)
         updateEdgePositions()
     }
+
+    private func processIPAddresses() {
+        var ipSubnetNodes: [String: Node] = [:]
+        
+        if let targetNetworkNode = nodes.first(where: { $0.value == "Target Network" }) {
+            for node in nodes {
+                if let ipAddress = node.ipAddress ?? extractIPAddress(from: node.value) {
+                    if isPrivateIP(ipAddress) {
+                        let subnet = getSubnet(from: ipAddress)
+                        if ipSubnetNodes[subnet] == nil {
+                            let subnetNode = Node(target: Target(id: nodes.count + ipSubnetNodes.count, key: "subnet", value: subnet, parent: targetNetworkNode.id, children: nil), isSubnet: true)
+                            ipSubnetNodes[subnet] = subnetNode
+                            nodes.append(subnetNode)
+//                            graph.addVertex(String(subnetNode.id))
+                            
+                            // Link Target Network to subnet
+                            edges.append(Edge(from: targetNetworkNode.id, to: subnetNode.id))
+                            graph.addEdge(from: String(targetNetworkNode.id), to: String(subnetNode.id), directed: true)
+                        }
+                        
+                        if let subnetNode = ipSubnetNodes[subnet] {
+                            edges.append(Edge(from: subnetNode.id, to: node.id))
+                            graph.addEdge(from: String(subnetNode.id), to: String(node.id), directed: true)
+                        }
+                    } else {
+                        // For public IPs, create a direct edge to the target network
+                        edges.append(Edge(from: targetNetworkNode.id, to: node.id))
+                        graph.addEdge(from: String(targetNetworkNode.id), to: String(node.id), directed: true)
+                    }
+                }
+            }
+        }
+    }
+
+    
+    private func extractIPAddress(from value: String) -> String? {
+        let pattern = #"(\d{1,3}\.){3}\d{1,3}"#
+        if let range = value.range(of: pattern, options: .regularExpression) {
+            return String(value[range])
+        }
+        return nil
+    }
+    
+    private func getSubnet(from ipAddress: String) -> String {
+        let components = ipAddress.split(separator: ".")
+        guard components.count == 4 else { return ipAddress }
+        return "\(components[0]).\(components[1]).\(components[2]).0/24"
+    }
+    
+    private func isPrivateIP(_ ipAddress: String) -> Bool {
+        let privateIPRanges = [
+            "10.",
+            "172.16.", "172.17.", "172.18.", "172.19.", "172.20.",
+            "172.21.", "172.22.", "172.23.", "172.24.", "172.25.",
+            "172.26.", "172.27.", "172.28.", "172.29.", "172.30.",
+            "172.31.",
+            "192.168."
+        ]
+        return privateIPRanges.contains { ipAddress.starts(with: $0) }
+    }
     
     private func updateNodePositions(geometry: CGSize) {
-        let center = CGPoint(x: geometry.width / 2, y: geometry.height / 2)
-        let radius: CGFloat = min(geometry.width, geometry.height) / 3
-        let angleIncrement = CGFloat(2 * Double.pi) / CGFloat(nodes.count)
+        let rootNode = nodes.first { $0.value == "Target Network" }
+        var levels: [[Node]] = []
         
-        for (index, node) in nodes.enumerated() {
-            nodes[index].position = CGPoint(
-                x: center.x + radius * cos(angleIncrement * CGFloat(index)),
-                y: center.y + radius * sin(angleIncrement * CGFloat(index))
-            )
+        func assignLevels(node: Node, level: Int) {
+            if levels.count <= level {
+                levels.append([])
+            }
+            levels[level].append(node)
+            
+            for edge in edges {
+                if edge.from == node.id {
+                    if let childNode = nodes.first(where: { $0.id == edge.to }) {
+                        assignLevels(node: childNode, level: level + 1)
+                    }
+                }
+            }
         }
+        
+        if let rootNode = rootNode {
+            assignLevels(node: rootNode, level: 0)
+        }
+
+        let levelHeight: CGFloat = geometry.height / CGFloat(max(1, levels.count))
+        
+        for (levelIndex, levelNodes) in levels.enumerated() {
+            let nodeWidth: CGFloat = geometry.width / CGFloat(max(1, levelNodes.count))
+            for (nodeIndex, node) in levelNodes.enumerated() {
+                nodes[nodes.firstIndex(where: { $0.id == node.id })!].position = CGPoint(
+                    x: nodeWidth * CGFloat(nodeIndex) + nodeWidth / 2,
+                    y: levelHeight * CGFloat(levelIndex) + levelHeight / 2
+                )
+            }
+        }
+        
+        updateEdgePositions()
     }
     
     private func updateEdgePositions() {
         for edge in edges {
             if let fromNode = nodes.first(where: { $0.id == edge.from }),
                let toNode = nodes.first(where: { $0.id == edge.to }) {
-                print("Graph: toNode=", toNode.value)
                 edge.fromPosition = fromNode.position
                 edge.toPosition = toNode.position
             }
@@ -114,10 +207,8 @@ struct TargetGraphView: View {
     
     private func highlightNodes() {
         let matchingHosts = findHostsMatching(searchText)
-        print("highlightNodes: matchingHosts=", matchingHosts)
         for node in nodes {
             node.isHighlighted = matchingHosts.contains(node.value) && !searchText.isEmpty
-            print("Graph: : node.isHighlighted=", node.isHighlighted)
         }
     }
 
@@ -179,7 +270,7 @@ struct NodeView: View {
 
     var body: some View {
         VStack {
-            Image(systemName: "server.rack")
+            icon(for: node)
                 .resizable()
                 .frame(width: 30, height: 30)
                 .foregroundColor(node.isHighlighted ? .yellow : .black)
@@ -189,7 +280,9 @@ struct NodeView: View {
         }
         .position(x: node.position.x, y: node.position.y)
         .onTapGesture {
-            showingDetail = true
+            if !node.isSubnet && isHost(node: node) {
+                showingDetail = true
+            }
         }
         .fullScreenCover(isPresented: $showingDetail) {
             if let target = targetMap[node.id] {
@@ -232,7 +325,49 @@ struct NodeView: View {
             }
         }
     }
+
+    private func icon(for node: Node) -> Image {
+        if node.isSubnet || node.value == "Target Network" {
+            return Image(systemName: "network")
+        } else if isHost(node: node) {
+            return Image(systemName: "desktopcomputer")
+        } else {
+            return Image(systemName: "questionmark.circle")
+        }
+    }
+
+    private func isHost(node: Node) -> Bool {
+        // Check if the node is a host by checking for an IP address or a pattern matching an IP address
+        if let ipAddress = node.ipAddress, isValidIPAddress(ipAddress) {
+            return true
+        } else if isValidIPAddress(node.value) {
+            return true
+        }
+        return false
+    }
+
+    private func isValidIPAddress(_ value: String) -> Bool {
+        let pattern = #"(\d{1,3}\.){3}\d{1,3}"#
+        return value.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    private func isPrivateIP(_ ipAddress: String) -> Bool {
+        let privateIPRanges = [
+            "10.",
+            "172.16.", "172.17.", "172.18.", "172.19.", "172.20.",
+            "172.21.", "172.22.", "172.23.", "172.24.", "172.25.",
+            "172.26.", "172.27.", "172.28.", "172.29.", "172.30.",
+            "172.31.",
+            "192.168."
+        ]
+        return privateIPRanges.contains { ipAddress.starts(with: $0) }
+    }
+
+    private func isPublicIP(_ ipAddress: String) -> Bool {
+        return !isPrivateIP(ipAddress)
+    }
 }
+
 
 struct EdgeView: View {
     @ObservedObject var edge: Edge
