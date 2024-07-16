@@ -71,7 +71,7 @@ struct TargetGraphView: View {
     }
        
     private func processTargets(geometry: CGSize) {
-        let filteredTargets = targetMap.values.filter { $0.key == "Network" || $0.key == "host" }
+        let filteredTargets = targetMap.values.filter { $0.key == "Network" || $0.key.lowercased() == "host" }
         nodes = filteredTargets.map { Node(target: $0) }
 
         /*
@@ -82,16 +82,6 @@ struct TargetGraphView: View {
         
         edges = []
         processIPAddresses()
-        
-        // Ensure no direct edges from Target Network to host nodes
-        for target in filteredTargets {
-            if target.key == "host", let parent = target.parent {
-                if let parentTarget = targetMap[parent], parentTarget.key != "subnet" {
-                    // Skip creating an edge from Target Network to host
-                    continue
-                }
-            }
-        }
         
         updateNodePositions(geometry: geometry)
         updateEdgePositions()
@@ -109,9 +99,7 @@ struct TargetGraphView: View {
                             let subnetNode = Node(target: Target(id: nodes.count + ipSubnetNodes.count, key: "subnet", value: subnet, parent: targetNetworkNode.id, children: nil), isSubnet: true)
                             ipSubnetNodes[subnet] = subnetNode
                             nodes.append(subnetNode)
-//                            graph.addVertex(String(subnetNode.id))
                             
-                            // Link Target Network to subnet
                             edges.append(Edge(from: targetNetworkNode.id, to: subnetNode.id))
                             graph.addEdge(from: String(targetNetworkNode.id), to: String(subnetNode.id), directed: true)
                         }
@@ -121,10 +109,13 @@ struct TargetGraphView: View {
                             graph.addEdge(from: String(subnetNode.id), to: String(node.id), directed: true)
                         }
                     } else {
-                        // For public IPs, create a direct edge to the target network
                         edges.append(Edge(from: targetNetworkNode.id, to: node.id))
                         graph.addEdge(from: String(targetNetworkNode.id), to: String(node.id), directed: true)
                     }
+                } else {
+                    // Creare edge from Root Node directly if no ipaddress found
+                    edges.append(Edge(from: targetNetworkNode.id, to: node.id))
+                    graph.addEdge(from: String(targetNetworkNode.id), to: String(node.id), directed: true)
                 }
             }
         }
@@ -160,8 +151,14 @@ struct TargetGraphView: View {
     private func updateNodePositions(geometry: CGSize) {
         let rootNode = nodes.first { $0.value == "Target Network" }
         var levels: [[Node]] = []
+        var visitedNodes: Set<Int> = []
         
         func assignLevels(node: Node, level: Int) {
+            guard !visitedNodes.contains(node.id) else {
+                return
+            }
+            visitedNodes.insert(node.id)
+            
             if levels.count <= level {
                 levels.append([])
             }
@@ -218,7 +215,7 @@ struct TargetGraphView: View {
             if let target = targetMap[node.id] {
                 if target.value.lowercased().contains(searchText.lowercased()) ||
                    (findParentHost(for: target, matching: searchText.lowercased()) != nil) {
-                    if target.key == "host" {
+                    if target.key.lowercased() == "host" {
                         matchingHosts.insert(target.value)
                     } else if let host = findHostAncestor(of: target) {
                         matchingHosts.insert(host.value)
@@ -332,7 +329,8 @@ struct NodeView: View {
         } else if isHost(node: node) {
             return Image(systemName: "desktopcomputer")
         } else {
-            return Image(systemName: "questionmark.circle")
+//            return Image(systemName: "questionmark.circle")
+            return Image(systemName: "desktopcomputer")
         }
     }
 
