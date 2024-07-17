@@ -1,6 +1,6 @@
 [Echidna]
 pattern: nmap
-description: Nmap is used to discover hosts and services on a computer network by sending packets and analyzing the responses. -p- option scan all ports. -A option enables OS detection, version detection, script scanning, and traceroute. -script vuln option enables scan vulnerabiliities. -T4 option enables aggressive scan. -O enables OS scan.
+description: Nmap is used to discover hosts and services on a computer network by sending packets and analyzing the responses.\n-p- option scan all ports.\n-A option enables OS detection, version detection, script scanning, and traceroute.\n-script vuln option enables scan vulnerabiliities.\n-T4 option enables aggressive scan.\n-O enables OS scan.
 template: nmap {host}
 template: nmap -Pn -p- {host}
 template: nmap -Pn -sV -A -p{port} {host}
@@ -20,9 +20,8 @@ group: 80_HTTP
 [end]
 
 [Echidna]
-description: ip address
+description: display ip address of your own machine
 template: ip addr
-pattern: ip a
 group: Useful Command
 [end]
 
@@ -30,7 +29,6 @@ group: Useful Command
 description: The ip neigh command manipulates neighbour objects that establish bindings between protocol addresses and link layer addresses for hosts sharing the same link.
 template: ip neigh
 template: ip -4 neigh
-pattern: ip (-4 )*n.*
 group: Useful Command
 [end]
 
@@ -412,7 +410,7 @@ group: 25_SMTP
 [end]
 
 [Echidna]
-description: Enumerate service users using nmap module
+description: Enumerate smtp service users using nmap module
 template: nmap --script smtp-enum-users -p 25 {host}
 condition: ["SMTP", "25"]
 group: 25_SMTP
