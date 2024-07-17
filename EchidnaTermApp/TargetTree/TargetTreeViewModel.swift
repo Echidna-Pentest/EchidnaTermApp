@@ -186,11 +186,8 @@ class TargetTreeViewModel: ObservableObject {
         let lines = input.components(separatedBy: "\n").filter { !$0.isEmpty }
         for line in lines {
             let components = line.components(separatedBy: "\t")
-            guard components.count >= 2 else { continue }
 
             let ip = components[0]
-            let port = components[1]
-            let details = components.dropFirst(2)
 
             var parentId: Int
             // Check if IP node exists
@@ -205,6 +202,10 @@ class TargetTreeViewModel: ObservableObject {
 //                print("ipaddress contains ipMetadata=", ipMetadata)
                 parentId = addTarget(key: "host", value: ip, toParent: 0, metadata: ipMetadata)
             }
+
+            guard components.count >= 2 else { continue }
+            let port = components[1]
+            let details = components.dropFirst(2)
 
             // Check if Port node exists
             if let portNode = targetMap.values.first(where: { $0.value == port && $0.parent == parentId }) {
