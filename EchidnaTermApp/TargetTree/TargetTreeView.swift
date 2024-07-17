@@ -282,8 +282,8 @@ struct AddTargetSheet: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("New Target Details")) {
-                    TextField("Key", text: $newKey)
+                Section(header: Text("New Target Details. It is okay if the Key is left blank. To display in the Target Graph, please set the Key to Host.").textCase(nil)) {
+                    TextField("Key.", text: $newKey)
                     TextField("Value", text: $newValue)
                 }
             }

@@ -33,7 +33,7 @@ struct APIKeyManagementView: View {
             }
             
             HStack {
-                Text("Enable AI Analysis")
+                Text("Enable OpenAI Analysis. If this is enabled, terminal outputs are analyzed using OpenAI Library")
                     .font(.headline)
                 Spacer()
                 Toggle("", isOn: $isAIAnalysisEnabled)

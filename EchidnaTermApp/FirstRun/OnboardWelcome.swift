@@ -20,7 +20,7 @@ struct OnboardWelcome: View {
                     Text ("Welcome to EchidnaTerm")
                         .fontWeight(.semibold)
                         .font (.title)
-                    Text ("A terminal emulator and SSH client for iOS")
+                    Text ("SSH client application for iOS specialized for learning cyber attack techniques.")
                         .font (.title2)
                 }
             }
@@ -40,7 +40,7 @@ struct OnboardWelcome: View {
                         .font(.system(size: 30))
                         .foregroundColor(Color.accentColor)
                         .frame(minWidth: 50)
-                    Text ("You can then import existing SSH keys, or create new ones.")
+                    Text ("You can then import existing SSH keys, or create new ones, or password login if it is a local network.")
                         .minimumScaleFactor(0.7)
                     Spacer ()
                 }.padding()
@@ -50,7 +50,7 @@ struct OnboardWelcome: View {
                         .font(.system(size: 30))
                         .foregroundColor(Color.accentColor)
                         .frame(minWidth: 50)
-                    Text ("Need help?  Shake your device or use the 'Support' menu option to report a bug or to share feedback or a feature request.")
+                    Text ("If you need help or find a bug, please access to my git hub page and create a issue. https://github.com/Echidna-Pentest/EchidnaTermApp")
                         .minimumScaleFactor(0.7)
                     Spacer ()
                 }.padding()
