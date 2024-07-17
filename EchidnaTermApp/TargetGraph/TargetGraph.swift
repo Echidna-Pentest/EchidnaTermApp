@@ -340,9 +340,12 @@ struct NodeView: View {
             return true
         } else if isValidIPAddress(node.value) {
             return true
+        } else if let target = targetMap[node.id], target.key.lowercased() == "host" {
+            return true
         }
         return false
     }
+
 
     private func isValidIPAddress(_ value: String) -> Bool {
         let pattern = #"(\d{1,3}\.){3}\d{1,3}"#
