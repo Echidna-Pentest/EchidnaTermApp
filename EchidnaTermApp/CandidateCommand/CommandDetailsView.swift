@@ -20,11 +20,10 @@ struct CommandDetailsView: View {
                 .padding(.bottom, 8)
 
             detailRow(title: "Template:", value: command.template)
-            detailRow(title: "Display Name:", value: command.displayName)
             detailRow(title: "Patterns:", value: command.patterns.joined(separator: ", "))
             detailRow(title: "Condition:", value: command.condition.joined(separator: ", "))
             detailRow(title: "Group:", value: command.group ?? "None")
-            detailRow(title: "Description:", value: command.description)
+            detailRow(title: "Description:", value: command.description.replacingOccurrences(of: "\\n", with: "\n"), isDescription: true)
         }
         .padding()
         .background(Color(.systemGray6))
@@ -34,14 +33,18 @@ struct CommandDetailsView: View {
     }
 
     @ViewBuilder
-    private func detailRow(title: String, value: String) -> some View {
-        HStack {
-            Text(title)
-                .fontWeight(.bold)
-                .foregroundColor(Color(.systemBlue))
-            Spacer()
+    private func detailRow(title: String, value: String, isDescription: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color(.systemBlue))
+                Spacer()
+            }
             Text(value)
-                .multilineTextAlignment(.trailing)
+                .multilineTextAlignment(isDescription ? .leading : .trailing)
+                .fixedSize(horizontal: false, vertical: true)
+                .lineSpacing(4)
         }
         .padding(.vertical, 4)
     }
