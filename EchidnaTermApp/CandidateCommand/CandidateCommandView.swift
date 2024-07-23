@@ -92,9 +92,9 @@ struct CandidateCommandView: View {
             CommandDetailsView(command: selectedCommand ?? Command(template: "", patterns: [], condition: [], description: ""))
         }
         .onChange(of: selectedCommand) { newCommand in
-            if newCommand != nil {
-                showCommandDescription = true
-            }
+//            if newCommand != nil {
+//                showCommandDescription = true
+//            }
         }
     }
 
