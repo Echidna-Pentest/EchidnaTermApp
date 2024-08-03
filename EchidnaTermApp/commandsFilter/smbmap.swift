@@ -52,7 +52,8 @@ func targets(reader: LineReader) -> [(String, String, String)] {
                 let scandetails = line.split(separator: "\t", omittingEmptySubsequences: false)
                 if scandetails.count > 3 {
                     let details1 = String(scandetails[1].trimmingCharacters(in: .whitespacesAndNewlines))
-                    let details2 = "\tPermissions: \(scandetails[2].trimmingCharacters(in: .whitespacesAndNewlines))"
+                    let details2 = "\t\(scandetails[2].trimmingCharacters(in: .whitespacesAndNewlines))"
+//                    let details2 = "\tPermissions: \(scandetails[2].trimmingCharacters(in: .whitespacesAndNewlines))"
 //                    print("detail2=", details2)
                     let details3 = "\tComment: \(scandetails[3].trimmingCharacters(in: .whitespacesAndNewlines))"
                     result.append((host, "\(port)", "\(details1)\(details2)"))
