@@ -9,6 +9,15 @@
 import Foundation
 import Security
 
+struct AnalysisResult: Codable {
+    struct CommandItem: Codable {
+        let command: String
+        let explanation: String
+    }
+    let commands: [CommandItem]
+    let vulnerability: String
+}
+
 class APIManager {
     
     static let shared = APIManager()
@@ -31,12 +40,53 @@ class APIManager {
         client.analyzeText(input: text, analysisType: "penetration_testing", isUserRequest: fromUserRequest) { result in
             switch result {
             case .success(let analysis):
-                let chatViewModel = ChatViewModel.shared
-                chatViewModel.sendMessage(analysis, isUser: false)
+//                print("analysis=", analysis)
+                
+                // Convert analysis from String to Data
+                guard let jsonData = analysis.data(using: .utf8) else {
+                    print("Error converting analysis to Data")
+                    return
+                }
+
+                do {
+                    // Decode the entire analysis result JSON object
+                    let analysisResult = try JSONDecoder().decode(AnalysisResult.self, from: jsonData)
+                    
+                    // Iterate through the commands and add them
+                    for commandObj in analysisResult.commands {
+//                        print("Command: \(commandObj.command)")
+//                        print("Explanation: \(commandObj.explanation)")
+                        
+                        let newCommand = Command(
+                            template: commandObj.command,
+                            patterns: [],
+                            condition: [],
+                            group: "AI",
+                            description: commandObj.explanation
+                        )
+                        CommandManager.shared.addCommand(newCommand)
+                    }
+                    
+                    // Output the most concerning vulnerability
+//                    print("Most Concerning Vulnerability: \(analysisResult.vulnerability)")
+//                    ChatMessage(message: "Most Concerning Vulnerability:" + analysisResult.vulnerability, isUser: false)
+//                    let chatViewModel = ChatViewModel.shared
+                    ChatViewModel.shared.sendMessage("Most Concerning Vulnerability:" + analysisResult.vulnerability, isUser: false)
+                } catch {
+                    // Handle decoding errors
+                    print("Error decoding JSON: \(error)")
+                }
+
+                // Send the analysis data to the chat view model
+//                let chatViewModel = ChatViewModel.shared
+//                chatViewModel.sendMessage(analysis, isUser: false)
+
             case .failure(let error):
+                // Handle analysis errors
                 print("Analysis Error: \(error)")
             }
         }
+
     }
 
     private func retrieveAPIKey() -> String? {

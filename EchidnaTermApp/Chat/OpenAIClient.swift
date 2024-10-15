@@ -44,10 +44,10 @@ class OpenAIClient {
             parameters = [
                 "model": "gpt-4",
                 "messages": [
-                    ["role": "system", "content": "You are a penetration test assistant. Analyze the provided string for security risks, vulnerabilities, or potential for exploitation. For a 'HIGH RISK' finding, reply with 'HIGH RISK: ' plus briefly state the risk and necessary steps for exploitation within 150 words. For 'LOW RISK' or 'NONE', just simply reply with the category ('LOW RISK' or 'NONE') only.\n"],
+                    ["role": "system", "content": "You are a penetration test assistant. Analyze the provided console output and suggest up to 3 relevant commands that might be used to exploit the vulnerabilities or weaknesses discovered. If no vulnerabilities are found or no action is required, simply respond with 'NONE'. Return the result as a JSON object with two keys: 'commands' and 'vulnerability'. The 'commands' key should contain an array of commands, where each entry contains the command as a string and a brief explanation as another string, like this:\n{\n  \"commands\": [\n    {\n      \"command\": \"example command\",\n      \"explanation\": \"brief explanation\"\n    },\n    ...\n  ],\n  \"vulnerability\": \"Brief description of the most concerning vulnerability\"\n}\nIf no commands are applicable, return an empty array for 'commands'."],
                     ["role": "user", "content": generatePrompt(input: input, analysisType: analysisType)]
                 ],
-                "max_tokens": 150,
+                "max_tokens": 400,
                 "temperature": 0.7,
                 "top_p": 0.9,
                 "frequency_penalty": 0.0,

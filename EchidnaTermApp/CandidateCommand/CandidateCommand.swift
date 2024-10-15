@@ -36,6 +36,7 @@ class CommandManager: ObservableObject {
     @Published var commands: [Command] = []
     var hostname = ""
     var isInitialShellEstablished = false
+    let maxAICommands = 30
     
     init() {
         copyCommandsFileIfNeeded()
@@ -200,12 +201,26 @@ class CommandManager: ObservableObject {
     }
     
     func addCommand(_ command: Command) {
+        // Ensure that the number of "AI" group commands does not exceed the maximum limit
+        if command.group == "AI" {
+            // Filter only commands from the "AI" group
+            let aiCommands = commands.filter { $0.group == "AI" }
+            // If the number of commands exceeds 30, remove the oldest one
+            if aiCommands.count >= maxAICommands {
+                if let firstAICommand = aiCommands.first {
+                    if let index = commands.firstIndex(where: { $0.id == firstAICommand.id }) {
+                        commands.remove(at: index)
+                    }
+                }
+            }
+        }
+        // Add the new command
         commands.append(command)
-        let fileURL = getDocumentsDirectory().appendingPathComponent("mycommands.txt")
-        saveCommandToFile(command, to: fileURL)
+//        let fileURL = getDocumentsDirectory().appendingPathComponent("mycommands.txt")
+//        saveCommandToFile(command, to: fileURL)
         objectWillChange.send()
     }
-    
+
     private func shouldDisplayCommand(command: Command, for target: Target) -> Bool {
         var currentTarget: Target? = target
 //        print("shouldDisplayCommand: command=", command.condition)
