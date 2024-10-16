@@ -98,7 +98,8 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                                     self.processCommandOutputs(self.commandOutputs.joined(separator: "\n"), command: self.commandEntered)
                                 }
 //                                print("self.commandOUtputLongest=", getLongestOutput(from: self.commandOutputs))
-                                if UserDefaults.standard.bool(forKey: "EnableAIAnalysis") {
+//                                print("self.commandEntered=", self.commandEntered)
+                                if UserDefaults.standard.bool(forKey: "EnableAIAnalysis") && !self.commandEntered.isEmpty {
                                     var longestCommandOutput = getLongestOutput(from: self.commandOutputs)
                                     // analyze the longest command Output if it is longer than 40 characters,  this may need to be improved
                                     longestCommandOutput = longestCommandOutput.filter { !($0.isWhitespace) }
