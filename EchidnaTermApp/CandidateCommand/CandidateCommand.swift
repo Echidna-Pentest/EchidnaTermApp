@@ -200,15 +200,25 @@ class CommandManager: ObservableObject {
         objectWillChange.send()
     }
     
+    let commandLimits: [String: Int] = [
+        "OpenAI": 20,
+        "Gemini": 20
+    ]
+
+    // Generalize processing for each group
+    let groupsToFilter: Set<String> = ["OpenAI", "Gemini"]
+
     func addCommand(_ command: Command) {
-        // Ensure that the number of "AI" group commands does not exceed the maximum limit
-        if command.group == "AI" {
-            // Filter only commands from the "AI" group
-            let aiCommands = commands.filter { $0.group == "AI" }
-            // If the number of commands exceeds 30, remove the oldest one
-            if aiCommands.count >= maxAICommands {
-                if let firstAICommand = aiCommands.first {
-                    if let index = commands.firstIndex(where: { $0.id == firstAICommand.id }) {
+        // Ensure that the number of commands in the group does not exceed the maximum limit
+        if let commandGroup = command.group, groupsToFilter.contains(commandGroup) {
+            // Filter the commands based on the group
+            let filteredCommands = commands.filter { $0.group == commandGroup }
+            
+            // Get the maximum number of commands allowed for the group
+            if let maxCommands = commandLimits[commandGroup], filteredCommands.count >= maxCommands {
+                // Remove the oldest command
+                if let firstCommand = filteredCommands.first {
+                    if let index = commands.firstIndex(where: { $0.id == firstCommand.id }) {
                         commands.remove(at: index)
                     }
                 }
@@ -216,8 +226,8 @@ class CommandManager: ObservableObject {
         }
         // Add the new command
         commands.append(command)
-//        let fileURL = getDocumentsDirectory().appendingPathComponent("mycommands.txt")
-//        saveCommandToFile(command, to: fileURL)
+    //        let fileURL = getDocumentsDirectory().appendingPathComponent("mycommands.txt")
+    //        saveCommandToFile(command, to: fileURL)
         objectWillChange.send()
     }
 

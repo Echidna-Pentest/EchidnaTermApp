@@ -11,100 +11,138 @@ import SwiftUI
 struct APIKeyManagementView: View {
     @EnvironmentObject var dataController: DataController
     @Environment(\.managedObjectContext) var moc
-    @State private var addEditKeyShown = false
-    @AppStorage("EnableAIAnalysis") private var isAIAnalysisEnabled = false
-    @State private var apiKey: String? = nil
+    @State private var addEditOpenAIKeyShown = false
+    @State private var addEditGeminiKeyShown = false
+    @AppStorage("EnableOpenAIAnalysis") private var isOpenAIAnalysisEnabled = false
+    @AppStorage("EnableGeminiAnalysis") private var isGeminiAnalysisEnabled = false
+    @State private var openAIKey: String? = nil
+    @State private var geminiKey: String? = nil
     
     var body: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    self.addEditKeyShown = true
-                }) {
-                    Label(apiKey == nil ? "Add API Key" : "Edit API Key", systemImage: "plus.circle")
-                        .font(.title2)
-                        .padding()
-                }
-                .sheet(isPresented: $addEditKeyShown, onDismiss: loadAPIKey) {
-                    AddEditAPIKeyView(isPresented: $addEditKeyShown)
-                }
-                Spacer()
-            }
-            
-            HStack {
-                Text("Enable OpenAI Analysis. If this is enabled, terminal outputs are analyzed using OpenAI Library")
-                    .font(.headline)
-                Spacer()
-                Toggle("", isOn: $isAIAnalysisEnabled)
-                    .toggleStyle(SwitchToggleStyle(tint: .blue))
+        ScrollView {
+            VStack(spacing: 30) {
+                // OpenAI Key Section
+                apiKeySection(
+                    title: "OpenAI",
+                    apiKey: $openAIKey,
+                    addEditKeyShown: $addEditOpenAIKeyShown,
+                    service: "OpenAIKeyService",
+                    isAnalysisEnabled: $isOpenAIAnalysisEnabled,
+                    analysisDescription: "Enable OpenAI Analysis. Terminal outputs are analyzed using OpenAI Library."
+                )
+                
+                // Gemini Key Section
+                apiKeySection(
+                    title: "Gemini",
+                    apiKey: $geminiKey,
+                    addEditKeyShown: $addEditGeminiKeyShown,
+                    service: "GeminiKeyService",
+                    isAnalysisEnabled: $isGeminiAnalysisEnabled,
+                    analysisDescription: "Enable Gemini Analysis. Terminal outputs are analyzed using Gemini API."
+                )
             }
             .padding()
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .navigationTitle("API Keys")
+        .onAppear(perform: loadAPIKeys)
+    }
+    
+    // View for OpenAI and Gemini API Key sections
+    @ViewBuilder
+    func apiKeySection(
+        title: String,
+        apiKey: Binding<String?>,
+        addEditKeyShown: Binding<Bool>,
+        service: String,
+        isAnalysisEnabled: Binding<Bool>,
+        analysisDescription: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Text("\(title) API Key")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Spacer()
+                Button(action: {
+                    addEditKeyShown.wrappedValue = true
+                }) {
+                    Label(apiKey.wrappedValue == nil ? "Add" : "Edit", systemImage: apiKey.wrappedValue == nil ? "plus.circle" : "pencil.circle")
+                        .labelStyle(IconOnlyLabelStyle())
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                }
+                .sheet(isPresented: addEditKeyShown, onDismiss: { loadAPIKey(service: service, apiKey: apiKey) }) {
+                    AddEditAPIKeyView(isPresented: addEditKeyShown, apiKey: apiKey, service: service)
+                }
+            }
             
-            if let apiKey = apiKey {
-                VStack(spacing: 10) {
+            if let key = apiKey.wrappedValue {
+                VStack(alignment: .leading, spacing: 10) {
                     HStack {
-                        Text("Current API Key")
-                            .font(.headline)
+                        Text("Current \(title) API Key:")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                         Spacer()
                     }
-                    .padding([.top, .horizontal])
+                    .padding(.bottom, 5)
                     
                     HStack {
-                        Text(maskedAPIKey(apiKey))
+                        Text(maskedAPIKey(key))
                             .font(.body)
                         Spacer()
                         Button(action: {
-                            self.addEditKeyShown = true
+                            deleteAPIKey(service: service)
+                            loadAPIKey(service: service, apiKey: apiKey)
                         }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.blue)
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
                         }
+                        .padding(.leading, 10)
                     }
                     .padding()
-                    
-                    Button(action: {
-                        deleteAPIKey()
-                        loadAPIKey()
-                    }) {
-                        Text("Delete API Key")
-                            .foregroundColor(.red)
-                    }
-                    .padding()
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .cornerRadius(10)
                 }
-                .background(Color(UIColor.systemGray6))
-                .cornerRadius(10)
-                .padding()
+                .padding(.bottom, 20)
             } else {
-                Spacer()
-                VStack(spacing: 10) {
-                    Image(systemName: "key")
-                        .font(.largeTitle)
-                        .foregroundColor(.gray)
+                HStack {
+                    Spacer()
                     Text("No API Key registered.")
-                        .font(.headline)
-                    Text("Add an API Key to enable secure access to APIs.")
-                        .font(.body)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+                        .foregroundColor(.gray)
+                    Spacer()
                 }
                 .padding()
+            }
+            
+            HStack {
+                Text(analysisDescription)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                 Spacer()
+                Toggle("", isOn: isAnalysisEnabled)
+                    .toggleStyle(SwitchToggleStyle(tint: .blue))
             }
         }
         .padding()
-        .navigationTitle("API Keys")
-        .onAppear(perform: loadAPIKey)
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
     }
     
-    func loadAPIKey() {
-        apiKey = retrieveAPIKey()
+    func loadAPIKeys() {
+        loadAPIKey(service: "OpenAIKeyService", apiKey: $openAIKey)
+        loadAPIKey(service: "GeminiKeyService", apiKey: $geminiKey)
     }
     
-    func retrieveAPIKey() -> String? {
+    func loadAPIKey(service: String, apiKey: Binding<String?>) {
+        apiKey.wrappedValue = retrieveAPIKey(service: service)
+    }
+    
+    func retrieveAPIKey(service: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "APIKeyService",
+            kSecAttrService as String: service,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -122,10 +160,20 @@ struct APIKeyManagementView: View {
         return nil
     }
     
-    func deleteAPIKey() {
+    func saveAPIKey(service: String, apiKey: String) {
+        let keyData = apiKey.data(using: .utf8)!
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "APIKeyService"
+            kSecAttrService as String: service,
+            kSecValueData as String: keyData
+        ]
+        SecItemAdd(query as CFDictionary, nil)
+    }
+    
+    func deleteAPIKey(service: String) {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service
         ]
         SecItemDelete(query as CFDictionary)
     }
@@ -137,3 +185,4 @@ struct APIKeyManagementView: View {
         return "\(prefix)\(masked)"
     }
 }
+

@@ -11,70 +11,64 @@ import Security
 
 struct AddEditAPIKeyView: View {
     @Binding var isPresented: Bool
-    @State private var apiKey: String = ""
-    @EnvironmentObject var dataController: DataController
-    @Environment(\.managedObjectContext) var moc
+    @Binding var apiKey: String?
+    @State private var inputKey: String = ""
+    var service: String
     
     var body: some View {
         NavigationView {
-            Form {
-                Section(header: Text("API Key")) {
-                    SecureField("API Key", text: $apiKey)
-                }
+            VStack {
+                TextField("Enter API Key", text: $inputKey)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
                 
-                Button(action: {
-                    saveAPIKey(newKey: apiKey)
-                    self.isPresented = false
-                }) {
+                Button(action: saveKey) {
                     Text("Save")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
+                .padding()
+                
+                Spacer()
             }
             .navigationTitle("Add/Edit API Key")
-            .navigationBarItems(trailing: Button("Cancel") {
-                self.isPresented = false
-            })
-            .onAppear {
-                self.apiKey = retrieveAPIKey() ?? ""
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        isPresented = false
+                    }
+                }
+            }
+        }
+        .onAppear {
+            if let existingKey = apiKey {
+                inputKey = existingKey
             }
         }
     }
     
-    func saveAPIKey(newKey: String) {
+    func saveKey() {
+        saveAPIKey(service: service, apiKey: inputKey)
+        apiKey = inputKey
+        isPresented = false
+    }
+    
+    func saveAPIKey(service: String, apiKey: String) {
+        let keyData = apiKey.data(using: .utf8)!
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "APIKeyService"
+            kSecAttrService as String: service,
+            kSecValueData as String: keyData
         ]
+        
+        // Remove existing key if it exists
         SecItemDelete(query as CFDictionary)
-
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "APIKeyService",
-            kSecAttrAccount as String: UUID().uuidString,
-            kSecValueData as String: newKey.data(using: .utf8)!
-        ]
         
-        let status = SecItemAdd(addQuery as CFDictionary, nil)
-        print("Save status: \(status)")
-    }
-    
-    func retrieveAPIKey() -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "APIKeyService",
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        
-        var item: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &item)
-        
-        if status == errSecSuccess {
-            if let keyData = item as? Data,
-               let key = String(data: keyData, encoding: .utf8) {
-                return key
-            }
-        }
-        
-        return nil
+        // Add new key
+        SecItemAdd(query as CFDictionary, nil)
     }
 }
+

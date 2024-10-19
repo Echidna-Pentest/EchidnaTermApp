@@ -29,7 +29,7 @@ class TargetTreeViewModel: ObservableObject {
                 let data = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
                 var targets = try decoder.decode([Target].self, from: data)
-                print("loadJSON targets=", targets)
+//                print("loadJSON targets=", targets)
                 targets.sort { $0.id < $1.id }
                 self.targets = buildTree(targets: targets)
             } catch {

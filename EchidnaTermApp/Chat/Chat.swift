@@ -31,7 +31,7 @@ class ChatViewModel: ObservableObject {
     }
     
     private func handleAICommand(message: String, fromUserRequest: Bool) {
-        APIManager.shared.performAIAnalysis(text: message, fromUserRequest: fromUserRequest)
+        APIManager.shared.performOpenAIAnalysis(text: message, fromUserRequest: fromUserRequest)
     }
 }
 

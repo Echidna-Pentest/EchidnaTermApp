@@ -24,8 +24,8 @@ class APIManager {
     
     private init() {}
     
-    func performAIAnalysis(text: String, fromUserRequest: Bool = false) {
-        guard fromUserRequest || UserDefaults.standard.bool(forKey: "EnableAIAnalysis") else {
+    func performOpenAIAnalysis(text: String, fromUserRequest: Bool = false) {
+        guard fromUserRequest || UserDefaults.standard.bool(forKey: "EnableOpenAIAnalysis") else {
             print("AI Analysis is disabled.")
             return
         }
@@ -61,7 +61,7 @@ class APIManager {
                             template: commandObj.command,
                             patterns: [],
                             condition: [],
-                            group: "AI",
+                            group: "OpenAI",
                             description: commandObj.explanation
                         )
                         CommandManager.shared.addCommand(newCommand)
@@ -69,9 +69,9 @@ class APIManager {
                     
                     // Output the most concerning vulnerability
 //                    print("Most Concerning Vulnerability: \(analysisResult.vulnerability)")
-//                    ChatMessage(message: "Most Concerning Vulnerability:" + analysisResult.vulnerability, isUser: false)
-//                    let chatViewModel = ChatViewModel.shared
-                    ChatViewModel.shared.sendMessage("Most Concerning Vulnerability:" + analysisResult.vulnerability, isUser: false)
+                    if !analysisResult.vulnerability.contains("NONE") {
+                        ChatViewModel.shared.sendMessage("Most Concerning Vulnerability:" + analysisResult.vulnerability, isUser: false)
+                    }
                 } catch {
                     // Handle decoding errors
                     print("Error decoding JSON: \(error)")
@@ -89,10 +89,10 @@ class APIManager {
 
     }
 
-    private func retrieveAPIKey() -> String? {
+    func retrieveAPIKey(service: String = "OpenAIKeyService") -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "APIKeyService",
+            kSecAttrService as String: service,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -103,6 +103,7 @@ class APIManager {
         if status == errSecSuccess {
             if let keyData = item as? Data,
                let key = String(data: keyData, encoding: .utf8) {
+//                print("retrieveAPIKey: key=", key)
                 return key
             }
         }

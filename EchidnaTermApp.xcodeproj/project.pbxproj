@@ -137,6 +137,7 @@
 		9AA0E8162C353FD800992B0A /* AddCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA0E8152C353FD800992B0A /* AddCommandView.swift */; };
 		9AA0E8182C3557F200992B0A /* graph.png in Resources */ = {isa = PBXBuildFile; fileRef = 9AA0E8172C3557F200992B0A /* graph.png */; };
 		9AA0E81A2C363F7100992B0A /* smbVersionScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA0E8192C363F7100992B0A /* smbVersionScan.swift */; };
+		9ABC2E602CC1FC830065743A /* GeminiAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABC2E5F2CC1FC830065743A /* GeminiAPIManager.swift */; };
 		9AF543062C2E170A0026F0CA /* whatweb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF543052C2E170A0026F0CA /* whatweb.swift */; };
 /* End PBXBuildFile section */
 
@@ -292,6 +293,7 @@
 		9AA0E8152C353FD800992B0A /* AddCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCommandView.swift; sourceTree = "<group>"; };
 		9AA0E8172C3557F200992B0A /* graph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = graph.png; sourceTree = "<group>"; };
 		9AA0E8192C363F7100992B0A /* smbVersionScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = smbVersionScan.swift; sourceTree = "<group>"; };
+		9ABC2E5F2CC1FC830065743A /* GeminiAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiAPIManager.swift; sourceTree = "<group>"; };
 		9AF543052C2E170A0026F0CA /* whatweb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = whatweb.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -734,6 +736,7 @@
 				9AA0E80B2C32A4EE00992B0A /* AddAPIKeysView.swift */,
 				9AA0E80D2C33C2EE00992B0A /* APIKeyManagementView.swift */,
 				9AA0E80F2C33C53900992B0A /* APIManager.swift */,
+				9ABC2E5F2CC1FC830065743A /* GeminiAPIManager.swift */,
 			);
 			path = APIKeys;
 			sourceTree = "<group>";
@@ -984,6 +987,7 @@
 				9A2928332BFC9824001B338D /* CandidateCommand.swift in Sources */,
 				4943DA9827FC87DE00E4E2F5 /* RecentHostsView.swift in Sources */,
 				49C650952832D8B2005DFC17 /* Main.xcdatamodeld in Sources */,
+				9ABC2E602CC1FC830065743A /* GeminiAPIManager.swift in Sources */,
 				49F02ADF24610D7A00CFEB50 /* STFilePicker.swift in Sources */,
 				49A0A2C02491CDC4002593F7 /* InteractiveLogin.swift in Sources */,
 				9A920E2B2C0061BC00782456 /* CandidateCommandView.swift in Sources */,
