@@ -9,6 +9,11 @@
 import Foundation
 import Security
 
+enum GeminiClientError: Error {
+    case invalidURL
+    case noData
+    case noTextInResponse
+}
 
 class GeminiAPIManager {
     
