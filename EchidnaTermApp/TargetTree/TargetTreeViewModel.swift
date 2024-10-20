@@ -117,7 +117,7 @@ class TargetTreeViewModel: ObservableObject {
                             if key != "machine_name" {
                                 if let valueString = value as? String {
 //                                    print("Key: \(key), Value: \(valueString)")
-                                    chatViewModel.sendMessage("\(valueString) is interesting. Similar machine is " + machineName, isUser: false)
+                                    chatViewModel.sendMessage("\(valueString) is interesting. Similar machine is " + machineName, source: 0)
                                 }
                             }
                         }

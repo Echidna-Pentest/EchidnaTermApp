@@ -145,7 +145,7 @@ class GeminiAPIManager {
                         
                         // Display vulnerability information
                         if !analysisResult.vulnerability.contains("NONE") {
-                            ChatViewModel.shared.sendMessage("Most Concerning Vulnerability: " + analysisResult.vulnerability, isUser: false)
+                            ChatViewModel.shared.sendMessage("Gemini Analysis\n" + analysisResult.vulnerability, source: 3)
                         }
                         
                         // Callback for success

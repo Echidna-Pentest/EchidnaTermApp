@@ -70,7 +70,7 @@ class APIManager {
                     // Output the most concerning vulnerability
 //                    print("Most Concerning Vulnerability: \(analysisResult.vulnerability)")
                     if !analysisResult.vulnerability.contains("NONE") {
-                        ChatViewModel.shared.sendMessage("Most Concerning Vulnerability:" + analysisResult.vulnerability, isUser: false)
+                        ChatViewModel.shared.sendMessage("OpenAI Analysis\n" + analysisResult.vulnerability, source: 2)
                     }
                 } catch {
                     // Handle decoding errors

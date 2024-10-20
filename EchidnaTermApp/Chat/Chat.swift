@@ -8,61 +8,70 @@
 
 import SwiftUI
 
-struct ChatMessage: Identifiable {
-    let id = UUID()
-    let message: String
-    let isUser: Bool
-}
-
 class ChatViewModel: ObservableObject {
     static let shared = ChatViewModel()
-    @Published var messages: [ChatMessage] = [
-        ChatMessage(message: "If you enable the AI ​​Analysis option on the API Key page and register your OpenAI API Key, the terminal output will be analyzed using the OpenAI API.", isUser: false),
-        ChatMessage(message: "If you add @AI to the beginning, Echidna will analyze the received text using the OpenAI API.", isUser: false),
+    
+    @Published var messages: [(message: String, source: Int)] = [
+        ("If you enable the AI ​​Analysis option on the API Key page and register your OpenAI API Key, the terminal output will be analyzed using the OpenAI API.", 0),
+        ("If you add @AI to the beginning, Echidna will analyze the received text using the OpenAI API.", 0)
     ]
     
-    func sendMessage(_ message: String, isUser: Bool) {
-        let chatMessage = ChatMessage(message: message, isUser: isUser)
-        messages.append(chatMessage)
+    func sendMessage(_ message: String, source: Int) {
+        messages.append((message: message, source: source))
         
-        if isUser && message.hasPrefix("@AI") {
-            handleAICommand(message: message, fromUserRequest: true)
+        if source == 1 && message.hasPrefix("@AI") {
+            handleAICommand(message: message)
         }
     }
     
-    private func handleAICommand(message: String, fromUserRequest: Bool) {
-        APIManager.shared.performOpenAIAnalysis(text: message, fromUserRequest: fromUserRequest)
+    private func handleAICommand(message: String) {
+        messages.append((message: message, source: 2))  // Add as a message from OpenAI
+        APIManager.shared.performOpenAIAnalysis(text: message, fromUserRequest: true)
     }
 }
 
 struct ChatView: View {
-    //@ObservedObject var viewModel = ChatViewModel()
     @ObservedObject var viewModel = ChatViewModel.shared
-    //    @EnvironmentObject var viewModel: ChatViewModel
     @State private var newMessage: String = ""
 
     var body: some View {
         VStack {
             List {
-                ForEach(viewModel.messages) { message in
+                ForEach(viewModel.messages.indices, id: \.self) { index in
+                    let message = viewModel.messages[index]
+                    
                     HStack {
-                        if message.isUser {
+                        if message.source == 1 {  // User message
                             Spacer()
                             Text(message.message)
                                 .padding()
-                                .background(Color.blue)
+                                .background(Color.blue)  // User messages are blue
                                 .foregroundColor(.white)
                                 .cornerRadius(8)
-                        } else {
+                        } else if message.source == 2 {  // OpenAI message
                             Text(message.message)
                                 .padding()
-                                .background(Color.gray.opacity(0.2))
+                                .background(Color.green.opacity(0.2))  // OpenAI messages are green
+                                .foregroundColor(.black)
+                                .cornerRadius(8)
+                            Spacer()
+                        } else if message.source == 3 {  // Gemini message
+                            Text(message.message)
+                                .padding()
+                                .background(Color.purple.opacity(0.2))  // Gemini messages are purple
+                                .foregroundColor(.black)
+                                .cornerRadius(8)
+                            Spacer()
+                        } else {  // Other messages
+                            Text(message.message)
+                                .padding()
+                                .background(Color.orange.opacity(0.2))  // Other messages are orange
                                 .foregroundColor(.black)
                                 .cornerRadius(8)
                             Spacer()
                         }
                     }
-                    .padding(message.isUser ? .leading : .trailing, 40)
+                    .padding(message.source == 1 ? .leading : .trailing, 40)
                 }
             }
             .listStyle(PlainListStyle())
@@ -73,7 +82,7 @@ struct ChatView: View {
                     .frame(minHeight: CGFloat(30))
                 
                 Button(action: {
-                    viewModel.sendMessage(newMessage, isUser: true)
+                    viewModel.sendMessage(newMessage, source: 1)  // 1 is for user
                     newMessage = ""
                 }) {
                     Text("Send")
