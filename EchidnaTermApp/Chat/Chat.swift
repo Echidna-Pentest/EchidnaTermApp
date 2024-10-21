@@ -12,9 +12,16 @@ class ChatViewModel: ObservableObject {
     static let shared = ChatViewModel()
     
     @Published var messages: [(message: String, source: Int)] = [
-        ("If you enable the AI ​​Analysis option on the API Key page and register your OpenAI API Key, the terminal output will be analyzed using the OpenAI API.", 0),
-        ("If you add @AI to the beginning, Echidna will analyze the received text using the OpenAI API.", 0)
+        ("If you enable the AI ​​Analysis option on the API Key page and register your OpenAI or Gemini API Key, the terminal output will be analyzed using their APIs.", 0),
+        ("If you add @AI to the beginning, Echidna will analyze the received text using the OpenAI API.", 0),
+        ("If you add @Gemini to the beginning, Echidna will analyze the received text using the Gemini API.", 0)
     ]
+    
+    func removeAtPrefix(from message: String) -> String {
+        // Replace the part from @ to the first space using regular expression
+        let modifiedMessage = message.replacingOccurrences(of: "^@\\S+\\s", with: "", options: .regularExpression)
+        return modifiedMessage
+    }
     
     func sendMessage(_ message: String, source: Int) {
         messages.append((message: message, source: source))
@@ -22,6 +29,19 @@ class ChatViewModel: ObservableObject {
         if source == 1 && message.hasPrefix("@AI") {
             handleAICommand(message: message)
         }
+        
+        if source == 1 && message.hasPrefix("@Gemini") {
+//            print("for Gemini: message=", removeAtPrefix(from: message))
+            GeminiAPIManager.shared.analyzeTextByGemini(input: removeAtPrefix(from: message), isUserRequest: true) { result in
+                switch result {
+                case .success(let text):
+                    print("Success: \(text)")
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
+        }
+
     }
     
     private func handleAICommand(message: String) {
