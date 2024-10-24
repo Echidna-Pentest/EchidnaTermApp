@@ -41,7 +41,12 @@ class APIManager {
             switch result {
             case .success(let analysis):
 //                print("analysis=", analysis)
-                
+
+                if fromUserRequest {
+//                    print("OpenAI Analysis Result: \(analysis)")
+                    ChatViewModel.shared.sendMessage("OpenAI Response\n" + analysis, source: 2)
+                    return
+                }
                 // Convert analysis from String to Data
                 guard let jsonData = analysis.data(using: .utf8) else {
                     print("Error converting analysis to Data")

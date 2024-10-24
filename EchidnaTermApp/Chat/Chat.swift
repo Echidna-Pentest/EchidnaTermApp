@@ -26,11 +26,11 @@ class ChatViewModel: ObservableObject {
     func sendMessage(_ message: String, source: Int) {
         messages.append((message: message, source: source))
         
-        if source == 1 && message.hasPrefix("@AI") {
+        if source == 1 && (message.hasPrefix("@AI") || !message.hasPrefix("@")) {
             handleAICommand(message: message)
         }
         
-        if source == 1 && message.hasPrefix("@Gemini") {
+        if source == 1 && (message.hasPrefix("@Gemini") || !message.hasPrefix("@")) {
 //            print("for Gemini: message=", removeAtPrefix(from: message))
             GeminiAPIManager.shared.analyzeTextByGemini(input: removeAtPrefix(from: message), isUserRequest: true) { result in
                 switch result {
@@ -45,7 +45,7 @@ class ChatViewModel: ObservableObject {
     }
     
     private func handleAICommand(message: String) {
-        messages.append((message: message, source: 2))  // Add as a message from OpenAI
+//        messages.append((message: message, source: 2))  // Add as a message from OpenAI
         APIManager.shared.performOpenAIAnalysis(text: message, fromUserRequest: true)
     }
 }
