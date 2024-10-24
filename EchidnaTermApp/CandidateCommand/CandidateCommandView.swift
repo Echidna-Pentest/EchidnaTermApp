@@ -107,9 +107,25 @@ struct CandidateCommandView: View {
 
     private func commandRow(command: Command) -> some View {
         HStack {
+            // Display the command name
             Text(command.displayName)
                 .font(.subheadline)
+            
             Spacer()
+            
+            // If there are scores, and they are not zero, display them on the right side
+            if let score1 = command.score1, score1 != 0 {
+                Text("\(score1)")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+
+            if let score2 = command.score2, score2 != 0 {
+                Text("\(score2)")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+
         }
         .padding(.vertical, 4)
         .onTapGesture {
@@ -119,6 +135,7 @@ struct CandidateCommandView: View {
             showCommandDescription(command: command)
         }
     }
+
 
     private func handleCommandTap(command: Command) {
         selectedCommand = command

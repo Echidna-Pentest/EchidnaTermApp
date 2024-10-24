@@ -16,14 +16,18 @@ class Command: Identifiable, ObservableObject, Equatable {
     var condition: [String]
     var group: String?
     var description: String
+    var score1: Int? // New score1 property
+    var score2: Int? // New score2 property
 
-    init(template: String, patterns: [String], condition: [String], group: String? = nil, description: String) {
+    init(template: String, patterns: [String], condition: [String], group: String? = nil, description: String, score1: Int = 0, score2: Int = 0) {
         self.template = template
         self.displayName = template
         self.patterns = patterns
         self.condition = condition
         self.group = group
         self.description = description
+        self.score1 = score1
+        self.score2 = score2
     }
     
     static func == (lhs: Command, rhs: Command) -> Bool {
@@ -181,14 +185,54 @@ class CommandManager: ObservableObject {
     }
 
     
+    var displayedCommands: [Command] = []
+
     func updateCandidateCommand(target: Target) {
+        // Initialize the array to store displayed commands
+        displayedCommands.removeAll()
         for command in commands {
             if command.condition.isEmpty || shouldDisplayCommand(command: command, for: target) {
                 command.displayName = command.template
                 replaceTargetInCommand(target: target, in: &command.displayName)
+                displayedCommands.append(command) // Store the commands that should be displayed
                 objectWillChange.send()
             } else {
                 command.displayName = ""
+            }
+        }
+        
+        // Analyze commands for further processing (e.g., scoring)
+        analyzeCommands()
+    }
+    
+    func analyzeCommands() {
+        guard let apiKey = APIManager.shared.retrieveAPIKey() else {
+            print("API Key not found.")
+            return
+        }
+        
+        let openAIClient = OpenAIClient(apiKey: apiKey)
+        
+        // Calling OpenAIClient to score the displayed commands
+        openAIClient.scoreCommands(self.displayedCommands) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let scores):
+                // Ensure the number of scores matches the number of commands
+                guard scores.count == self.displayedCommands.count else {
+                    print("Error: Number of scores returned does not match the number of commands")
+                    return
+                }
+
+                // Updating the score for each command
+                for (index, command) in self.displayedCommands.enumerated() {
+                    command.score1 = scores[index]
+//                    print("Command: \(command.displayName), score1: \(command.score1)")
+                }
+                objectWillChange.send()
+            case .failure(let error):
+                print("Error scoring commands: \(error)")
             }
         }
     }
