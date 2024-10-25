@@ -202,7 +202,15 @@ class CommandManager: ObservableObject {
         }
         
         // Analyze commands for further processing (e.g., scoring)
-        analyzeCommands()
+        if UserDefaults.standard.bool(forKey: "EnableOpenAIAnalysis") {
+            analyzeCommands()
+        }
+
+        if UserDefaults.standard.bool(forKey: "EnableGeminiAnalysis") {
+            analyzeCommandsByGemini()
+        }
+        objectWillChange.send()
+
     }
     
     func analyzeCommands() {
@@ -236,6 +244,29 @@ class CommandManager: ObservableObject {
             }
         }
     }
+
+    func analyzeCommandsByGemini() {
+        // Calling GeminiAPI to score the displayed commands
+        GeminiAPIManager.shared.scoreCommands(self.displayedCommands) { result in
+            switch result {
+            case .success(let scores):
+                // Ensure the number of scores matches the number of commands
+                guard scores.count == self.displayedCommands.count else {
+                    print("Error: Number of scores returned does not match the number of commands. scores.count=", scores.count, " self.displayedCommands.count=", self.displayedCommands.count)
+                    return
+                }
+
+                // Updating the score for each command
+                for (index, command) in self.displayedCommands.enumerated() {
+                    command.score2 = scores[index]
+//                    print("Command: \(command.displayName), score1: \(command.score1)")
+                }
+            case .failure(let error):
+                print("Error scoring commands: \(error)")
+            }
+        }
+    }
+    
     
     func showAllCommands() {
         for command in commands {

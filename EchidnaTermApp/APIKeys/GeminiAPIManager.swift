@@ -174,8 +174,144 @@ class GeminiAPIManager {
             """
         case "question":
             return "You are a Penetration Test Assistant and help the user to attack Hack The Box Machine for educational purposes. You must answer the questions from the user as a Penetration Test Assistant. Here is a question and answer it: \(input)"
+        case "command_score":
+            return """
+            Score each command from 0 to 100 based on its relevance for exploiting vulnerabilities or obtaining critical information in a penetration testing context.
+
+            Requirements:
+            - Ensure the number of scores matches the number of commands.
+            - Ensure the scores are in the same order as the commands.
+            - Before returning the result, double-check that the count of scores is equal to the count of commands. If they do not match, adjust the scores and reanalyze until they match.
+
+            Output:
+            - Return only a JSON object with the scores list in the format: {"scores": [score1, score2, ...]}.
+            - If, after multiple adjustments, the counts still do not match, return an error in JSON format: {"error": "Mismatched score and command count"}.
+
+            Commands:
+            \(input)
+            """
         default:
             return "Analyze the following input: \(input)"
         }
     }
+    
+    
+    func scoreCommands(_ commands: [Command], completion: @escaping (Result<[Int], Error>) -> Void) {
+
+        // Create a description of the commands with their display names and enumerate them
+        let commandDescriptions = commands.map { $0.displayName }.enumerated().map { "\($0 + 1). \($1)" }.joined(separator: "\n")
+//        print("commandDescriptions=", commandDescriptions)
+        // Define the prompt for scoring the commands
+        let parameters: [String: Any] = [
+            "contents": [
+                [
+                    "parts": [
+                        ["text": generatePrompt(input: commandDescriptions, analysisType: "command_score")]
+                    ]
+                ]
+            ],
+            "safetySettings": [
+                [
+                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "threshold": "BLOCK_NONE"
+                ],
+                [
+                    "category": "HARM_CATEGORY_HATE_SPEECH",
+                    "threshold": "BLOCK_NONE"
+                ],
+                [
+                    "category": "HARM_CATEGORY_HARASSMENT",
+                    "threshold": "BLOCK_NONE"
+                ]
+            ]
+        ]
+
+//        print("score: parameters=", parameters)
+        sendRequestToGemini(parameters: parameters, completion: completion)  // Call function to send request to Gemini API
+    }
+
+    private func sendRequestToGemini(parameters: [String: Any], completion: @escaping (Result<[Int], Error>) -> Void) {
+        guard let geminiApiKey = APIManager.shared.retrieveAPIKey(service: "GeminiKeyService"),
+              let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=\(geminiApiKey)") else {
+            completion(.failure(GeminiClientError.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // Serialize request body
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        } catch {
+            completion(.failure(error))
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data, let jsonString = String(data: data, encoding: .utf8) else {
+                completion(.failure(OpenAIClientError.noData))
+                return
+            }
+            
+//            print("Raw Response: \(jsonString)")
+
+            // Parse response to get scores
+            if let scores = self.extractScores(from: jsonString) {
+                completion(.success(scores))
+            } else {
+                print("Failed to parse scores from response. Raw Response: \(jsonString)")
+                completion(.failure(OpenAIClientError.apiError("Failed to parse scores from response.")))
+            }
+        }
+        task.resume()
+    }
+
+    // Enhanced helper function to parse scores from JSON response
+    private func extractScores(from jsonString: String) -> [Int]? {
+        // Step 1: Parse initial JSON structure
+        guard let jsonData = jsonString.data(using: .utf8),
+              let jsonResponse = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+              let candidates = jsonResponse["candidates"] as? [[String: Any]] else {
+            print("Error: Failed to parse the base JSON structure.")
+            return nil
+        }
+        
+        // Step 2: Access `text` within `content -> parts -> text`
+        guard let content = candidates.first?["content"] as? [String: Any],
+              let parts = content["parts"] as? [[String: Any]],
+              let text = parts.first?["text"] as? String else {
+            print("Error: Could not find 'text' field within JSON response.")
+            return nil
+        }
+        
+        // Step 3: Remove Markdown backticks and locate JSON content
+        let cleanedText = text.replacingOccurrences(of: "```json", with: "").replacingOccurrences(of: "```", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Step 4: Extract JSON inside cleaned text
+        guard let jsonStart = cleanedText.range(of: "{"),
+              let jsonEnd = cleanedText.range(of: "}", options: .backwards)?.upperBound else {
+            print("Error: No JSON structure found in 'text' field.")
+            return nil
+        }
+        
+        let jsonText = String(cleanedText[jsonStart.lowerBound..<jsonEnd])
+        
+        // Step 5: Parse extracted JSON to access `scores`
+        guard let contentData = jsonText.data(using: .utf8),
+              let parsedContent = try? JSONSerialization.jsonObject(with: contentData, options: []) as? [String: Any],
+              let scores = parsedContent["scores"] as? [Int] else {
+            print("Error: Failed to parse scores from extracted JSON.")
+            return nil
+        }
+        
+        return scores
+    }
+
 }
