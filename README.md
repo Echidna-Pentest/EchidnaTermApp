@@ -130,3 +130,16 @@ Analysis results are returned through the chat component.
 
 <img src="img/chat.png" width="50%">
 
+
+### AI Analysis and CandidateCommands
+AI Analysis and CandidateCommands are integrated, so when AI Analysis is enabled, AI-suggested commands are displayed in the OpenAI and Gemini groups.
+
+![Integrate AI Anaysis with CandidateCommand](img/IntegratedAI.gif)
+
+A function to score the CandidateCommands from 0 to 100 using the OpenAI and Gemini APIs has been implemented. OpenAI's score for each command is displayed on the left, while Gemini's score is shown on the right.
+
+<img src="img/Scoring.png" width="50%">
+
+You can also ask questions for OpenAI and Gemini AI.
+
+<img src="img/ChatQuestions.png" width="50%">
