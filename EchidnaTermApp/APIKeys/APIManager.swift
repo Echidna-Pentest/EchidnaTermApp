@@ -47,40 +47,7 @@ class APIManager {
                     ChatViewModel.shared.sendMessage("OpenAI Response\n" + analysis, source: 2)
                     return
                 }
-                // Convert analysis from String to Data
-                guard let jsonData = analysis.data(using: .utf8) else {
-                    print("Error converting analysis to Data")
-                    return
-                }
-
-                do {
-                    // Decode the entire analysis result JSON object
-                    let analysisResult = try JSONDecoder().decode(AnalysisResult.self, from: jsonData)
-                    
-                    // Iterate through the commands and add them
-                    for commandObj in analysisResult.commands {
-//                        print("Command: \(commandObj.command)")
-//                        print("Explanation: \(commandObj.explanation)")
-                        
-                        let newCommand = Command(
-                            template: commandObj.command,
-                            patterns: [],
-                            condition: [],
-                            group: "OpenAI",
-                            description: commandObj.explanation
-                        )
-                        CommandManager.shared.addCommand(newCommand)
-                    }
-                    
-                    // Output the most concerning vulnerability
-//                    print("Most Concerning Vulnerability: \(analysisResult.vulnerability)")
-                    if !analysisResult.vulnerability.contains("NONE") {
-                        ChatViewModel.shared.sendMessage("OpenAI Analysis\n" + analysisResult.vulnerability, source: 2)
-                    }
-                } catch {
-                    // Handle decoding errors
-                    print("Error decoding JSON: \(error)")
-                }
+                APIManager.processAnalysis(analysis: analysis, llmName: "OpenAI", source: 2)
 
                 // Send the analysis data to the chat view model
 //                let chatViewModel = ChatViewModel.shared
@@ -92,6 +59,39 @@ class APIManager {
             }
         }
 
+    }
+    
+    static func processAnalysis(analysis: String, llmName: String, source: Int) {
+        // Convert analysis from String to Data
+        guard let jsonData = analysis.data(using: .utf8) else {
+            print("Error converting analysis to Data")
+            return
+        }
+
+        do {
+            // Decode the entire analysis result JSON object
+            let analysisResult = try JSONDecoder().decode(AnalysisResult.self, from: jsonData)
+            
+            // Iterate through the commands and add them
+            for commandObj in analysisResult.commands {
+                let newCommand = Command(
+                    template: commandObj.command,
+                    patterns: [],
+                    condition: [],
+                    group: llmName, // Use the provided LLM name here
+                    description: commandObj.explanation
+                )
+                CommandManager.shared.addCommand(newCommand)
+            }
+            
+            // Output the most concerning vulnerability
+            if !analysisResult.vulnerability.contains("NONE") {
+                ChatViewModel.shared.sendMessage("\(llmName) Analysis\n" + analysisResult.vulnerability, source: source)
+            }
+        } catch {
+            // Handle decoding errors
+            print("Error decoding JSON: \(error)")
+        }
     }
 
     func retrieveAPIKey(service: String = "OpenAIKeyService") -> String? {

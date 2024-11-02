@@ -15,6 +15,7 @@ struct APIKeyManagementView: View {
     @State private var addEditGeminiKeyShown = false
     @AppStorage("EnableOpenAIAnalysis") private var isOpenAIAnalysisEnabled = false
     @AppStorage("EnableGeminiAnalysis") private var isGeminiAnalysisEnabled = false
+    @AppStorage("EnableOpenHermesAnalysis") private var isOpenHermesAnalysisEnabled = false
     @State private var openAIKey: String? = nil
     @State private var geminiKey: String? = nil
     
@@ -40,6 +41,18 @@ struct APIKeyManagementView: View {
                     isAnalysisEnabled: $isGeminiAnalysisEnabled,
                     analysisDescription: "Enable Gemini Analysis. Terminal outputs are analyzed using Gemini API."
                 )
+                
+                // OpenHermes Section (Enable/Disable only, no API Key)
+                openHermesSection(
+                    title: "OpenHermes",
+                    isAnalysisEnabled: $isOpenHermesAnalysisEnabled,
+                    analysisDescription: "Enable OpenHermes Analysis. This service can be enabled or disabled but does not require an API Key."
+                )
+                .onChange(of: isOpenHermesAnalysisEnabled) { newValue in
+                    if newValue {
+                        performActionWhenOpenHermesEnabled()
+                    }
+                }
             }
             .padding()
         }
@@ -130,6 +143,36 @@ struct APIKeyManagementView: View {
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
     }
     
+    // View for OpenHermes (Enable/Disable only)
+    @ViewBuilder
+    func openHermesSection(
+        title: String,
+        isAnalysisEnabled: Binding<Bool>,
+        analysisDescription: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Text("\(title) Service")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Spacer()
+            }
+            
+            HStack {
+                Text(analysisDescription)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Spacer()
+                Toggle("", isOn: isAnalysisEnabled)
+                    .toggleStyle(SwitchToggleStyle(tint: .blue))
+            }
+        }
+        .padding()
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+    }
+    
     func loadAPIKeys() {
         loadAPIKey(service: "OpenAIKeyService", apiKey: $openAIKey)
         loadAPIKey(service: "GeminiKeyService", apiKey: $geminiKey)
@@ -184,5 +227,7 @@ struct APIKeyManagementView: View {
         let masked = String(repeating: "*", count: key.count - 4)
         return "\(prefix)\(masked)"
     }
+    
+
 }
 

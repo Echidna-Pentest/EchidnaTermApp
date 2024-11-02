@@ -119,6 +119,18 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                                                 }
                                             }
                                         }
+                                        if UserDefaults.standard.bool(forKey: "EnableOpenHermesAnalysis") {
+//                                            print("LocalLLM Analyze Starting")
+                                            Task {
+                                                if let LocalLLM = await LocalLLM.getInstance { progress in
+                                                    print("Loading progress: \(progress)")
+                                                } {
+                                                    await LocalLLM.performLocalAIAnalysis(input: longestCommandOutput)
+                                                } else {
+                                                    print("Failed to initialize Bot instance")
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                                 self.commandOutputs = []
@@ -140,7 +152,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                             let range = NSRange(trimmedTerminalOutput.startIndex..<trimmedTerminalOutput.endIndex, in: trimmedTerminalOutput)
                             return regex.firstMatch(in: trimmedTerminalOutput, options: [], range: range) != nil
                         } catch {
-                            print("Invalid regex: \(pattern)")
+//                            print("Invalid regex: \(pattern)")
                             return false
                         }
                     }) {

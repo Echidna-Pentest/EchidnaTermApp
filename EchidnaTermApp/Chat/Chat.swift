@@ -41,6 +41,21 @@ class ChatViewModel: ObservableObject {
                 }
             }
         }
+        // Check if the source is for Local processing and if the message has the correct prefix
+        if source == 1 && (message.hasPrefix("@Local") || !message.hasPrefix("@")) {
+            // Run the asynchronous operation within a Task context to support async calls
+            Task {
+                // Initialize the LocalLLM instance and provide a progress handler
+                if let LocalLLM = await LocalLLM.getInstance(update: { progress in
+                    print("Loading progress: \(progress)")
+                }) {
+                    // Perform analysis with LocalLLM and handle the result
+                    let result = await LocalLLM.performLocalAIAnalysis(input: removeAtPrefix(from: message), fromUserRequest: true)
+                } else {
+                    print("Failed to initialize LocalLLM instance")
+                }
+            }
+        }
 
     }
     
