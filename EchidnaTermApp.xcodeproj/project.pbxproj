@@ -138,6 +138,8 @@
 		9AA0E8182C3557F200992B0A /* graph.png in Resources */ = {isa = PBXBuildFile; fileRef = 9AA0E8172C3557F200992B0A /* graph.png */; };
 		9AA0E81A2C363F7100992B0A /* smbVersionScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA0E8192C363F7100992B0A /* smbVersionScan.swift */; };
 		9ABC2E602CC1FC830065743A /* GeminiAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABC2E5F2CC1FC830065743A /* GeminiAPIManager.swift */; };
+		9AE2A5F62CD3A2D0003F8A02 /* LocalLLM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE2A5F52CD3A2C6003F8A02 /* LocalLLM.swift */; };
+		9AE2A5FE2CD5CDCB003F8A02 /* llama in Frameworks */ = {isa = PBXBuildFile; productRef = 9AE2A5FD2CD5CDCB003F8A02 /* llama */; };
 		9AF543062C2E170A0026F0CA /* whatweb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF543052C2E170A0026F0CA /* whatweb.swift */; };
 /* End PBXBuildFile section */
 
@@ -294,6 +296,7 @@
 		9AA0E8172C3557F200992B0A /* graph.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = graph.png; sourceTree = "<group>"; };
 		9AA0E8192C363F7100992B0A /* smbVersionScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = smbVersionScan.swift; sourceTree = "<group>"; };
 		9ABC2E5F2CC1FC830065743A /* GeminiAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiAPIManager.swift; sourceTree = "<group>"; };
+		9AE2A5F52CD3A2C6003F8A02 /* LocalLLM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalLLM.swift; sourceTree = "<group>"; };
 		9AF543052C2E170A0026F0CA /* whatweb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = whatweb.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -306,6 +309,7 @@
 				49C650BC28333AD8005DFC17 /* CloudKit.framework in Frameworks */,
 				02C2FCC8282017A9005EDEC2 /* Shake in Frameworks */,
 				4912EB6828207E5C0083638C /* Introspect in Frameworks */,
+				9AE2A5FE2CD5CDCB003F8A02 /* llama in Frameworks */,
 				49C1B6AF24625C7D00D54F6F /* SwiftTerm in Frameworks */,
 				4928BDEB27BF09BE00C180E6 /* CSSH in Frameworks */,
 				9A920E312C03E77400782456 /* SwiftGraph in Frameworks */,
@@ -733,6 +737,7 @@
 		9AA0E80A2C32A35B00992B0A /* APIKeys */ = {
 			isa = PBXGroup;
 			children = (
+				9AE2A5F52CD3A2C6003F8A02 /* LocalLLM.swift */,
 				9AA0E80B2C32A4EE00992B0A /* AddAPIKeysView.swift */,
 				9AA0E80D2C33C2EE00992B0A /* APIKeyManagementView.swift */,
 				9AA0E80F2C33C53900992B0A /* APIManager.swift */,
@@ -773,6 +778,7 @@
 				4912EB6728207E5C0083638C /* Introspect */,
 				9A920E302C03E77400782456 /* SwiftGraph */,
 				9A1656CA2C046D610008F8C6 /* MathParser */,
+				9AE2A5FD2CD5CDCB003F8A02 /* llama */,
 			);
 			productName = testMasterDetail;
 			productReference = 4901167224553789002C1F85 /* EchidnaTermApp.app */;
@@ -855,6 +861,7 @@
 				9A920E2F2C03E71200782456 /* XCRemoteSwiftPackageReference "SwiftGraph" */,
 				9A920E322C04563300782456 /* XCRemoteSwiftPackageReference "GraphViz" */,
 				9A1656C92C046D1B0008F8C6 /* XCRemoteSwiftPackageReference "DDMathParser" */,
+				9AE2A5FC2CD5CDCB003F8A02 /* XCRemoteSwiftPackageReference "llama" */,
 			);
 			productRefGroup = 4901167324553789002C1F85 /* Products */;
 			projectDirPath = "";
@@ -986,6 +993,7 @@
 				49A0A2BE2491C792002593F7 /* LazyView.swift in Sources */,
 				9A2928332BFC9824001B338D /* CandidateCommand.swift in Sources */,
 				4943DA9827FC87DE00E4E2F5 /* RecentHostsView.swift in Sources */,
+				9AE2A5F62CD3A2D0003F8A02 /* LocalLLM.swift in Sources */,
 				49C650952832D8B2005DFC17 /* Main.xcdatamodeld in Sources */,
 				9ABC2E602CC1FC830065743A /* GeminiAPIManager.swift in Sources */,
 				49F02ADF24610D7A00CFEB50 /* STFilePicker.swift in Sources */,
@@ -1180,7 +1188,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
@@ -1213,7 +1221,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Accent Color";
 				CODE_SIGN_ENTITLEMENTS = EchidnaTermApp/EchidnaTermApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"EchidnaTermApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
@@ -1228,7 +1236,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.36;
+				MARKETING_VERSION = 1.41;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.terasec0327;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1246,7 +1254,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Accent Color";
 				CODE_SIGN_ENTITLEMENTS = EchidnaTermApp/EchidnaTermApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_ASSET_PATHS = "\"EchidnaTermApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
@@ -1261,11 +1269,11 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.36;
+				MARKETING_VERSION = 1.41;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gmail.terasec0327;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Distribution Profile2";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = EchidnaTermApp_gmailOffline;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1453,6 +1461,14 @@
 				minimumVersion = 0.4.1;
 			};
 		};
+		9AE2A5FC2CD5CDCB003F8A02 /* XCRemoteSwiftPackageReference "llama" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ggerganov/llama.cpp/";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1485,6 +1501,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9A920E2F2C03E71200782456 /* XCRemoteSwiftPackageReference "SwiftGraph" */;
 			productName = SwiftGraph;
+		};
+		9AE2A5FD2CD5CDCB003F8A02 /* llama */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9AE2A5FC2CD5CDCB003F8A02 /* XCRemoteSwiftPackageReference "llama" */;
+			productName = llama;
 		};
 /* End XCSwiftPackageProductDependency section */
 
