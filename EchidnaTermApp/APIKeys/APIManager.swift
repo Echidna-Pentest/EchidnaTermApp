@@ -12,7 +12,7 @@ import Security
 struct AnalysisResult: Codable {
     struct CommandItem: Codable {
         let command: String
-        let explanation: String
+        let explanation: String?
     }
     let commands: [CommandItem]
     let vulnerability: String
@@ -79,7 +79,7 @@ class APIManager {
                     patterns: [],
                     condition: [],
                     group: llmName, // Use the provided LLM name here
-                    description: commandObj.explanation
+                    description: commandObj.explanation ?? ""
                 )
                 CommandManager.shared.addCommand(newCommand)
             }
