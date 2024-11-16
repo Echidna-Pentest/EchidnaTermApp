@@ -15,11 +15,11 @@ class Command: Identifiable, ObservableObject, Equatable {
     var patterns: [String]
     var condition: [String]
     var group: String?
-    var description: String
+    var description: String?
     var score1: Int? // New score1 property
     var score2: Int? // New score2 property
 
-    init(template: String, patterns: [String], condition: [String], group: String? = nil, description: String, score1: Int = 0, score2: Int = 0) {
+    init(template: String, patterns: [String], condition: [String], group: String? = nil, description: String? = "", score1: Int = 0, score2: Int = 0) {
         self.template = template
         self.displayName = template
         self.patterns = patterns

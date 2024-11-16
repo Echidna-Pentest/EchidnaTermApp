@@ -146,7 +146,7 @@ struct CandidateCommandView: View {
     
     private func showCommandDescription(command: Command) {
         selectedCommand = command
-        commandDescription = command.description
+        commandDescription = command.description ?? ""
         showCommandDescription = true
     }
     

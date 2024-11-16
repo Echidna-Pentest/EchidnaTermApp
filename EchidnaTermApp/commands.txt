@@ -35,8 +35,8 @@ group: Useful Command
 [Echidna]
 pattern: smbmap
 description: scan shared drive via SMB using smbmap
-template: smbmap -H {host}
-template: smbmap -H {host} -u "{user}" -p "{pass}"
+template: smbmap --no-banner --no-color -H {host}
+template: smbmap --no-banner --no-color -H {host} -u "{user}" -p "{pass}"
 condition: ["139", "445", "netbios", "microsoft-ds"]
 group: 445_SMB
 [end]

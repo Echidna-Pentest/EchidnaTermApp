@@ -23,7 +23,7 @@ struct CommandDetailsView: View {
             detailRow(title: "Patterns:", value: command.patterns.joined(separator: ", "))
             detailRow(title: "Condition:", value: command.condition.joined(separator: ", "))
             detailRow(title: "Group:", value: command.group ?? "None")
-            detailRow(title: "Description:", value: command.description.replacingOccurrences(of: "\\n", with: "\n"), isDescription: true)
+            detailRow(title: "Description:", value: command.description?.replacingOccurrences(of: "\\n", with: "\n") ?? "", isDescription: true)
         }
         .padding()
         .background(Color(.systemGray6))
