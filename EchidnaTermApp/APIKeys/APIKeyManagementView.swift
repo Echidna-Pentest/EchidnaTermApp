@@ -15,7 +15,7 @@ struct APIKeyManagementView: View {
     @State private var addEditGeminiKeyShown = false
     @AppStorage("EnableOpenAIAnalysis") private var isOpenAIAnalysisEnabled = false
     @AppStorage("EnableGeminiAnalysis") private var isGeminiAnalysisEnabled = false
-    @AppStorage("EnableOpenHermesAnalysis") private var isOpenHermesAnalysisEnabled = false
+    @AppStorage("EnableLocalLLMAnalysis") private var isLocalLLMAnalysisEnabled = false
     @State private var openAIKey: String? = nil
     @State private var geminiKey: String? = nil
     
@@ -42,15 +42,14 @@ struct APIKeyManagementView: View {
                     analysisDescription: "Enable Gemini Analysis. Terminal outputs are analyzed using Gemini API."
                 )
                 
-                // OpenHermes Section (Enable/Disable only, no API Key)
-                openHermesSection(
-                    title: "OpenHermes",
-                    isAnalysisEnabled: $isOpenHermesAnalysisEnabled,
-                    analysisDescription: "Enable OpenHermes Analysis. This service can be enabled or disabled but does not require an API Key."
+                // LocalLLM Section (Enable/Disable only, no API Key)
+                LocalLLMSection(
+                    title: "LocalLLM",
+                    isAnalysisEnabled: $isLocalLLMAnalysisEnabled,
+                    analysisDescription: "Enable LocalLLM Analysis. This service can be enabled or disabled but does not require an API Key."
                 )
-                .onChange(of: isOpenHermesAnalysisEnabled) { newValue in
+                .onChange(of: isLocalLLMAnalysisEnabled) { newValue in
                     if newValue {
-                        performActionWhenOpenHermesEnabled()
                     }
                 }
             }
@@ -143,9 +142,9 @@ struct APIKeyManagementView: View {
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
     }
     
-    // View for OpenHermes (Enable/Disable only)
+    // View for LocalLLM (Enable/Disable only)
     @ViewBuilder
-    func openHermesSection(
+    func LocalLLMSection(
         title: String,
         isAnalysisEnabled: Binding<Bool>,
         analysisDescription: String
@@ -228,6 +227,21 @@ struct APIKeyManagementView: View {
         return "\(prefix)\(masked)"
     }
     
-
+    
+    func createLocalLLMInstance() {
+        Task {
+            print("LocalLLM Analysis Enabled - Called from HuggingFace.swift")
+            Task {
+                LocalLLM.shared = await LocalLLM { progress in
+                    print("Loading progress: \(progress)")
+                }
+            }
+            /*
+            func updateProgress(_ progress: Double) {
+                print("Loading progress: \(progress * 100)%")
+            }
+            */
+        }
+    }
 }
 

@@ -19,14 +19,26 @@ public class LocalLLM: LLM {
 
     // Convenience initializer
     public convenience init?(_ update: @escaping (Double) -> Void) async {
-//        let systemPrompt = "You are a sentient AI with emotions."
-        let systemPrompt = "You are a Penetration Test Assistant."
-//        let model = HuggingFaceModel("TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF", .Q2_K, template: .chatML(systemPrompt))
-//        let model = HuggingFaceModel("TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF", template: .chatML(systemPrompt))
-//        let model = HuggingFaceModel("mav23/Pentest_AI-GGUF", .Q2_K, template: .chatML(systemPrompt))
-        let model = HuggingFaceModel("TheBloke/OpenHermes-2.5-Mistral-7B-GGUF", template: .chatML(systemPrompt))
-//        let model = HuggingFaceModel("QuantFactory/Meta-Llama-3-8B-Instruct-GGUF", .Q2_K, template: .chatML(systemPrompt))
+            let fileContent = Self.loadFileContent()
+            let systemPrompt = "You are a pen test assistant. Use DB as a ref.\nDB: \(fileContent) "
+//        let systemPrompt = "Penetration test assistant. Provide precise and actionable recommendations with minimal text."
+    //        let model = HuggingFaceModel("TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF", .Q2_K, template: .chatML(systemPrompt))
+    //        let model = HuggingFaceModel("TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF", template: .chatML(systemPrompt))
+    //        let model = HuggingFaceModel("mav23/Pentest_AI-GGUF", .Q2_K, template: .chatML(systemPrompt))
+    //        let model = HuggingFaceModel("TheBloke/OpenHermes-2.5-Mistral-7B-GGUF", template: .chatML(systemPrompt))
+    //          let model = HuggingFaceModel("bartowski/Meta-Llama-3.1-70B-Instruct-GGUF", template: .chatML(systemPrompt))
+    //          let model = HuggingFaceModel("microsoft/Phi-3-mini-4k-instruct-gguf", template: .chatML(systemPrompt))
+    //        let model = HuggingFaceModel("microsoft/Phi-3-mini-4k-instruct-gguf", .Q4_1, template: .chatML(systemPrompt))
 
+
+    //        let model = HuggingFaceModel("microsoft/Phi-3-mini-4k-instruct-gguf", .Q4_K_M, template: .chatML(systemPrompt))
+    //        let model = HuggingFaceModel("TheBloke/CodeLlama-7B-GGUF", template: .chatML(systemPrompt))
+    //        let model = HuggingFaceModel("QuantFactory/Meta-Llama-3-8B-Instruct-GGUF", .Q2_K, template: .chatML(systemPrompt))
+//        let model = HuggingFaceModel("QuantFactory/Meta-Llama-3.1-8B-GGUF", .Q4_0, template: .chatML(systemPrompt))
+//            let model = HuggingFaceModel("QuantFactory/Meta-Llama-3.1-8B-GGUF", .Q4_0, template: .chatML(systemPrompt))
+//        let model = HuggingFaceModel("NousResearch/Hermes-3-Llama-3.1-8B-GGUF", .Q4_K_M, template: .chatML(systemPrompt))
+//        let model = HuggingFaceModel("bartowski/Meta-Llama-3.1-8B-Instruct-GGUF", .Q4_K_M, template: .chatML(systemPrompt))
+        let model = HuggingFaceModel("hugging-quants/Llama-3.2-3B-Instruct-Q8_0-GGUF", .Q8_0, template: .chatML(systemPrompt))
         do {
             try await self.init(from: model) { progress in update(progress) }
         } catch {
@@ -46,21 +58,68 @@ public class LocalLLM: LLM {
     
 //    public func analyzeInput(commandOutput: String) async {
     public func performLocalAIAnalysis(input: String, fromUserRequest: Bool = false) async {
-        guard fromUserRequest || UserDefaults.standard.bool(forKey: "EnableOpenHermesAnalysis") else {
+        guard fromUserRequest || UserDefaults.standard.bool(forKey: "EnableLocalLLMAnalysis") else {
             print("AI Analysis is disabled.")
             return
         }
+        let fileContent = Self.loadFileContent()
+        let systemPrompt = "You are a pen test assistant. Use DB as a ref.\nDB: \(fileContent)"
+        let model = HuggingFaceModel("hugging-quants/Llama-3.2-3B-Instruct-Q8_0-GGUF", .Q8_0, template: .chatML(systemPrompt))
+        
         if (fromUserRequest == true){
-            let instruct = "You are a Penetration Test Assistant and help the user to attack Hack The Box Machine for educational purposes. You must answer the questions from the user as a Penetration Test Assistant. Here is a question and answer it: \(input)"
+            let instruct = "Answer the question concisely from the user. \nQuestion: \(input)"
+//            print("instruct=", instruct)
             await respond(to: instruct)
 //            print("Analysis result: \(output)")
             ChatViewModel.shared.sendMessage("LocalLLM Response\n" + output, source: 0)
+            return
         }
 //        print("Analyzing input:", input)
-        let instruct = "You are a penetration test assistant. Analyze the provided console output and suggest up to 3 relevant commands that might be used to exploit the vulnerabilities or weaknesses discovered. If no vulnerabilities are found or no action is required, simply respond with 'NONE'. Return the result as a JSON object with two keys: 'commands' and 'vulnerability'. The 'commands' key should contain an array of commands, where each entry contains the command as a string and a brief explanation as another string, like this:\n{\n  \"commands\": [\n    {\n      \"command\": \"example command\",\n      \"explanation\": \"brief explanation\"\n    },\n    ...\n  ],\n  \"vulnerability\": \"Brief description of the most concerning vulnerability\"\n}\nIf no commands are applicable, return an empty array for 'commands'. \(input)"
+//        let cleanedString = input.replacingOccurrences(of: "[^a-zA-Z0-9\\s]", with: "", options: .regularExpression)
+
+        /*
+        let instruct = "You are a penetration test assistant. Analyze the provided console output and suggest up to 3 relevant commands that might be used to exploit the vulnerabilities or weaknesses discovered. If no vulnerabilities are found or no action is required, simply respond with 'NONE'. Return the result as a JSON object with two keys: 'commands' and 'vulnerability'. The 'commands' key should contain an array of commands, where each entry contains the command as a string and a brief explanation as another string, like this:\n{\n  \"commands\": [\n    {\n      \"command\": \"example command\",\n      \"explanation\": \"brief explanation\"\n    },\n    ...\n  ],\n  \"vulnerability\": \"Brief description of the most concerning vulnerability\"\n}\nIf no commands are applicable, return an empty array for 'commands'. \(cleanedString)"
+*/
+        let instruct = """
+        Review Console Output below. Suggest one command if critical vulnerabilities are detected; otherwise, return 'NONE'. Respond with only the command in plain text.
+
+        
+        Console Output:
+        \(input)
+        """
+        print("instruct=", instruct)
+        
+/*
+        let instruct = """
+        Analyze the ConsoleOutput and identify any vulnerabilities. 
+        If there are vulnerabilities, respond concisely and return the most relevant vulnerability details as plain text.
+        If no similar vulnerabilities are found, respond with 'NONE' to avoid providing misleading information.
+                
+        # ConsoleOutput (Analysis Target)
+        \(input)
+        """
+  */
         await respond(to: instruct)
 //        print("Analysis result: \(output)")
-        APIManager.processAnalysis(analysis: output, llmName: "LocalLLM", source: 0)
+  
+        if output.lowercased() != "none" && !output.isEmpty {
+//            print("TargetTreeViewModel.shared=", TargetTreeViewModel.shared.targets)
+//            let result = replaceIPAddressWithHost(in: output)
+            // Extract the first line of output and take the first 70 characters
+            let firstLine = output.components(separatedBy: "\n").first ?? ""
+            let truncatedOutput = String(firstLine.prefix(70))
+            let newCommand = Command(
+                template: truncatedOutput,
+                patterns: [],
+                condition: [],
+                group: "LocalLLM",
+                description: ""
+            )
+            CommandManager.shared.addCommand(newCommand)
+ //           ChatViewModel.shared.sendMessage("LocalLLM Analysis Summary\n" + output.prefix(300), source: 0)
+        }
+        
+//        APIManager.processAnalysis(analysis: output, llmName: "LocalLLM", source: 0)
     }
     
     // Function to get or create a shared instance
@@ -74,21 +133,35 @@ public class LocalLLM: LLM {
             return shared
         }
     }
-}
-
-public func performActionWhenOpenHermesEnabled() {
-    Task {
-        print("OpenHermes Analysis Enabled - Called from HuggingFace.swift")
-        Task {
-            LocalLLM.shared = await LocalLLM { progress in
-                print("Loading progress: \(progress)")
+    
+    public static func loadFileContent() -> String {
+//        if let fileURL = Bundle.main.url(forResource: "Blue", withExtension: "json") {
+        if let fileURL = Bundle.main.url(forResource: "merged_data", withExtension: "json") {
+            do {
+                let content = try String(contentsOf: fileURL, encoding: .utf8)
+                print("content=", content)
+                return content
+            } catch {
+                print("Error reading file content: \(error)")
+                return "Error reading content."
             }
+        } else {
+            print("File not found in bundle.")
+            return "File not found."
         }
-        /*
-        func updateProgress(_ progress: Double) {
-            print("Loading progress: \(progress * 100)%")
-        }
-        */
+    }
+    
+    public func replaceIPAddressWithHost(in output: String) -> String {
+        // Regular expression pattern for matching IPv4 addresses
+        let pattern = #"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"#
+        
+        // Create a regular expression object
+        let regex = try? NSRegularExpression(pattern: pattern)
+        
+        // Replace any IP addresses in the string with "{host}"
+        let modifiedOutput = regex?.stringByReplacingMatches(in: output, options: [], range: NSRange(output.startIndex..., in: output), withTemplate: "{host}") ?? output
+        
+        return modifiedOutput
     }
 }
 

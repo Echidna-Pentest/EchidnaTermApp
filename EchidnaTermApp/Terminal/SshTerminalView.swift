@@ -99,17 +99,21 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                                 }
 //                                print("self.commandOUtputLongest=", getLongestOutput(from: self.commandOutputs))
 //                                print("self.commandEntered=", self.commandEntered)
-                                if (UserDefaults.standard.bool(forKey: "EnableOpenAIAnalysis") || UserDefaults.standard.bool(forKey: "EnableGeminiAnalysis")) && !self.commandEntered.isEmpty {
+//                                let commands = ["nmap", "smbmap", "ping", "nikto"]
+//                                let commands = ["nmap", "smbmap"]
+                                if !CommandManager.shared.getAllPatterns().contains(where: { self.commandEntered.contains($0) }) {
+                                    return
+                                }
+                                if (UserDefaults.standard.bool(forKey: "EnableOpenAIAnalysis") || UserDefaults.standard.bool(forKey: "EnableGeminiAnalysis") || UserDefaults.standard.bool(forKey: "EnableLocalLLMAnalysis")) && !self.commandEntered.isEmpty {
                                     var longestCommandOutput = getLongestOutput(from: self.commandOutputs)
                                     // analyze the longest command Output if it is longer than 40 characters,  this may need to be improved
-                                    longestCommandOutput = longestCommandOutput.filter { !($0.isWhitespace) }
+//                                    longestCommandOutput = longestCommandOutput.filter { !($0.isWhitespace) }
                                     
                                     if longestCommandOutput.count > 40 {
                                         if UserDefaults.standard.bool(forKey: "EnableOpenAIAnalysis") {
                                             APIManager.shared.performOpenAIAnalysis(text: longestCommandOutput)
                                         }
                                         if UserDefaults.standard.bool(forKey: "EnableGeminiAnalysis") {
-//                                            print("longestCommandOutput::::", longestCommandOutput)
                                             GeminiAPIManager.shared.analyzeTextByGemini(input: longestCommandOutput, isUserRequest: false) { result in
                                                 switch result {
                                                 case .success(let text):
@@ -119,8 +123,9 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                                                 }
                                             }
                                         }
-                                        if UserDefaults.standard.bool(forKey: "EnableOpenHermesAnalysis") {
+                                        if UserDefaults.standard.bool(forKey: "EnableLocalLLMAnalysis") {
 //                                            print("LocalLLM Analyze Starting")
+//                                            print("longestCommandOutput::::", longestCommandOutput)
                                             Task {
                                                 if let LocalLLM = await LocalLLM.getInstance { progress in
                                                     print("Loading progress: \(progress)")
@@ -131,6 +136,7 @@ public class SshTerminalView: AppTerminalView, TerminalViewDelegate, SessionDele
                                                 }
                                             }
                                         }
+                                        self.commandEntered = ""
                                     }
                                 }
                                 self.commandOutputs = []
